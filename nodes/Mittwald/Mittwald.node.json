@@ -1,0 +1,18 @@
+{
+	"node": "n8n-nodes-mittwald",
+	"nodeVersion": "1.0",
+	"codexVersion": "1.0",
+	"categories": ["API", "Developer Tools"],
+	"resources": {
+		"credentialDocumentation": [
+			{
+				"url": "https://developer.mittwald.de/docs/v2/api/intro/#obtaining-an-api-token"
+			}
+		],
+		"primaryDocumentation": [
+			{
+				"url": "https://developer.mittwald.de/"
+			}
+		]
+	}
+}

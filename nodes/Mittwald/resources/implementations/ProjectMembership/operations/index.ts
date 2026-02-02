@@ -1,0 +1,2 @@
+import './delete';
+import './get';

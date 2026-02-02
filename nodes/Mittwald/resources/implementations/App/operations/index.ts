@@ -1,0 +1,2 @@
+import './install';
+import './delete';
