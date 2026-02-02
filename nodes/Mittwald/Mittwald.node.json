@@ -2,16 +2,16 @@
 	"node": "n8n-nodes-mittwald",
 	"nodeVersion": "1.0",
 	"codexVersion": "1.0",
-	"categories": ["Development", "Developer Tools"],
+	"categories": ["API", "Developer Tools"],
 	"resources": {
 		"credentialDocumentation": [
 			{
-				"url": "https://github.com/org/repo?tab=readme-ov-file#credentials"
+				"url": "https://developer.mittwald.de/docs/v2/api/intro/#obtaining-an-api-token"
 			}
 		],
 		"primaryDocumentation": [
 			{
-				"url": "https://github.com/org/repo?tab=readme-ov-file"
+				"url": "https://developer.mittwald.de/"
 			}
 		]
 	}

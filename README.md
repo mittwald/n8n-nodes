@@ -1,6 +1,6 @@
 # n8n-nodes-mittwald
 
-This is an n8n community node. It lets you use _app/service name_ in your n8n workflows.
+This is an n8n community node. It lets you use the mittwald API in your n8n workflows.
 
 _App/service name_ is _one or two sentences describing the service this node integrates with_.
 
