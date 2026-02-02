@@ -32,7 +32,7 @@
         "strict": true,
         "credentials": [],
         "nodes": [
-            "dist/nodes/Example/Example.node.js"
+            "dist/nodes/Mittwald/Mittwald.node.js"
         ]
     },
     "devDependencies": {
