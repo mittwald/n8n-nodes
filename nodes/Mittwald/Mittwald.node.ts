@@ -9,6 +9,15 @@ import {
 } from 'n8n-workflow';
 import { NodeConnectionTypes, NodeOperationError } from 'n8n-workflow';
 import { INodeParameterResourceLocator } from 'n8n-workflow/dist/esm/interfaces';
+import { projectResource } from '../../Operations/Project/Project.resource';
+
+const resources = [
+	{
+		name: 'Project',
+		value: 'project',
+		resource: projectResource
+	}
+]
 
 export class Mittwald implements INodeType {
 	description: INodeTypeDescription = {
@@ -37,10 +46,7 @@ export class Mittwald implements INodeType {
 				displayName: 'Resource',
 				type: 'options',
 				options: [
-					{
-						name: 'Project',
-						value: 'project',
-					},
+					...(resources.map(resource => ({name: resource.name, value: resource.value}))),
 					{
 						name: 'Server',
 						value: 'server',
@@ -66,29 +72,6 @@ export class Mittwald implements INodeType {
 				type: 'options',
 				options: [
 					{
-						name: 'Create',
-						action: 'Create Project on Server',
-						value: 'createProject',
-					},
-					{
-						name: 'Delete',
-						action: 'Delete Project',
-						value: 'deleteProject',
-					},
-				],
-				displayOptions: {
-					show: {
-						resource: ['project'],
-					},
-				},
-			},
-			{
-				name: 'operation',
-				default: null,
-				displayName: 'Operation',
-				type: 'options',
-				options: [
-					{
 						name: 'Install',
 						action: 'Install App on Project',
 						value: 'installApp',
@@ -105,51 +88,7 @@ export class Mittwald implements INodeType {
 					},
 				},
 			},
-			{
-				displayName: 'Server',
-				name: 'server',
-				type: 'resourceLocator',
-				modes: [
-					{
-						name: 'list',
-						displayName: 'From List',
-						type: 'list',
-						typeOptions: {
-							searchListMethod: 'searchServer',
-							searchable: true,
-						},
-					},
-					{
-						displayName: 'By ID',
-						name: 'id',
-						type: 'string',
-						placeholder: 'Enter server UUID or short ID',
-					},
-				],
-
-				default: '',
-				required: true,
-				placeholder: 'Placeholder value',
-				description: 'the uuid of the server',
-				displayOptions: {
-					show: {
-						operation: ['createProject'],
-					},
-				},
-			},
-			{
-				displayName: 'Name',
-				name: 'description',
-				type: 'string',
-				default: '',
-				placeholder: 'Placeholder value',
-				description: 'The Name of the Project',
-				displayOptions: {
-					show: {
-						operation: ['createProject'],
-					},
-				},
-			},
+			...projectResource.getProperties(),
 		],
 	};
 
@@ -159,6 +98,8 @@ export class Mittwald implements INodeType {
 				this: ILoadOptionsFunctions,
 				filter?: string,
 			): Promise<INodeListSearchResult> {
+				// @ts-ignore
+				console.log('Searching for servers with filter:', filter);
 				// TODO: Add support for filtering and pagination
 				const servers = await this.helpers.httpRequestWithAuthentication.call(this, 'mittwaldApi', {
 					url: 'https://api.mittwald.de/v2/servers',
