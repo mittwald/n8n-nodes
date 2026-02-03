@@ -1,5 +1,6 @@
 import { projectResource } from './Project.resource';
 import { pollStatus } from '../types';
+import server from '../Properties/server.property';
 
 export const createProjectOperation = projectResource
 	.createOperation({
@@ -7,13 +8,7 @@ export const createProjectOperation = projectResource
 		action: 'Create Project on Server',
 	})
 	.withProperties({
-		server: {
-			name: 'server',
-			displayName: 'Server',
-			type: 'resourceLocator',
-			searchListMethod: 'searchServer',
-			default: null,
-		},
+		server,
 		description: {
 			name: 'description',
 			displayName: 'Description',

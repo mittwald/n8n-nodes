@@ -1,33 +1,34 @@
 import {
 	IExecuteFunctions,
-	ILoadOptionsFunctions,
 	INodeExecutionData,
-	INodeListSearchResult,
+	INodeParameterResourceLocator,
 	INodeType,
 	INodeTypeDescription,
 	NodeConnectionTypes,
 	NodeOperationError,
-	INodeParameterResourceLocator,
 	sleep,
 } from 'n8n-workflow';
 import { projectResource } from '../../Resources/Project';
 import {
 	ExecutionContext,
-	OperationProperties,
 	PollStatusRequestConfig,
 	RequestConfig,
 	RequestResponse,
 } from '../../Resources/types';
 import { Operation } from '../../Resources/Operation';
+import { searchServer } from '../../Resources/Properties/server.property';
 
 const resources = [projectResource];
+
+const apiBaseUrl = 'https://api.mittwald.de/v2';
 
 const buildExecutionContext = (
 	node: IExecuteFunctions,
 	itemIndex: number,
 	operation: Operation,
-): ExecutionContext<OperationProperties> => {
+): ExecutionContext => {
 	let properties = {};
+	const logger = node.logger;
 
 	for (const property of operation.properties) {
 		if (property.getN8NProperty().type === 'resourceLocator') {
@@ -49,41 +50,50 @@ const buildExecutionContext = (
 		}
 	}
 
+	const buildUrl = (config: RequestConfig) => `${apiBaseUrl}${config.path}`;
+
+	const execute = async (config: RequestConfig): Promise<any> => {
+		const { path, ...restConfig } = config;
+		const url = buildUrl(config);
+
+		logger.debug(`${config.method} ${url}`);
+		const response: RequestResponse = await node.helpers.httpRequestWithAuthentication.call(
+			node,
+			'mittwaldApi',
+			{
+				url,
+				returnFullResponse: true,
+				...restConfig,
+			},
+		);
+		logger.debug(`${config.method} ${url} ${response.statusCode}`);
+
+		return response;
+	};
+
 	return {
 		properties,
 		request: {
-			execute: (config: RequestConfig) => {
-				return node.helpers.httpRequestWithAuthentication.call(node, 'mittwaldApi', {
-					url: `https://api.mittwald.de/v2${config.path}`,
-					method: config.method,
-					body: config.body,
-					returnFullResponse: true,
-				});
-			},
+			execute,
 			executeWithPolling: async <TRes extends RequestResponse>(
 				config: PollStatusRequestConfig<TRes>,
-			) => {
+			): Promise<TRes> => {
+				const { waitUntil, timeoutMs = 2000, ...restConfig } = config;
 				let backoff = 100;
-				const currentTime = Date.now();
-				const maxTime = currentTime + (config.timeoutMs ?? 500);
+				const maxTime = Date.now() + timeoutMs;
+				const url = buildUrl(config);
+
 				while (true) {
 					if (Date.now() > maxTime) {
-						throw new Error('Polling timed out');
+						throw new Error(`polling to ${url} timed out after ${timeoutMs} ms`);
 					}
-					const response = await node.helpers.httpRequestWithAuthentication.call(
-						node,
-						'mittwaldApi',
-						{
-							url: `https://api.mittwald.de/v2${config.path}`,
-							method: config.method,
-							body: config.body,
-							returnFullResponse: true,
-							ignoreHttpStatusErrors: true,
-						},
-					);
-					if (config.waitUntil(response)) {
+					const response = (await execute({ ...restConfig, ignoreHttpStatusErrors: true })) as TRes;
+
+					if (waitUntil(response)) {
 						return response;
 					}
+
+					logger.warn(`request to ${url} returned status ${response.statusCode}, retrying...`);
 
 					await sleep(backoff);
 					backoff = Math.min(backoff * 2, 2000); // Exponential backoff up to 2 seconds
@@ -127,26 +137,7 @@ export class Mittwald implements INodeType {
 
 	methods = {
 		listSearch: {
-			async searchServer(
-				this: ILoadOptionsFunctions,
-				filter?: string,
-			): Promise<INodeListSearchResult> {
-				// @ts-ignore
-				console.log('Searching for servers with filter:', filter);
-				// TODO: Add support for filtering and pagination
-				const servers = await this.helpers.httpRequestWithAuthentication.call(this, 'mittwaldApi', {
-					url: 'https://api.mittwald.de/v2/servers',
-					json: true,
-					method: 'GET',
-				});
-
-				return {
-					results: servers.map((server: any) => ({
-						name: `${server.description} (${server.shortId})`,
-						value: server.id,
-					})),
-				};
-			},
+			searchServer,
 		},
 	};
 

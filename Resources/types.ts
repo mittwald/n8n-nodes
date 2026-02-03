@@ -5,6 +5,7 @@ export interface RequestConfig {
 	path: string;
 	method: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
 	body?: any;
+	ignoreHttpStatusErrors?: boolean;
 }
 
 export type PollingRequestCondition<TRes extends RequestResponse = RequestResponse> = (
@@ -12,7 +13,7 @@ export type PollingRequestCondition<TRes extends RequestResponse = RequestRespon
 ) => boolean;
 
 export interface RequestResponse {
-	status: number;
+	statusCode: number;
 	body: any;
 	headers: Record<string, unknown>;
 }
@@ -20,7 +21,7 @@ export interface RequestResponse {
 export const pollStatus =
 	(status: number): PollingRequestCondition =>
 	(response) =>
-		response.status === status;
+		response.statusCode === status;
 
 export interface PollStatusRequestConfig<TRes extends RequestResponse = RequestResponse>
 	extends RequestConfig {
