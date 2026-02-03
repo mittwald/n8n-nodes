@@ -1,12 +1,14 @@
-import { OperationPropertyConfig } from '../OperationProperty';
 import { ILoadOptionsFunctions, INodeListSearchResult } from 'n8n-workflow';
+import { ApiClient } from '../../api/ApiClient';
+import type { OperationPropertyConfig } from '../base';
 
-const server: OperationPropertyConfig = {
-	name: 'server',
+// TODO: Helper class to config and map operation properties
+const serverProperty: OperationPropertyConfig = {
 	displayName: 'Server',
+	name: 'server',
 	type: 'resourceLocator',
 	searchListMethod: 'searchServer',
-	default: null,
+	default: '',
 };
 
 export async function searchServer(
@@ -17,9 +19,15 @@ export async function searchServer(
 	// reference: https://developer.mittwald.de/docs/v2/reference/project/project-list-servers/
 	this.logger.info('fetching servers from mittwald API https://api.mittwald.de/v2/servers');
 
-	const servers = await this.helpers.httpRequestWithAuthentication.call(this, 'mittwaldApi', {
-		url: 'https://api.mittwald.de/v2/servers',
-		json: true,
+	interface Server {
+		shortId: string;
+		id: string;
+		description: string;
+	}
+
+	const apiClient = new ApiClient(this);
+	const servers = await apiClient.request<Array<Server>>({
+		path: '/servers',
 		method: 'GET',
 		qs: {
 			searchTerm: filter,
@@ -27,11 +35,11 @@ export async function searchServer(
 	});
 
 	return {
-		results: servers.map((server: any) => ({
+		results: servers.map((server) => ({
 			name: `${server.description} (${server.shortId})`,
 			value: server.id,
 		})),
 	};
 }
 
-export default server;
+export default serverProperty;

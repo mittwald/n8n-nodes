@@ -1,7 +1,7 @@
 {
     "name": "n8n-nodes-mittwald",
     "version": "0.1.0",
-    "description": "",
+    "description": "n8n nodes for interacting with the Mittwald API",
     "license": "MIT",
     "homepage": "",
     "keywords": [
@@ -22,8 +22,9 @@
         "lint": "n8n-node lint",
         "lint:fix": "n8n-node lint --fix",
         "release": "n8n-node release",
-        "prepublishOnly": "n8n-node prerelease"
-    },
+        "prepublishOnly": "n8n-node prerelease",
+        "test:compile": "tsc --noEmit"
+    },    
     "files": [
         "dist"
     ],
@@ -31,7 +32,7 @@
         "n8nNodesApiVersion": 1,
         "strict": true,
         "credentials": [
-            "dist/credentials/Mittwald.credentials.js"
+            "dist/credentials/MittwaldApi.credentials.js"
         ],
         "nodes": [
             "dist/nodes/Mittwald/Mittwald.node.js"

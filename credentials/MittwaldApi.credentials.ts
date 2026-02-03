@@ -6,9 +6,10 @@ import {
 	INodeProperties,
 } from 'n8n-workflow';
 
-export class Mittwald implements ICredentialType {
-	name = 'mittwaldApi';
+export class MittwaldApi implements ICredentialType {
+	// eslint-disable-next-line n8n-nodes-base/cred-class-field-display-name-miscased
 	displayName = 'mittwald API';
+	name = 'mittwaldApi';
 	icon: Icon = 'file:../nodes/Mittwald/mittwald.svg';
 	documentationUrl = 'https://developer.mittwald.de/';
 
