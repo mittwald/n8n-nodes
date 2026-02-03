@@ -1,10 +1,50 @@
-import { Operation } from '../Operation';
-import { IExecuteFunctions, INodeExecutionData, sleep } from 'n8n-workflow';
-import { INodeParameterResourceLocator } from 'n8n-workflow/dist/esm/interfaces';
+import { projectResource } from './Project.resource';
+import { pollStatus } from '../types';
 
+export const createProjectOperation = projectResource
+	.createOperation({
+		name: 'Create',
+		action: 'Create Project on Server',
+	})
+	.withProperties({
+		server: {
+			name: 'server',
+			displayName: 'Server',
+			type: 'resourceLocator',
+			searchListMethod: 'searchServer',
+			default: null,
+		},
+		description: {
+			name: 'description',
+			displayName: 'Description',
+			type: 'string',
+			default: null,
+		},
+	})
+	.withExecuteFn(async (context) => {
+		const { properties, request } = context;
+		const { server, description } = properties;
 
+		const createResponse = await request.execute({
+			path: `/servers/${server}/projects`,
+			method: 'POST',
+			body: {
+				description,
+			},
+		});
+
+		const getResponse = await request.executeWithPolling({
+			path: `/projects/${createResponse.body.id}`,
+			method: 'GET',
+			waitUntil: pollStatus(200),
+		});
+
+		return getResponse.body;
+	});
+
+/*
 export const createProjectOperation: Operation = {
-	name: 'Create',
+	id: 'Create',
 	action: 'Create Project on Server',
 	value: 'createProject',
 	parentResources: ['project'],
@@ -56,7 +96,11 @@ export const createProjectOperation: Operation = {
 		},
 	],
 
-	async executeItem(this: IExecuteFunctions, item: INodeExecutionData, itemIndex: number): Promise<void> {
+	async executeItem(
+		this: IExecuteFunctions,
+		item: INodeExecutionData,
+		itemIndex: number,
+	): Promise<void> {
 		const server = this.getNodeParameter('server', itemIndex, '') as INodeParameterResourceLocator;
 		const description = this.getNodeParameter('description', itemIndex, '') as string;
 
@@ -88,4 +132,4 @@ export const createProjectOperation: Operation = {
 		});
 	},
 };
-
+*/

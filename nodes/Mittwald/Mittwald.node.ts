@@ -5,19 +5,93 @@ import {
 	INodeListSearchResult,
 	INodeType,
 	INodeTypeDescription,
+	NodeConnectionTypes,
+	NodeOperationError,
+	INodeParameterResourceLocator,
 	sleep,
 } from 'n8n-workflow';
-import { NodeConnectionTypes, NodeOperationError } from 'n8n-workflow';
-import { INodeParameterResourceLocator } from 'n8n-workflow/dist/esm/interfaces';
-import { projectResource } from '../../Operations/Project/Project.resource';
+import { projectResource } from '../../Resources/Project';
+import {
+	ExecutionContext,
+	OperationProperties,
+	PollStatusRequestConfig,
+	RequestConfig,
+	RequestResponse,
+} from '../../Resources/types';
+import { Operation } from '../../Resources/Operation';
 
-const resources = [
-	{
-		name: 'Project',
-		value: 'project',
-		resource: projectResource
+const resources = [projectResource];
+
+const buildExecutionContext = (
+	node: IExecuteFunctions,
+	itemIndex: number,
+	operation: Operation,
+): ExecutionContext<OperationProperties> => {
+	let properties = {};
+
+	for (const property of operation.properties) {
+		if (property.getN8NProperty().type === 'resourceLocator') {
+			const paramValue = node.getNodeParameter(
+				property.name,
+				itemIndex,
+			) as INodeParameterResourceLocator;
+
+			properties = {
+				...properties,
+				[property.name]: paramValue.value,
+			};
+		} else {
+			const paramValue = node.getNodeParameter(property.name, itemIndex);
+			properties = {
+				...properties,
+				[property.name]: paramValue,
+			};
+		}
 	}
-]
+
+	return {
+		properties,
+		request: {
+			execute: (config: RequestConfig) => {
+				return node.helpers.httpRequestWithAuthentication.call(node, 'mittwaldApi', {
+					url: `https://api.mittwald.de/v2${config.path}`,
+					method: config.method,
+					body: config.body,
+					returnFullResponse: true,
+				});
+			},
+			executeWithPolling: async <TRes extends RequestResponse>(
+				config: PollStatusRequestConfig<TRes>,
+			) => {
+				let backoff = 100;
+				const currentTime = Date.now();
+				const maxTime = currentTime + (config.timeoutMs ?? 500);
+				while (true) {
+					if (Date.now() > maxTime) {
+						throw new Error('Polling timed out');
+					}
+					const response = await node.helpers.httpRequestWithAuthentication.call(
+						node,
+						'mittwaldApi',
+						{
+							url: `https://api.mittwald.de/v2${config.path}`,
+							method: config.method,
+							body: config.body,
+							returnFullResponse: true,
+							ignoreHttpStatusErrors: true,
+						},
+					);
+					if (config.waitUntil(response)) {
+						return response;
+					}
+
+					await sleep(backoff);
+					backoff = Math.min(backoff * 2, 2000); // Exponential backoff up to 2 seconds
+				}
+			},
+		},
+	};
+};
 
 export class Mittwald implements INodeType {
 	description: INodeTypeDescription = {
@@ -45,50 +119,9 @@ export class Mittwald implements INodeType {
 				default: null,
 				displayName: 'Resource',
 				type: 'options',
-				options: [
-					...(resources.map(resource => ({name: resource.name, value: resource.value}))),
-					{
-						name: 'Server',
-						value: 'server',
-					},
-					{
-						name: 'Domain',
-						value: 'domain',
-					},
-					{
-						name: 'App',
-						value: 'app',
-					},
-					{
-						name: 'Customer',
-						value: 'customer',
-					},
-				],
+				options: [...resources.map((resource) => ({ name: resource.name, value: resource.value }))],
 			},
-			{
-				name: 'operation',
-				default: null,
-				displayName: 'Operation',
-				type: 'options',
-				options: [
-					{
-						name: 'Install',
-						action: 'Install App on Project',
-						value: 'installApp',
-					},
-					{
-						name: 'Delete',
-						action: 'Delete App',
-						value: 'deleteApp',
-					},
-				],
-				displayOptions: {
-					show: {
-						resource: ['app'],
-					},
-				},
-			},
-			...projectResource.getProperties(),
+			...projectResource.getN8NProperties(),
 		],
 	};
 
@@ -127,43 +160,19 @@ export class Mittwald implements INodeType {
 		// (This could be a different value for each item in case it contains an expression)
 		for (let itemIndex = 0; itemIndex < items.length; itemIndex++) {
 			try {
-				const server = this.getNodeParameter(
-					'server',
-					itemIndex,
-					'',
-				) as INodeParameterResourceLocator;
-				const description = this.getNodeParameter('description', itemIndex, '') as string;
+				const resourceId = this.getNodeParameter('resource', itemIndex) as string;
+				const operationValue = this.getNodeParameter('operation', itemIndex) as string;
+
+				const resource = resources.find((res) => res.value === resourceId);
+				const operation = resource?.findOperationByValue(operationValue);
+
+				if (!operation) {
+					throw new Error('Operation not found for the specified resource.');
+				}
+
+				const executionContext = buildExecutionContext(this, itemIndex, operation);
 				item = items[itemIndex];
-
-				// @ts-ignore
-				console.log(server);
-
-				const createResponse = await this.helpers.httpRequestWithAuthentication.call(
-					this,
-					'mittwaldApi',
-					{
-						url: `https://api.mittwald.de/v2/servers/${server.value}/projects`,
-						method: 'POST',
-						body: {
-							description,
-						},
-						returnFullResponse: true,
-					},
-				);
-
-				// @ts-ignore
-				console.log(createResponse.body.id);
-				// @ts-ignore
-				console.log(createResponse.headers.get('etag'));
-
-				await sleep(2000); // wait for 2 seconds to ensure the project is ready
-
-				item.json = await this.helpers.httpRequestWithAuthentication.call(this, 'mittwaldApi', {
-					url: 'https://api.mittwald.de/v2/projects/' + createResponse.body.id,
-					headers: {
-						'if-event-reached': createResponse.headers.get("etag"),
-					},
-				});
+				item.json = await operation.executionFn(executionContext);
 			} catch (error) {
 				// This node should never fail but we want to showcase how
 				// to handle errors.
