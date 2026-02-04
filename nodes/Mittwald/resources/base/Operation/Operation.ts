@@ -8,6 +8,7 @@ import type {
 	OperationProperties,
 } from './types';
 import { ApiClient } from '../../../api';
+import type { OperationPropertyConfig } from '../OperationProperty';
 
 export class Operation {
 	public readonly resource: Resource;
@@ -24,8 +25,8 @@ export class Operation {
 		this.resource = resource;
 		this.config = config;
 		this.executionFn = executionFn;
-		this.properties = Object.values(properties).map(
-			(propConfig) => new OperationProperty(this, propConfig),
+		this.properties = Object.entries(properties).map(
+			([name, propConfig]) => new OperationProperty(name, this, propConfig),
 		);
 	}
 
@@ -35,6 +36,10 @@ export class Operation {
 
 	public get id() {
 		return `${this.resource.name}-${this.name}`;
+	}
+
+	public addProperty(name: string, config: OperationPropertyConfig) {
+		this.properties.push(new OperationProperty(name, this, config));
 	}
 
 	public getN8NOption(): INodePropertyOptions {

@@ -1,7 +1,7 @@
-import serverProperty from '../../../operationProperties/serverProperty';
+import serverProperty from '../../shared/serverProperty';
 import { projectResource } from '../resource';
 
-export default projectResource
+projectResource
 	.addOperation({
 		name: 'Create',
 		action: 'Create Project on Server',

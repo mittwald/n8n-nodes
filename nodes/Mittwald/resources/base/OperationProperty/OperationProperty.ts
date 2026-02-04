@@ -3,16 +3,18 @@ import type { Operation } from '../Operation/Operation';
 import type { OperationPropertyConfig } from './types';
 
 export class OperationProperty {
-	private readonly config: OperationPropertyConfig;
+	public readonly config: OperationPropertyConfig;
 	private readonly operation: Operation;
+	public readonly name: string;
 
-	public constructor(operation: Operation, config: OperationPropertyConfig) {
+	public constructor(name: string, operation: Operation, config: OperationPropertyConfig) {
+		this.name = name;
 		this.operation = operation;
 		this.config = config;
 	}
 
-	public get name(): string {
-		return this.config.name;
+	public get type() {
+		return this.config.type;
 	}
 
 	public get id() {
@@ -20,17 +22,19 @@ export class OperationProperty {
 	}
 
 	public getN8NProperty(): INodeProperties {
-		const baseConfig: Partial<INodeProperties> = {
+		const baseConfig = {
+			name: this.name,
 			displayOptions: {
 				show: {
 					operation: [this.operation.name],
 					resource: [this.operation.resource.name],
 				},
 			},
-		};
+		} satisfies Partial<INodeProperties>;
 
 		if (this.config.type === 'resourceLocator') {
-			const { searchListMethod, ...restConfig } = this.config;
+			// eslint-disable-next-line @typescript-eslint/no-unused-vars
+			const { searchListMethod, searchListMethodName, ...restConfig } = this.config;
 			return {
 				...baseConfig,
 				...restConfig,
@@ -40,7 +44,7 @@ export class OperationProperty {
 						name: 'list',
 						type: 'list',
 						typeOptions: {
-							searchListMethod,
+							searchListMethod: searchListMethodName,
 							searchable: true,
 						},
 					},
@@ -55,7 +59,14 @@ export class OperationProperty {
 		}
 
 		if (this.config.type === 'resourceMapper') {
-			const { resourceMapperMethod, dependsOn, displayName, ...restConfig } = this.config;
+			const {
+				// eslint-disable-next-line @typescript-eslint/no-unused-vars
+				resourceMapperMethod,
+				resourceMapperMethodName,
+				dependsOn,
+				displayName,
+				...restConfig
+			} = this.config;
 			return {
 				...baseConfig,
 				...restConfig,
@@ -64,7 +75,7 @@ export class OperationProperty {
 					loadOptionsDependsOn: dependsOn,
 					resourceMapper: {
 						valuesLabel: displayName,
-						resourceMapperMethod,
+						resourceMapperMethod: resourceMapperMethodName,
 						mode: 'add',
 						fieldWords: {
 							singular: 'column',

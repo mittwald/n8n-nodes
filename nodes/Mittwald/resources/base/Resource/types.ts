@@ -1,4 +1,5 @@
-import type { OperationProperties, OperationExecutionFunction } from '../Operation';
+import type { OperationExecutionFunction } from '../Operation';
+import type { OperationProperties } from '../Operation/types';
 
 export interface OperationBuilder {
 	withProperties<TProps extends OperationProperties>(

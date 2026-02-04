@@ -1,9 +1,9 @@
+import softwareProperty from '../../shared/softwareProperty';
+import versionConfigProperty from '../../shared/versionConfigProperty';
+import versionProperty from '../../shared/versionProperty';
 import { appResource } from '../resource';
-import softwareProperty from '../../../operationProperties/softwareProperty';
-import versionProperty from '../../../operationProperties/versionProperty';
-import versionConfigProperty from '../../../operationProperties/versionConfigProperty';
 
-export default appResource
+appResource
 	.addOperation({
 		name: 'Install',
 		action: 'Install App',
@@ -11,7 +11,6 @@ export default appResource
 	.withProperties({
 		project: {
 			displayName: 'Project',
-			name: 'project',
 			type: 'string',
 			default: '',
 		},

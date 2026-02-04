@@ -1,6 +1,5 @@
 import { Resource } from './resources/base';
 import './resources/implementations/operations';
-import { searchServer } from './resources/operationProperties/serverProperty';
 import {
 	IExecuteFunctions,
 	INodeExecutionData,
@@ -9,9 +8,6 @@ import {
 	NodeConnectionTypes,
 	NodeOperationError,
 } from 'n8n-workflow';
-import { searchSoftware } from './resources/operationProperties/softwareProperty';
-import { searchVersion } from './resources/operationProperties/versionProperty';
-import { mapAppVersionConfig } from './resources/operationProperties/versionConfigProperty';
 
 export class Mittwald implements INodeType {
 	description: INodeTypeDescription = {
@@ -38,12 +34,8 @@ export class Mittwald implements INodeType {
 	};
 
 	methods = {
-		resourceMapping: { mapAppVersionConfig },
-		listSearch: {
-			searchServer,
-			searchSoftware,
-			searchVersion,
-		},
+		listSearch: { ...Resource.getN8NListSearchFunctions() },
+		resourceMapping: { ...Resource.getN8NResourceMappingFunctions() },
 	};
 
 	async execute(this: IExecuteFunctions): Promise<INodeExecutionData[][]> {

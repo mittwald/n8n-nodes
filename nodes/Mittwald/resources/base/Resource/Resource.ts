@@ -1,15 +1,15 @@
 import { INodeProperties, type INodePropertyOptions } from 'n8n-workflow';
-import { Operation, OperationConfig, OperationExecutionFunction } from '../Operation';
 import type { OperationBuilder, ResourceConfig } from './types';
+import { Operation, OperationConfig, type OperationExecutionFunction } from '../Operation';
 
 export class Resource {
 	private readonly config: ResourceConfig;
 	private readonly operations: Operation[] = [];
-	public static resources: Resource[] = [];
+	public static readonly resources = new Set<Resource>();
 
 	public constructor(config: ResourceConfig) {
 		this.config = config;
-		Resource.resources.push(this);
+		Resource.resources.add(this);
 	}
 
 	public get name() {
@@ -34,8 +34,12 @@ export class Resource {
 		};
 	}
 
+	private static get resourcesArray() {
+		return Array.from(Resource.resources.values());
+	}
+
 	private static get flattenedOperations() {
-		return Resource.resources.flatMap((resource) => resource.operations);
+		return Resource.resourcesArray.flatMap((resource) => resource.operations);
 	}
 
 	public static getOperation(resourceName: string, operationName: string): Operation {
@@ -58,12 +62,32 @@ export class Resource {
 				noDataExpression: true,
 				options: Resource.getN8NOptions(),
 			},
-			...Resource.resources.flatMap((resource) => resource.getN8NProperties()),
+			...Resource.resourcesArray.flatMap((resource) => resource.getN8NProperties()),
 		];
 	}
 
+	public static getN8NListSearchFunctions() {
+		return Object.fromEntries(
+			this.flattenedOperations
+				.flatMap((o) => o.properties)
+				.map((o) => o.config)
+				.filter((c) => c.type === 'resourceLocator')
+				.map((c) => [c.searchListMethodName, c.searchListMethod]),
+		);
+	}
+
+	public static getN8NResourceMappingFunctions() {
+		return Object.fromEntries(
+			this.flattenedOperations
+				.flatMap((o) => o.properties)
+				.map((o) => o.config)
+				.filter((c) => c.type === 'resourceMapper')
+				.map((c) => [c.resourceMapperMethodName, c.resourceMapperMethod]),
+		) as Record<string, any>;
+	}
+
 	private static getN8NOptions(): Array<INodePropertyOptions> {
-		return Resource.resources.flatMap((resource) => resource.getN8NOption());
+		return Resource.resourcesArray.flatMap((resource) => resource.getN8NOption());
 	}
 
 	private getN8NProperties(): Array<INodeProperties> {
