@@ -1,13 +1,28 @@
 import type { NodeParameterValueType } from 'n8n-workflow';
 
-type SupportedNodePropertyType = 'string' | 'number' | 'boolean' | 'resourceLocator';
-
-export interface OperationPropertyConfig {
+interface BaseConfig {
 	name: string;
 	displayName: string;
-	type: SupportedNodePropertyType;
 	default: NodeParameterValueType;
 	required?: boolean;
 	description?: string;
-	searchListMethod?: string;
 }
+
+export type OperationPropertyConfig =
+	| (BaseConfig & {
+			type: 'resourceLocator';
+			searchListMethod: string;
+	  })
+	| (BaseConfig & {
+			type: 'string' | 'number' | 'boolean';
+	  });
+
+export type OperationPropertyValue<T extends OperationPropertyConfig['type']> = T extends 'string'
+	? string
+	: T extends 'number'
+		? number
+		: T extends 'boolean'
+			? boolean
+			: T extends 'resourceLocator'
+				? string
+				: never;

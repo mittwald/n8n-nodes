@@ -1,10 +1,5 @@
 import { INodeProperties, type INodePropertyOptions } from 'n8n-workflow';
-import {
-	Operation,
-	OperationConfig,
-	OperationExecutionFunction,
-	OperationProperties,
-} from '../Operation';
+import { Operation, OperationConfig, OperationExecutionFunction } from '../Operation';
 import type { OperationBuilder, ResourceConfig } from './types';
 
 export class Resource {
@@ -25,9 +20,7 @@ export class Resource {
 		return this.name;
 	}
 
-	public addOperation<TProps extends OperationProperties>(
-		config: OperationConfig,
-	): OperationBuilder<TProps> {
+	public addOperation(config: OperationConfig): OperationBuilder {
 		return {
 			withProperties: (properties) => {
 				return {

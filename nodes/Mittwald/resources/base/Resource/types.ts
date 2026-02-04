@@ -1,7 +1,9 @@
 import type { OperationProperties, OperationExecutionFunction } from '../Operation';
 
-export interface OperationBuilder<TProps extends OperationProperties> {
-	withProperties(properties: TProps): {
+export interface OperationBuilder {
+	withProperties<TProps extends OperationProperties>(
+		properties: TProps,
+	): {
 		withExecuteFn(fn: OperationExecutionFunction<TProps>): void;
 	};
 }

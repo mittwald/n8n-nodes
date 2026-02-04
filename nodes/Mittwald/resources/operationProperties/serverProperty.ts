@@ -3,13 +3,13 @@ import { ApiClient } from '../../api/ApiClient';
 import type { OperationPropertyConfig } from '../base';
 
 // TODO: Helper class to config and map operation properties
-const serverProperty: OperationPropertyConfig = {
+const serverProperty = {
 	displayName: 'Server',
 	name: 'server',
 	type: 'resourceLocator',
 	searchListMethod: 'searchServer',
 	default: '',
-};
+} satisfies OperationPropertyConfig;
 
 export async function searchServer(
 	this: ILoadOptionsFunctions,

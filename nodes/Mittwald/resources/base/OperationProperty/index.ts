@@ -1,2 +1,2 @@
 export { OperationProperty } from './OperationProperty';
-export { OperationPropertyConfig } from './types';
+export { OperationPropertyConfig, OperationPropertyValue } from './types';

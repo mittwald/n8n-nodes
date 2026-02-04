@@ -20,10 +20,7 @@ export class OperationProperty {
 	}
 
 	public getN8NProperty(): INodeProperties {
-		const { searchListMethod, ...restConfig } = this.config;
-
-		const config: INodeProperties = {
-			...restConfig,
+		const baseConfig: Partial<INodeProperties> = {
 			displayOptions: {
 				show: {
 					operation: [this.operation.name],
@@ -32,9 +29,11 @@ export class OperationProperty {
 			},
 		};
 
-		if (config.type == 'resourceLocator') {
+		if (this.config.type === 'resourceLocator') {
+			const { searchListMethod, ...restConfig } = this.config;
 			return {
-				...config,
+				...baseConfig,
+				...restConfig,
 				modes: [
 					{
 						displayName: 'From List',
@@ -55,7 +54,10 @@ export class OperationProperty {
 			};
 		}
 
-		return config;
+		return {
+			...baseConfig,
+			...this.config,
+		};
 	}
 
 	public getPropertyValue(node: IAllExecuteFunctions, itemIndex: number): unknown {
