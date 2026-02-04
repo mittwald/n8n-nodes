@@ -10,16 +10,16 @@ export class ApiClient {
 		this.node = node;
 	}
 
-	public async request<TResponseBody = JsonObject>(
-		requestConfig: RequestConfig<TResponseBody> & { returnFullResponse: true },
+	public async request<TResponseBody = JsonObject, TRequestBody = JsonObject>(
+		requestConfig: RequestConfig<TRequestBody, TResponseBody> & { returnFullResponse: true },
 	): Promise<Response<TResponseBody>>;
 
-	public async request<TResponseBody = JsonObject>(
-		requestConfig: RequestConfig<TResponseBody>,
+	public async request<TResponseBody = JsonObject, TRequestBody = JsonObject>(
+		requestConfig: RequestConfig<TRequestBody, TResponseBody>,
 	): Promise<TResponseBody>;
 
-	public async request<TResponseBody = JsonObject>(
-		requestConfig: RequestConfig<TResponseBody>,
+	public async request<TResponseBody = JsonObject, TRequestBody = JsonObject>(
+		requestConfig: RequestConfig<TRequestBody, TResponseBody>,
 	): Promise<TResponseBody> {
 		const { logger, helpers } = this.node;
 		const { path, polling, returnFullResponse, ...restRequestConfig } = requestConfig;
@@ -36,7 +36,7 @@ export class ApiClient {
 			});
 
 		const fullResponse = polling
-			? await poll({
+			? await poll<TResponseBody>({
 					config: polling,
 					executeRequest,
 					logger,

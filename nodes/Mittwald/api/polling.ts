@@ -9,14 +9,14 @@ export interface PollingConfig<TBody = JsonObject> {
 	timeoutMs?: number;
 }
 
-interface PollExecutionConfig {
-	config: PollingConfig;
-	executeRequest: () => Promise<Response>;
+interface PollExecutionConfig<TBody = JsonObject> {
+	config: PollingConfig<TBody>;
+	executeRequest: () => Promise<Response<TBody>>;
 	logger: Logger;
 }
 
 export const poll = async <TBody = JsonObject>(
-	executionConfig: PollExecutionConfig,
+	executionConfig: PollExecutionConfig<TBody>,
 ): Promise<Response<TBody>> => {
 	const { config, executeRequest, logger } = executionConfig;
 	const { waitUntil, timeoutMs = 2000 } = config;
