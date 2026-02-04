@@ -24,6 +24,9 @@ export class ApiClient {
 		const { logger, helpers } = this.node;
 		const { path, polling, returnFullResponse, ...restRequestConfig } = requestConfig;
 
+		this.node.logger.info(
+			`calling mittwald API` + JSON.stringify({ method: restRequestConfig.method, path }),
+		);
 		const executeRequest = () =>
 			helpers.httpRequestWithAuthentication.call(this.node, 'mittwaldApi', {
 				...restRequestConfig,
@@ -42,6 +45,14 @@ export class ApiClient {
 					logger,
 				})
 			: await executeRequest();
+
+		this.node.logger.info(
+			'mittwald API response' +
+				JSON.stringify({
+					status: fullResponse.statusCode,
+					data: fullResponse.data,
+				}),
+		);
 
 		if (returnFullResponse) {
 			return fullResponse;

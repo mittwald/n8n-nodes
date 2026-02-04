@@ -12,6 +12,8 @@ import {
 import { searchSoftware } from './resources/operationProperties/softwareProperty';
 import { searchVersion } from './resources/operationProperties/versionProperty';
 import { mapAppVersionConfig } from './resources/operationProperties/versionConfigProperty';
+import { searchProject } from './resources/operationProperties/projectProperty';
+import { searchAppInstallation } from './resources/operationProperties/appInstallationProperty';
 
 export class Mittwald implements INodeType {
 	description: INodeTypeDescription = {
@@ -43,6 +45,8 @@ export class Mittwald implements INodeType {
 			searchServer,
 			searchSoftware,
 			searchVersion,
+			searchProject,
+			searchAppInstallation,
 		},
 	};
 

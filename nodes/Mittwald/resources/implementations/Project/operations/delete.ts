@@ -1,4 +1,5 @@
 import { projectResource } from '../resource';
+import projectProperty from '../../../operationProperties/projectProperty';
 
 export default projectResource
 	.addOperation({
@@ -6,13 +7,14 @@ export default projectResource
 		action: 'Delete Project',
 	})
 	.withProperties({
-		project: {
-			displayName: 'Project',
-			name: 'project',
-			type: 'string',
-			default: '',
-		},
+		project: projectProperty,
 	})
-	.withExecuteFn(async () => {
-		return {};
+	.withExecuteFn(async (context) => {
+		const { properties, apiClient } = context;
+		const { project } = properties;
+
+		return await apiClient.request({
+			path: `/projects/${project}`,
+			method: 'DELETE',
+		});
 	});
