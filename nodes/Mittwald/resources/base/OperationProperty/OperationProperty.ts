@@ -54,6 +54,30 @@ export class OperationProperty {
 			};
 		}
 
+		if (this.config.type === 'resourceMapper') {
+			const { resourceMapperMethod, dependsOn, displayName, ...restConfig } = this.config;
+			return {
+				...baseConfig,
+				...restConfig,
+				displayName,
+				typeOptions: {
+					loadOptionsDependsOn: dependsOn,
+					resourceMapper: {
+						valuesLabel: displayName,
+						resourceMapperMethod,
+						mode: 'add',
+						fieldWords: {
+							singular: 'column',
+							plural: 'columns',
+						},
+						addAllFields: true,
+						multiKeyMatch: true,
+						supportAutoMap: false,
+					},
+				},
+			};
+		}
+
 		return {
 			...baseConfig,
 			...this.config,
@@ -63,7 +87,12 @@ export class OperationProperty {
 	public getPropertyValue(node: IAllExecuteFunctions, itemIndex: number): unknown {
 		return node.getNodeParameter(this.name, itemIndex, undefined, {
 			extractValue: true,
-			ensureType: this.config.type === 'resourceLocator' ? 'string' : this.config.type,
+			ensureType:
+				this.config.type === 'resourceLocator'
+					? 'string'
+					: this.config.type === 'resourceMapper'
+						? 'string'
+						: this.config.type,
 		});
 	}
 }

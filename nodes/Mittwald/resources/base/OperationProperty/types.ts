@@ -1,4 +1,5 @@
 import type { NodeParameterValueType } from 'n8n-workflow';
+import { Json } from '../../../shared';
 
 interface BaseConfig {
 	name: string;
@@ -15,6 +16,11 @@ export type OperationPropertyConfig =
 	  })
 	| (BaseConfig & {
 			type: 'string' | 'number' | 'boolean';
+	  })
+	| (BaseConfig & {
+			type: 'resourceMapper';
+			resourceMapperMethod: string;
+			dependsOn: string[];
 	  });
 
 export type OperationPropertyValue<T extends OperationPropertyConfig['type']> = T extends 'string'
@@ -25,4 +31,6 @@ export type OperationPropertyValue<T extends OperationPropertyConfig['type']> = 
 			? boolean
 			: T extends 'resourceLocator'
 				? string
-				: never;
+				: T extends 'resourceMapper'
+					? Json
+					: never;

@@ -1,4 +1,7 @@
 import { appResource } from '../resource';
+import softwareProperty from '../../../operationProperties/softwareProperty';
+import versionProperty from '../../../operationProperties/versionProperty';
+import versionConfigProperty from '../../../operationProperties/versionConfigProperty';
 
 export default appResource
 	.addOperation({
@@ -12,6 +15,9 @@ export default appResource
 			type: 'string',
 			default: '',
 		},
+		software: softwareProperty,
+		version: versionProperty,
+		versionConfig: versionConfigProperty,
 	})
 	.withExecuteFn(async () => {
 		return {};

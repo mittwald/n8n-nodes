@@ -9,6 +9,9 @@ import {
 	NodeConnectionTypes,
 	NodeOperationError,
 } from 'n8n-workflow';
+import { searchSoftware } from './resources/operationProperties/softwareProperty';
+import { searchVersion } from './resources/operationProperties/versionProperty';
+import { mapAppVersionConfig } from './resources/operationProperties/versionConfigProperty';
 
 export class Mittwald implements INodeType {
 	description: INodeTypeDescription = {
@@ -35,8 +38,11 @@ export class Mittwald implements INodeType {
 	};
 
 	methods = {
+		resourceMapping: { mapAppVersionConfig },
 		listSearch: {
 			searchServer,
+			searchSoftware,
+			searchVersion,
 		},
 	};
 
