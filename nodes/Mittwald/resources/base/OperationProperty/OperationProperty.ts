@@ -96,14 +96,23 @@ export class OperationProperty {
 	}
 
 	public getPropertyValue(node: IAllExecuteFunctions, itemIndex: number): unknown {
-		return node.getNodeParameter(this.name, itemIndex, undefined, {
+		const value = node.getNodeParameter(this.name, itemIndex, undefined, {
 			extractValue: true,
 			ensureType:
 				this.config.type === 'resourceLocator'
 					? 'string'
 					: this.config.type === 'resourceMapper'
-						? 'string'
+						? 'json'
 						: this.config.type,
 		});
+
+		if (this.config.type === 'resourceMapper') {
+			if (typeof value !== 'object' || value === null || 'value' in value === false) {
+				throw new Error('Expected value to be an object for resourceMapper type');
+			}
+			return value.value;
+		}
+
+		return value;
 	}
 }

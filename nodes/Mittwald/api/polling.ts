@@ -32,7 +32,7 @@ export const poll = async <TBody = JsonObject>(
 		if (
 			typeof waitUntil === 'function'
 				? waitUntil(response)
-				: 'statusCode' in waitUntil
+				: 'status' in waitUntil
 					? response.statusCode === waitUntil.status
 					: false
 		) {
