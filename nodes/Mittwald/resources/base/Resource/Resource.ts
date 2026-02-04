@@ -45,12 +45,12 @@ export class Resource {
 		return Resource.resources.flatMap((resource) => resource.operations);
 	}
 
-	public static getOperation(operationId: string): Operation {
+	public static getOperation(resourceName: string, operationName: string): Operation {
 		const operation = Resource.flattenedOperations.find(
-			(operation) => operation.id === operationId,
+			(operation) => operation.name === operationName && operation.resource.name === resourceName,
 		);
 		if (operation === undefined) {
-			throw new Error(`Operation "${operationId}" not found`);
+			throw new Error(`Operation "${resourceName}:${operationName}" not found`);
 		}
 		return operation;
 	}

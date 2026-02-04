@@ -24,10 +24,10 @@ export class OperationProperty {
 
 		const config: INodeProperties = {
 			...restConfig,
-			name: this.id,
 			displayOptions: {
 				show: {
-					operation: [this.operation.id],
+					operation: [this.operation.name],
+					resource: [this.operation.resource.name],
 				},
 			},
 		};

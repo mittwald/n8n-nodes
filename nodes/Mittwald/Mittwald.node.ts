@@ -47,10 +47,13 @@ export class Mittwald implements INodeType {
 
 		for (let itemIndex = 0; itemIndex < items.length; itemIndex++) {
 			try {
+				const resourceName = this.getNodeParameter('resource', itemIndex, undefined, {
+					ensureType: 'string',
+				});
 				const operationName = this.getNodeParameter('operation', itemIndex, undefined, {
 					ensureType: 'string',
 				});
-				const operation = Resource.getOperation(operationName);
+				const operation = Resource.getOperation(resourceName, operationName);
 
 				item = items[itemIndex];
 				item.json = await operation.execute(this, itemIndex);
