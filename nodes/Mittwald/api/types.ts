@@ -7,7 +7,7 @@ export interface RequestConfig<TBody = JsonObject> {
 	path: string;
 	method: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
 	body?: TBody;
-	polling?: PollingConfig;
+	polling?: PollingConfig<TBody>;
 	qs?: Record<string, string | undefined>;
 	returnFullResponse?: true;
 }

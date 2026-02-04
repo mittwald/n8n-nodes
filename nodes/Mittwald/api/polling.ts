@@ -2,10 +2,10 @@ import { sleep, type Logger } from 'n8n-workflow';
 import type { Response } from './types';
 import type { JsonObject } from '../shared';
 
-export type PollingRequestCondition = (response: Response) => boolean;
+export type PollingRequestCondition<TBody = JsonObject> = (response: Response<TBody>) => boolean;
 
-export interface PollingConfig {
-	waitUntil: PollingRequestCondition | { status: number };
+export interface PollingConfig<TBody = JsonObject> {
+	waitUntil: PollingRequestCondition<TBody> | { status: number };
 	timeoutMs?: number;
 }
 
