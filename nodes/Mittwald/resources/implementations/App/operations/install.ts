@@ -19,9 +19,6 @@ export default appResource
 		version: versionProperty,
 		versionConfig: versionConfigProperty,
 	})
-	.withExecuteFn(async (context) => {
-		const { properties, apiClient } = context;
-		const { project, software, version, versionConfig } = properties;
-
+	.withExecuteFn(async () => {
 		return {};
 	});
