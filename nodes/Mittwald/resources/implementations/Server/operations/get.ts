@@ -8,7 +8,6 @@ export default serverResource
 	.withProperties({
 		serverId: {
 			displayName: 'Server ID',
-			name: 'serverId',
 			type: 'string',
 			default: '',
 		},

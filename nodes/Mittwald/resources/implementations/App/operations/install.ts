@@ -13,13 +13,11 @@ export default appResource
 		project: projectProperty,
 		description: {
 			displayName: 'Description',
-			name: 'description',
 			type: 'string',
 			default: '',
 		},
 		installationPath: {
 			displayName: 'Installation Path',
-			name: 'installationPath',
 			type: 'string',
 			default: '',
 		},

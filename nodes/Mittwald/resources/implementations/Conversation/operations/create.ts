@@ -10,13 +10,11 @@ export default conversationResource
 		conversationCategory: conversationCategoryProperty,
 		title: {
 			displayName: 'Title',
-			name: 'title',
 			type: 'string',
 			default: '',
 		},
 		message: {
 			displayName: 'Message',
-			name: 'message',
 			type: 'string',
 			default: '',
 			typeOptions: {

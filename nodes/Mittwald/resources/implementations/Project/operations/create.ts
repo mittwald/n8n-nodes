@@ -10,7 +10,6 @@ projectResource
 		server: serverProperty,
 		description: {
 			displayName: 'Description',
-			name: 'description',
 			type: 'string',
 			default: '',
 		},

@@ -8,13 +8,11 @@ export default projectInviteResource
 	.withProperties({
 		projectInviteId: {
 			displayName: 'Project Invite ID',
-			name: 'projectInviteId',
 			type: 'string',
 			default: '',
 		},
 		invitationToken: {
 			displayName: 'Invitation Token',
-			name: 'invitationToken',
 			type: 'string',
 			typeOptions: { password: true },
 			default: '',

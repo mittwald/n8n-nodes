@@ -8,7 +8,6 @@ export default projectResource
 	.withProperties({
 		projectId: {
 			displayName: 'Project ID',
-			name: 'projectId',
 			type: 'string',
 			default: '',
 		},

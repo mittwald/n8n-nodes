@@ -8,7 +8,6 @@ export default projectMembershipResource
 	.withProperties({
 		projectMembershipId: {
 			displayName: 'Project Membership ID',
-			name: 'projectMembershipId',
 			type: 'string',
 			default: '',
 		},
