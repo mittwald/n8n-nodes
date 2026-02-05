@@ -10,6 +10,7 @@ export default {
 		interface RedisVersion {
 			id: string;
 			name: string;
+			disabled: boolean;
 		}
 
 		const apiClient = new ApiClient(this);
@@ -19,12 +20,15 @@ export default {
 			method: 'GET',
 		});
 
+		// Filter out disabled versions
+		const enabledVersions = versions.filter((v) => !v.disabled);
+
 		const filteredVersions = filter
-			? versions.filter((v) =>
+			? enabledVersions.filter((v) =>
 					v.name.toLowerCase().includes(filter.toLowerCase()) ||
 					v.id.toLowerCase().includes(filter.toLowerCase()),
 				)
-			: versions;
+			: enabledVersions;
 
 		return {
 			results: filteredVersions.map((version) => ({
