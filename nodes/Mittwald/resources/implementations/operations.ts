@@ -5,3 +5,4 @@ import './ProjectMembership/operations';
 import './Server/operations';
 import './Conversation/operations';
 import './Contributor/operations';
+import './RedisDatabase/operations';
