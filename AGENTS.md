@@ -109,3 +109,4 @@ When `Mittwald.node.ts` imports `'./resources/implementations/operations'`, all 
 - Follow the established Resource/Operation/Property pattern for any new functionality.
 - Ensure all API interactions use the `ApiClient` with proper Zod validation.
 - For API operations, use the Context7 MCP server to lookup API operations and data structures. You may also refer to any guides you find on https://developer.mittwald.de/docs/v2/category/how-tos/.
+- **NEVER** modify `package-lock.json` or `yarn.lock` files. These are managed by the package manager and should not be manually edited or committed unless explicitly updating dependencies.
