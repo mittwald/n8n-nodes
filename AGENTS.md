@@ -59,6 +59,7 @@ Create a new file in the resource's `operations/` directory following this patte
 
 ```typescript
 import { myResource } from '../resource';
+import Z from 'zod';
 
 export default myResource
   .addOperation({ name: 'Get', action: 'Get a Thing' })
@@ -66,7 +67,11 @@ export default myResource
     thingId: { displayName: 'Thing ID', type: 'string', default: '' },
   })
   .withExecuteFn(async ({ apiClient, properties }) => {
-    return apiClient.request({ path: `/things/${properties.thingId}`, method: 'GET' });
+    return apiClient.request({ 
+      path: `/things/${properties.thingId}`, 
+      method: 'GET',
+      responseSchema: Z.object({/* response schema here; will also be used for type inference */})
+    });
   });
 ```
 
