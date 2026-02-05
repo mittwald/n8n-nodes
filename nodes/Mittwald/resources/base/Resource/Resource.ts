@@ -83,7 +83,7 @@ export class Resource {
 				.map((o) => o.config)
 				.filter((c) => c.type === 'resourceMapper')
 				.map((c) => [c.resourceMapperMethodName, c.resourceMapperMethod]),
-		) as Record<string, any>;
+		) as Record<string, unknown>;
 	}
 
 	private static getN8NOptions(): Array<INodePropertyOptions> {
