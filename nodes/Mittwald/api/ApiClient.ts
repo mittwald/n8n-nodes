@@ -37,7 +37,7 @@ export class ApiClient {
 		if (requestSchema) {
 			const { error } = await requestSchema.safeParseAsync(requestConfig.body);
 			if (error) {
-				throw new Error(`${pathInfos} - Request body validation failed`, {
+				throw new Error(`${pathInfos} - Request body validation failed: ${error.message}`, {
 					cause: error,
 				});
 			}
@@ -68,9 +68,11 @@ export class ApiClient {
 
 		if (responseSchema) {
 			const { error } = await responseSchema.safeParseAsync(fullResponse.body);
-			throw new Error(`${pathInfos} - Response body validation failed`, {
-				cause: error,
-			});
+			if (error) {
+				throw new Error(`${pathInfos} - Response body validation failed: ${error?.message}`, {
+					cause: error,
+				});
+			}
 		}
 
 		if (returnFullResponse) {

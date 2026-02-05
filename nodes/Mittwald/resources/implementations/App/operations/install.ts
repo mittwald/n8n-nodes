@@ -41,7 +41,7 @@ export default appResource
 				appVersionId: Z.string(),
 				installationPath: Z.string(),
 				description: Z.string(),
-				userInputs: Z.object({}).catchall(Z.any()),
+				userInputs: Z.array(Z.object({ name: Z.string(), value: Z.any() })),
 			}),
 			responseSchema: Z.object({
 				id: Z.string(),
