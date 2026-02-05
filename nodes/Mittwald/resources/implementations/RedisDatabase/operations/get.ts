@@ -2,8 +2,8 @@ import { redisDatabaseResource } from '../resource';
 
 export default redisDatabaseResource
 	.addOperation({
-		name: 'Remove',
-		action: 'Delete Redis Database',
+		name: 'Get',
+		action: 'Get a Redis Database',
 	})
 	.withProperties({
 		redisDatabaseId: {
@@ -16,8 +16,8 @@ export default redisDatabaseResource
 		const { properties, apiClient } = context;
 		const { redisDatabaseId } = properties;
 
-		return await apiClient.request({
+		return apiClient.request({
 			path: `/redis-databases/${redisDatabaseId}`,
-			method: 'DELETE',
+			method: 'GET',
 		});
 	});

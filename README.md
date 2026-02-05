@@ -47,7 +47,9 @@ This node provides integration with the [Mittwald API v2](https://developer.mitt
 
 ### RedisDatabase
 - **Create**: Create a new Redis database in a project
-- **Remove**: Delete a Redis database
+- **Remove**: Delete a Redis database by ID
+- **Get**: Get details of a Redis database by ID
+- **List All**: List all Redis databases in a project
 
 ### Server
 - Operations for managing servers
