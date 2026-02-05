@@ -1,5 +1,6 @@
 import conversationCategoryProperty from '../../shared/conversationCategoryProperty';
 import { conversationResource } from '../resource';
+import Z from 'zod';
 
 export default conversationResource
 	.addOperation({
@@ -26,25 +27,28 @@ export default conversationResource
 		const { properties, apiClient } = context;
 		const { conversationCategory, title, message } = properties;
 
-		interface UserInfo {
-			userId: string;
-		}
-
-		interface CreatedConversation {
-			conversationId: string;
-		}
-
-		const ownUser = await apiClient.request<UserInfo>({
+		const { userId } = await apiClient.request({
 			path: `/users/self`,
 			method: 'GET',
+			responseSchema: Z.object({
+				userId: Z.string(),
+			}),
 		});
 
-		const createdConversation = await apiClient.request<CreatedConversation>({
+		const createdConversation = await apiClient.request({
 			path: `/conversations`,
 			method: 'POST',
+			requestSchema: Z.object({
+				categoryId: Z.string(),
+				mainUserId: Z.string(),
+				title: Z.string(),
+			}),
+			responseSchema: Z.object({
+				conversationId: Z.string(),
+			}),
 			body: {
 				categoryId: conversationCategory,
-				mainUserId: ownUser.userId,
+				mainUserId: userId,
 				title,
 			},
 		});

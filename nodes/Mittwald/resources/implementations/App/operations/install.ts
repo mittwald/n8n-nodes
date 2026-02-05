@@ -3,6 +3,7 @@ import projectProperty from '../../shared/projectProperty';
 import softwareProperty from '../../shared/softwareProperty';
 import versionProperty from '../../shared/versionProperty';
 import versionConfigProperty from '../../shared/versionConfigProperty';
+import Z from 'zod';
 
 export default appResource
 	.addOperation({
@@ -33,13 +34,18 @@ export default appResource
 			throw new Error('missing versionConfig');
 		}
 
-		interface CreateAppInstallationResponseBody {
-			id: string;
-		}
-
-		const appInstallation = await context.apiClient.request<CreateAppInstallationResponseBody>({
+		const appInstallation = await context.apiClient.request({
 			method: 'POST',
 			path: '/projects/' + project + '/app-installations',
+			requestSchema: Z.object({
+				appVersionId: Z.string(),
+				installationPath: Z.string(),
+				description: Z.string(),
+				userInputs: Z.object({}).catchall(Z.any()),
+			}),
+			responseSchema: Z.object({
+				id: Z.string(),
+			}),
 			body: {
 				appVersionId: version,
 				installationPath,

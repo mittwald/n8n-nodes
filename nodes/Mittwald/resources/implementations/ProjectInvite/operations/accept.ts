@@ -1,4 +1,5 @@
 import { projectInviteResource } from '../resource';
+import Z from 'zod';
 
 export default projectInviteResource
 	.addOperation({
@@ -25,6 +26,9 @@ export default projectInviteResource
 		return apiClient.request({
 			path: `/project-invites/${projectInviteId}/actions/accept`,
 			method: 'POST',
+			requestSchema: Z.object({
+				invitationToken: Z.string(),
+			}),
 			body: {
 				invitationToken,
 			},
