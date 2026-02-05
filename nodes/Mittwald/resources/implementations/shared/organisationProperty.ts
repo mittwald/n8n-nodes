@@ -27,9 +27,6 @@ export default {
 			},
 		});
 
-		// @ts-ignore
-		console.log(organisations);
-
 		return {
 			results: organisations.map((organisation) => ({
 				name: `${organisation.name} (${organisation.customerNumber})`,
