@@ -96,4 +96,4 @@ When `Mittwald.node.ts` imports `'./resources/implementations/operations'`, all 
 
 - Follow the established Resource/Operation/Property pattern for any new functionality.
 - Ensure all API interactions use the `ApiClient` with proper Zod validation.
-- For API operations, refer to the reference at https://api.mittwald.de/v2/openapi.json for available endpoints and data structures. You may also refer to any guides you find on https://developer.mittwald.de/docs/v2/category/how-tos/.
+- For API operations, use the Context7 MCP server to lookup API operations and data structures. You may also refer to any guides you find on https://developer.mittwald.de/docs/v2/category/how-tos/.
