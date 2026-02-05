@@ -1,37 +1,39 @@
 import { ApiClient } from '../../../api';
 import type { OperationPropertyConfig } from '../../base';
+import Z from 'zod';
 
-// TODO: Helper class to config and map operation properties
 export default {
 	displayName: 'Project',
 	type: 'resourceLocator',
 	default: '',
 	searchListMethodName: 'searchProject',
-	async searchListMethod(this, filter) {
-		// TODO: Add support for pagination
-		// reference: https://developer.mittwald.de/docs/v2/reference/project/project-list-servers/
-		this.logger.info('fetching projects from mittwald API https://api.mittwald.de/v2/servers');
-
-		interface Project {
-			shortId: string;
-			id: string;
-			description: string;
-		}
-
+	async searchListMethod(this, filter, paginationToken) {
 		const apiClient = new ApiClient(this);
-		const projects = await apiClient.request<Array<Project>>({
+
+		const response = await apiClient.request({
 			path: '/projects',
 			method: 'GET',
 			qs: {
 				searchTerm: filter,
 			},
+			pagination: {
+				token: paginationToken,
+			},
+			responseSchema: Z.array(
+				Z.object({
+					shortId: Z.string(),
+					id: Z.string(),
+					description: Z.string(),
+				}),
+			),
 		});
 
 		return {
-			results: projects.map((project) => ({
+			results: response.body.map((project) => ({
 				name: `${project.description} (${project.shortId})`,
 				value: project.id,
 			})),
+			paginationToken: response.nextPaginationToken,
 		};
 	},
 } satisfies OperationPropertyConfig;
