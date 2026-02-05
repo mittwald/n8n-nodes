@@ -65,12 +65,19 @@ export default myResource
   .addOperation({ name: 'Get', action: 'Get a Thing' })
   .withProperties({
     thingId: { displayName: 'Thing ID', type: 'string', default: '' },
+    foo: { displayName: 'Example property', type: 'string' }
   })
   .withExecuteFn(async ({ apiClient, properties }) => {
     return apiClient.request({ 
       path: `/things/${properties.thingId}`, 
-      method: 'GET',
-      responseSchema: Z.object({/* response schema here; will also be used for type inference */})
+      method: 'PUT',
+      body: {
+        foo: properties.foo,
+      },
+      requestSchema: Z.object({
+        foo: Z.string(),
+      }),
+      responseSchema: Z.object({/* response schema here; will also be used for return type inference */})
     });
   });
 ```
