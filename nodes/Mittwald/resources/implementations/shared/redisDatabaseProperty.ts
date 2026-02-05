@@ -7,8 +7,6 @@ export default {
 	default: '',
 	searchListMethodName: 'searchRedisDatabase',
 	async searchListMethod(this, filter) {
-		this.logger.info('fetching Redis databases from mittwald API https://api.mittwald.de/v2');
-
 		interface RedisDatabase {
 			id: string;
 			description: string;
