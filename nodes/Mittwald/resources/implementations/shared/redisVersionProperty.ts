@@ -33,7 +33,7 @@ export default {
 		return {
 			results: filteredVersions.map((version) => ({
 				name: version.name,
-				value: version.id,
+				value: version.name,
 			})),
 		};
 	},
