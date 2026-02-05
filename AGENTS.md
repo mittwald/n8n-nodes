@@ -8,12 +8,12 @@ This is **n8n-nodes-mittwald**, an n8n community node package that provides inte
 
 ## Commands
 
-- `npm run build` — Build the node using `n8n-node build`
-- `npm run build:watch` — Watch mode with `tsc --watch`
-- `npm run dev` — Development mode via `n8n-node dev`
-- `npm run lint` — Lint with `n8n-node lint` (uses n8n's ESLint config)
-- `npm run lint:fix` — Lint with auto-fix
-- `npm run test:compile` — TypeScript compilation check (`tsc --noEmit`)
+- `yarn build` — Build the node using `n8n-node build`
+- `yarn build:watch` — Watch mode with `tsc --watch`
+- `yarn dev` — Development mode via `n8n-node dev`
+- `yarn lint` — Lint with `n8n-node lint` (uses n8n's ESLint config)
+- `yarn lint:fix` — Lint with auto-fix
+- `yarn test:compile` — TypeScript compilation check (`tsc --noEmit`)
 
 There is no test runner configured yet (vitest is installed but no test files exist).
 
