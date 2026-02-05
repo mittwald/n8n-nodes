@@ -13,9 +13,9 @@ export default {
 		this.logger.info('fetching organisations from mittwald API https://api.mittwald.de/v2/servers');
 
 		interface Organisation {
-			shortId: string;
-			id: string;
-			description: string;
+			customerId: string;
+			customerNumber: string;
+			name: string;
 		}
 
 		const apiClient = new ApiClient(this);
@@ -27,10 +27,13 @@ export default {
 			},
 		});
 
+		// @ts-ignore
+		console.log(organisations);
+
 		return {
 			results: organisations.map((organisation) => ({
-				name: `${organisation.description} (${organisation.shortId})`,
-				value: organisation.id,
+				name: `${organisation.name} (${organisation.customerNumber})`,
+				value: organisation.customerId,
 			})),
 		};
 	},

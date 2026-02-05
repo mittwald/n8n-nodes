@@ -4,7 +4,7 @@ import { conversationResource } from '../resource';
 export default conversationResource
 	.addOperation({
 		name: 'Create',
-		action: 'Create a Conversation',
+		action: 'Create a Ticket',
 	})
 	.withProperties({
 		conversationCategory: conversationCategoryProperty,

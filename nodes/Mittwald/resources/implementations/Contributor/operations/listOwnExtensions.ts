@@ -3,8 +3,8 @@ import { contributorResource } from '../resource';
 
 export default contributorResource
 	.addOperation({
-		name: 'List incoming invoices',
-		action: 'list incoming invoices',
+		name: 'List own extensions',
+		action: 'list own extensions',
 	})
 	.withProperties({
 		organisation: organisationProperty,
@@ -14,7 +14,7 @@ export default contributorResource
 		const { organisation } = properties;
 
 		return apiClient.request({
-			path: `/contributors/${organisation}/invoices/incoming`,
+			path: `/contributors/${organisation}/extensions`,
 			method: 'GET',
 		});
 	});

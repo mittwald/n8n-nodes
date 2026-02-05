@@ -1,5 +1,6 @@
 import { ApiClient } from '../../../api';
 import type { OperationPropertyConfig } from '../../base';
+import { FieldType } from 'n8n-workflow';
 
 export default {
 	displayName: 'Version Config',
@@ -13,7 +14,7 @@ export default {
 		const appId = this.getCurrentNodeParameter('software') as { value: string };
 		const versionId = this.getCurrentNodeParameter('version') as { value: string };
 		interface AppVersion {
-			userInputs: Array<{ name: string }>;
+			userInputs: Array<{ name: string; type: FieldType }>;
 		}
 
 		const apiClient = new ApiClient(this);
@@ -30,6 +31,7 @@ export default {
 				required: true,
 				id: input.name,
 				defaultMatch: false,
+				type: input.type,
 			})),
 		};
 	},
