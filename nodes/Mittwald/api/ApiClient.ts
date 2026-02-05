@@ -22,11 +22,27 @@ export class ApiClient {
 		requestConfig: RequestConfig<TRequestBody, TResponseBody>,
 	): Promise<TResponseBody> {
 		const { logger, helpers } = this.node;
-		const { path, polling, returnFullResponse, ...restRequestConfig } = requestConfig;
+		const {
+			path,
+			polling,
+			requestSchema,
+			responseSchema,
+			returnFullResponse,
+			...restRequestConfig
+		} = requestConfig;
 
-		this.node.logger.info(
-			`calling mittwald API` + JSON.stringify({ method: restRequestConfig.method, path }),
-		);
+		const pathInfos = `${requestConfig.method} ${requestConfig.path}`;
+		logger.info(`[mittwald] ${pathInfos}`);
+
+		if (requestSchema) {
+			const { error } = await requestSchema.safeParseAsync(requestConfig.body);
+			if (error) {
+				throw new Error(`${pathInfos} - Request body validation failed`, {
+					cause: error,
+				});
+			}
+		}
+
 		const executeRequest = () =>
 			helpers.httpRequestWithAuthentication.call(this.node, 'mittwaldApi', {
 				...restRequestConfig,
@@ -46,13 +62,16 @@ export class ApiClient {
 				})
 			: await executeRequest();
 
-		this.node.logger.info(
-			'mittwald API response' +
-				JSON.stringify({
-					status: fullResponse.statusCode,
-					data: fullResponse.data,
-				}),
+		logger.info(
+			`[mittwald] ${requestConfig.method} ${requestConfig.path} ${fullResponse.statusCode}`,
 		);
+
+		if (responseSchema) {
+			const { error } = await responseSchema.safeParseAsync(fullResponse.body);
+			throw new Error(`${pathInfos} - Response body validation failed`, {
+				cause: error,
+			});
+		}
 
 		if (returnFullResponse) {
 			return fullResponse;
