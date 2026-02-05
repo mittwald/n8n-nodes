@@ -1,6 +1,6 @@
 import { ApiClient } from '../../../api';
 import type { OperationPropertyConfig } from '../../base';
-import { FieldType } from 'n8n-workflow';
+import Z from 'zod';
 
 export default {
 	displayName: 'Version Config',
@@ -9,19 +9,22 @@ export default {
 	dependsOn: ['software.value', 'version.value'],
 	resourceMapperMethodName: 'getVersionConfigFields',
 	async resourceMapperMethod(this) {
-		// TODO: Add support for pagination
-		// reference: https://developer.mittwald.de/docs/v2/reference/project/project-list-servers/
-		const appId = this.getCurrentNodeParameter('software') as { value: string };
-		const versionId = this.getCurrentNodeParameter('version') as { value: string };
-		interface AppVersion {
-			userInputs: Array<{ name: string; type: FieldType }>;
-		}
-
 		const apiClient = new ApiClient(this);
 
-		const version = await apiClient.request<AppVersion>({
+		const appId = this.getCurrentNodeParameter('software') as { value: string };
+		const versionId = this.getCurrentNodeParameter('version') as { value: string };
+
+		const version = await apiClient.request({
 			path: `/apps/${appId.value}/versions/${versionId.value}`,
 			method: 'GET',
+			responseSchema: Z.object({
+				userInputs: Z.array(
+					Z.object({
+						name: Z.string(),
+						type: Z.enum(['string', 'number', 'boolean']),
+					}),
+				),
+			}),
 		});
 
 		return {
