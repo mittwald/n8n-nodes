@@ -1,2 +1,2 @@
-import './get'
-import './findAll'
+import './get';
+import './list';

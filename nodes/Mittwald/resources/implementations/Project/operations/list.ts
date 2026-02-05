@@ -1,16 +1,16 @@
-import { serverResource } from '../resource';
+import { projectResource } from '../resource';
 
-export default serverResource
+export default projectResource
 	.addOperation({
-		name: 'Find All',
-		action: 'Find all Servers',
+		name: 'List All',
+		action: 'List all Projects',
 	})
 	.withProperties({})
 	.withExecuteFn(async (context) => {
 		const { apiClient } = context;
 
 		return apiClient.request({
-			path: `/servers`,
+			path: `/projects`,
 			method: 'GET',
 		});
 	});
