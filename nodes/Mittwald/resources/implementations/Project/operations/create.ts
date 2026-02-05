@@ -1,5 +1,6 @@
 import serverProperty from '../../shared/serverProperty';
 import { projectResource } from '../resource';
+import Z from 'zod';
 
 projectResource
 	.addOperation({
@@ -18,13 +19,13 @@ projectResource
 		const { properties, apiClient } = context;
 		const { server, description } = properties;
 
-		interface CreateProjectResponseBody {
-			id: string;
-		}
-
-		const project = await apiClient.request<CreateProjectResponseBody>({
+		const project = await apiClient.request({
 			path: `/servers/${server}/projects`,
 			method: 'GET',
+			responseSchema: Z.object({
+				id: Z.string(),
+			}),
+			requestSchema: Z.object({ description: Z.string() }),
 			body: {
 				description,
 			},
