@@ -11,6 +11,7 @@ export default {
 			id: string;
 			name: string;
 			disabled: boolean;
+			number: string;
 		}
 
 		const apiClient = new ApiClient(this);
