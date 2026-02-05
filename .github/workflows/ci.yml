@@ -19,7 +19,7 @@ jobs:
           node-version: '22'
 
       - name: Install dependencies
-        run: 'yarn ci'
+        run: 'yarn install --immutable --immutable-cache --check-cache'
 
       - name: Run lint
         run: 'yarn lint'
