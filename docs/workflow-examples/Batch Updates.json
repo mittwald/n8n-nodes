@@ -1,0 +1,100 @@
+{
+  "name": "Batch Updates",
+  "nodes": [
+    {
+      "parameters": {
+        "resource": "App",
+        "operation": "List All"
+      },
+      "type": "CUSTOM.mittwald",
+      "typeVersion": 1,
+      "position": [
+        208,
+        0
+      ],
+      "id": "51484037-59c0-45fa-9704-c381f8d820b4",
+      "name": "List all installed Software (AppInstallations)",
+      "credentials": {
+        "mittwaldApi": {
+          "id": "vOb34VeTSX96I3Co",
+          "name": "mittwald account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "App",
+        "operation": "Update Software Versions"
+      },
+      "type": "CUSTOM.mittwald",
+      "typeVersion": 1,
+      "position": [
+        464,
+        0
+      ],
+      "id": "2b52d19a-1fbf-4ec6-abd1-16ed6a24ef3b",
+      "name": "Update System Software",
+      "credentials": {
+        "mittwaldApi": {
+          "id": "vOb34VeTSX96I3Co",
+          "name": "mittwald account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {}
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        0,
+        0
+      ],
+      "id": "ee20bb76-80f6-4ee9-b376-882d5e16a00a",
+      "name": "every night"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "List all installed Software (AppInstallations)": {
+      "main": [
+        [
+          {
+            "node": "Update System Software",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "every night": {
+      "main": [
+        [
+          {
+            "node": "List all installed Software (AppInstallations)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "9d07eea3-4801-4ae7-9416-124c26f3ba14",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "05de660234c38e407b9b1882d63b5ad9973ad2a79c2969d8535c575c8f7e5eb3"
+  },
+  "id": "aXH6-ExKfcyaVyRg8mIlr",
+  "tags": []
+}
