@@ -53,11 +53,7 @@ export default {
 					}
 
 					const currentVersion = await apiClient.request<{ id: string; externalVersion: string }>({
-						path:
-							'/system-softwares/' +
-							input.systemSoftwareId +
-							'/versions/' +
-							input.systemSoftwareVersion.desired,
+						path: `/system-softwares/${input.systemSoftwareId}/versions/${input.systemSoftwareVersion.desired}`,
 						method: 'GET',
 					});
 

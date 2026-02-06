@@ -23,11 +23,7 @@ export default appResource
 			{ systemSoftwareVersion: string; updatePolicy: string }
 		> = {};
 
-		// @ts-ignore
-		console.log(systemSoftware);
 		for (const [systemSoftwareId, semverTarget] of Object.entries(systemSoftware ?? {})) {
-			// @ts-ignore
-			console.log(`System Software ID: ${systemSoftwareId}, Target Version: ${semverTarget}`);
 			const matchingVersions = await apiClient.request<
 				Array<{
 					id: string;
@@ -35,15 +31,11 @@ export default appResource
 				}>
 			>({
 				method: 'GET',
-				path: '/system-softwares/' + systemSoftwareId + '/versions',
+				path: `/system-softwares/${systemSoftwareId}/versions`,
 				qs: {
 					versionRange: semverTarget,
 				},
 			});
-			// @ts-ignore
-			console.log(
-				`${semverTarget} Resolved Version ID: ${JSON.stringify(matchingVersions[matchingVersions.length - 1])}`,
-			);
 			systemSoftwareTargetRequest[systemSoftwareId] = {
 				systemSoftwareVersion: matchingVersions[matchingVersions.length - 1].id,
 				updatePolicy: 'inheritedFromApp',
@@ -53,7 +45,7 @@ export default appResource
 		const fetchCurrentInstallationData = async () => {
 			return await apiClient.request({
 				method: 'GET',
-				path: '/app-installations/' + appInstallation,
+				path: `/app-installations/${appInstallation}`,
 				responseSchema: Z.object({
 					id: Z.string(),
 					appVersion: Z.object({
@@ -78,14 +70,9 @@ export default appResource
 		const currentVersion =
 			currentInstallationData.appVersion.desired ?? currentInstallationData.appVersion.current;
 
-		// @ts-ignore
-		console.log({
-			appVersionId: !version || version === '' ? currentVersion! : version,
-			systemSoftware: systemSoftwareTargetRequest,
-		});
 		await apiClient.request({
 			method: 'PATCH',
-			path: '/app-installations/' + appInstallation,
+			path: `/app-installations/${appInstallation}`,
 			requestSchema: Z.object({
 				appVersionId: Z.string(),
 				systemSoftware: Z.record(

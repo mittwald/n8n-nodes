@@ -22,7 +22,7 @@ export default {
 		const appInstallation = await apiClient.request<{
 			appId: string;
 		}>({
-			path: '/app-installations/' + installationId.value,
+			path: `/app-installations/${installationId.value}`,
 			method: 'GET',
 		});
 		const appId = appInstallation.appId;
