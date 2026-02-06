@@ -40,8 +40,7 @@ export class Mittwald implements INodeType {
 
 	async execute(this: IExecuteFunctions): Promise<INodeExecutionData[][]> {
 		const items = this.getInputData();
-
-		let item: INodeExecutionData;
+		const returnData: INodeExecutionData[] = [];
 
 		for (let itemIndex = 0; itemIndex < items.length; itemIndex++) {
 			try {
@@ -53,11 +52,25 @@ export class Mittwald implements INodeType {
 				});
 				const operation = Resource.getOperation(resourceName, operationName);
 
-				item = items[itemIndex];
-				item.json = await operation.execute(this, itemIndex);
+				const result = await operation.execute(this, itemIndex);
+
+				// If the result is an array, create a separate item for each element
+				if (Array.isArray(result)) {
+					returnData.push(
+						...result.map((item) => ({
+							json: item,
+							pairedItem: itemIndex,
+						})),
+					);
+				} else {
+					returnData.push({
+						json: result,
+						pairedItem: itemIndex,
+					});
+				}
 			} catch (error) {
 				if (this.continueOnFail()) {
-					items.push({ json: this.getInputData(itemIndex)[0].json, error, pairedItem: itemIndex });
+					returnData.push({ json: this.getInputData(itemIndex)[0].json, error, pairedItem: itemIndex });
 				} else {
 					if (error.context) {
 						error.context.itemIndex = itemIndex;
@@ -70,6 +83,6 @@ export class Mittwald implements INodeType {
 			}
 		}
 
-		return [items];
+		return [returnData];
 	}
 }

@@ -3,7 +3,7 @@ import { serverResource } from '../resource';
 export default serverResource
 	.addOperation({
 		name: 'Get',
-		action: 'Get a Server',
+		action: 'Get a server',
 	})
 	.withProperties({
 		serverId: {

@@ -4,7 +4,7 @@ import { contributorResource } from '../resource';
 export default contributorResource
 	.addOperation({
 		name: 'List outgoing invoices',
-		action: 'list outgoing invoices',
+		action: 'List outgoing invoices',
 	})
 	.withProperties({
 		organisation: organisationProperty,

@@ -3,7 +3,7 @@ import { serverResource } from '../resource';
 export default serverResource
 	.addOperation({
 		name: 'List All',
-		action: 'List all Servers',
+		action: 'List all servers',
 	})
 	.withProperties({})
 	.withExecuteFn(async (context) => {
