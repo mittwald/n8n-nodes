@@ -1,53 +1,58 @@
 {
-    "name": "n8n-nodes-mittwald",
-    "version": "0.1.0",
-    "description": "n8n nodes for interacting with the Mittwald API",
-    "license": "MIT",
-    "homepage": "",
-    "keywords": [
-        "n8n-community-node-package"
-    ],
-    "author": {
-        "name": "Daniel Haering",
-        "email": "d.haering@mittwald.de"
-    },
-    "repository": {
-        "type": "git",
-        "url": "https://github.com/mittwald/n8n-nodes-mittwald.git"
-    },
-    "scripts": {
-        "build": "n8n-node build",
-        "build:watch": "tsc --watch",
-        "dev": "n8n-node dev",
-        "lint": "n8n-node lint",
-        "lint:fix": "n8n-node lint --fix",
-        "release": "n8n-node release",
-        "prepublishOnly": "n8n-node prerelease",
-        "test:compile": "tsc --noEmit"
-    },    
-    "files": [
-        "dist"
-    ],
-    "n8n": {
-        "n8nNodesApiVersion": 1,
-        "strict": true,
-        "credentials": [
-            "dist/credentials/MittwaldApi.credentials.js"
-        ],
-        "nodes": [
-            "dist/nodes/Mittwald/Mittwald.node.js"
-        ]
-    },
-    "devDependencies": {
-        "@n8n/node-cli": "*",
-        "eslint": "9.32.0",
-        "n8n-workflow": "^2.6.0",
-        "prettier": "3.6.2",
-        "release-it": "^19.0.4",
-        "typescript": "5.9.2",
-        "vitest": "^4.0.18"
-    },
-    "peerDependencies": {
-        "n8n-workflow": "*"
-    }
+	"name": "n8n-nodes-mittwald",
+	"version": "0.1.0",
+	"description": "n8n nodes for interacting with the mittwald API",
+	"license": "MIT",
+	"homepage": "",
+	"keywords": [
+		"n8n-community-node-package"
+	],
+	"author": {
+		"name": "Daniel Haering",
+		"email": "d.haering@mittwald.de"
+	},
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/mittwald/n8n-nodes.git"
+	},
+	"scripts": {
+		"build": "n8n-node build",
+		"build:watch": "tsc --watch",
+		"dev": "n8n-node dev",
+		"lint": "n8n-node lint",
+		"lint:fix": "n8n-node lint --fix",
+		"release": "n8n-node release",
+		"prepublishOnly": "n8n-node prerelease"
+	},
+	"files": [
+		"dist"
+	],
+	"release": {
+		"branches": [
+			{"name": "master"},
+			{"name": "beta", "channel": "beta", "prerelease": true }
+		]
+	},
+	"n8n": {
+		"n8nNodesApiVersion": 1,
+		"strict": true,
+		"credentials": [
+			"dist/credentials/MittwaldApi.credentials.js"
+		],
+		"nodes": [
+			"dist/nodes/Mittwald/Mittwald.node.js"
+		]
+	},
+	"devDependencies": {
+		"@n8n/node-cli": "*",
+		"eslint": "9.32.0",
+		"n8n-workflow": "^2.6.0",
+		"prettier": "3.6.2",
+		"release-it": "^19.0.4",
+		"typescript": "5.9.2",
+		"vitest": "^4.0.18"
+	},
+	"peerDependencies": {
+		"n8n-workflow": "*"
+	}
 }
