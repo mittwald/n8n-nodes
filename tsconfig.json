@@ -26,6 +26,7 @@
 		"nodes/**/*",
 		"nodes/**/*.json",
 		"nodes/Mittwald/resources/**/*",
-		"package.json"
+		"package.json",
+		"test"
 	]
 }
