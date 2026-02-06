@@ -1,2 +1,0 @@
-import './delete';
-import './get';

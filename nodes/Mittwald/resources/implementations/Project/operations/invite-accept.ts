@@ -1,9 +1,9 @@
-import { projectInviteResource } from '../resource';
+import { projectResource } from '../resource';
 import Z from 'zod';
 
-export default projectInviteResource
+export default projectResource
 	.addOperation({
-		name: 'Accept',
+		name: 'Accept invite',
 		action: 'Accept an invite to a project',
 	})
 	.withProperties({
