@@ -33,10 +33,10 @@ export default {
 		return {
 			fields: version.userInputs.map((input) => {
 				const helpText = fieldHelpText[input.name];
-				const displayName = helpText ? `${input.name} ${helpText}` : input.name;
+				const formattedDisplayName = helpText ? `${input.name} ${helpText}` : input.name;
 
 				return {
-					displayName,
+					displayName: formattedDisplayName,
 					display: true,
 					required: true,
 					id: input.name,
