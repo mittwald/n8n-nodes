@@ -2,7 +2,7 @@ import { projectResource } from '../resource';
 
 export default projectResource
 	.addOperation({
-		name: 'GetMembership',
+		name: 'Get membership',
 		action: 'Get a project membership',
 	})
 	.withProperties({
