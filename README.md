@@ -20,7 +20,7 @@ Follow the [installation guide](https://docs.n8n.io/integrations/community-nodes
 
 ## Operations
 
-This node provides integration with the [Mittwald API v2](https://developer.mittwald.de/). The following resources and operations are available:
+This node provides integration with the [mittwald API v2](https://developer.mittwald.de/). The following resources and operations are available:
 
 ### App
 - **Install App**: Install an application in a project
