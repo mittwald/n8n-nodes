@@ -12,11 +12,6 @@ export default appResource
 	})
 	.withProperties({
 		project: projectProperty,
-		description: {
-			displayName: 'Description',
-			type: 'string',
-			default: '',
-		},
 		installationPath: {
 			displayName: 'Installation Path',
 			type: 'string',
@@ -24,6 +19,11 @@ export default appResource
 		},
 		software: softwareProperty,
 		version: versionProperty,
+		description: {
+			displayName: 'Name',
+			type: 'string',
+			default: '',
+		},
 		versionConfig: versionConfigProperty,
 	})
 	.withExecuteFn(async (context) => {
