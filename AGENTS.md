@@ -103,6 +103,10 @@ When `Mittwald.node.ts` imports `'./resources/implementations/operations'`, all 
 
 - All available resources and operations should be documented in `README.md`.
 - Each operation should have a brief description of its purpose and parameters.
+- The operation `action` strings should follow the following requirements:
+  - Correct english grammar and spelling; start with a capital letter and a verb.
+  - Use "real" language, no API terminology or internal identifiers. For example, use `app installation` instead of `AppInstallation` or `app_installation`.
+  - Try to use domain-specific terminology where possible. For example, use `Uninstall app` instead of `Delete app installation`.
 
 ## Coding instructions
 
