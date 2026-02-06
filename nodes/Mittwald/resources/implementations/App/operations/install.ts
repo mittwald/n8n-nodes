@@ -12,15 +12,15 @@ export default appResource
 	})
 	.withProperties({
 		project: projectProperty,
-		installationPath: {
-			displayName: 'Installation Path',
-			type: 'string',
-			default: '',
-		},
 		software: softwareProperty,
 		version: versionProperty,
 		description: {
 			displayName: 'Name',
+			type: 'string',
+			default: '',
+		},
+		installationPath: {
+			displayName: 'Installation Path',
 			type: 'string',
 			default: '',
 		},
