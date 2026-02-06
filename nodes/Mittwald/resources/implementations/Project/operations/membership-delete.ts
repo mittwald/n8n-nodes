@@ -2,7 +2,7 @@ import { projectResource } from '../resource';
 
 export default projectResource
 	.addOperation({
-		name: 'Delete',
+		name: 'DeleteMembership',
 		action: 'Delete a project membership',
 	})
 	.withProperties({
@@ -16,7 +16,7 @@ export default projectResource
 		const { properties, apiClient } = context;
 		const { projectMembershipId } = properties;
 
-		return apiClient.request({
+		return await apiClient.request({
 			path: `/project-memberships/${projectMembershipId}`,
 			method: 'DELETE',
 		});
