@@ -21,7 +21,7 @@ projectResource
 
 		const project = await apiClient.request({
 			path: `/servers/${server}/projects`,
-			method: 'GET',
+			method: 'POST',
 			responseSchema: Z.object({
 				id: Z.string(),
 			}),
