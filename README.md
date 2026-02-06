@@ -37,13 +37,9 @@ This node provides integration with the [mittwald API v2](https://developer.mitt
 - **Remove**: Delete a project
 - **Get**: Get project details
 - **List**: List all projects
-
-### ProjectInvite
-- Operations for managing project invitations
-
-### ProjectMembership
-- **Get**: Get project membership details
-- **Remove**: Delete project membership
+- **Accept Invite**: Accept an invite to a project
+- **Get Membership**: Get project membership details
+- **Delete Membership**: Delete a project membership
 
 ### Database
 - **Create Redis**: Create a new Redis database in a project

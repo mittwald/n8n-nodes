@@ -1,9 +1,9 @@
-import { projectMembershipResource } from '../resource';
+import { projectResource } from '../resource';
 
-export default projectMembershipResource
+export default projectResource
 	.addOperation({
-		name: 'Delete',
-		action: 'Delete a project membership',
+		name: 'Get',
+		action: 'Get a project membership',
 	})
 	.withProperties({
 		projectMembershipId: {
@@ -16,8 +16,8 @@ export default projectMembershipResource
 		const { properties, apiClient } = context;
 		const { projectMembershipId } = properties;
 
-		return apiClient.request({
+		return await apiClient.request({
 			path: `/project-memberships/${projectMembershipId}`,
-			method: 'DELETE',
+			method: 'GET',
 		});
 	});
