@@ -16,7 +16,7 @@ export default redisDatabaseResource
 		const { properties, apiClient } = context;
 		const { redisDatabaseId } = properties;
 
-		return await apiClient.request({
+		return apiClient.request({
 			path: `/redis-databases/${redisDatabaseId}`,
 			method: 'DELETE',
 		});
