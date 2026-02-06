@@ -3,7 +3,7 @@ import { redisDatabaseResource } from '../resource';
 export default redisDatabaseResource
 	.addOperation({
 		name: 'Remove',
-		action: 'Delete Redis Database',
+		action: 'Delete Redis database',
 	})
 	.withProperties({
 		redisDatabaseId: {

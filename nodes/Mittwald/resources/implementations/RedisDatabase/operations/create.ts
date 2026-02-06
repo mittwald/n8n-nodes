@@ -6,7 +6,7 @@ import Z from 'zod';
 export default redisDatabaseResource
 	.addOperation({
 		name: 'Create',
-		action: 'Create Redis Database',
+		action: 'Create Redis database',
 	})
 	.withProperties({
 		project: projectProperty,
