@@ -13,7 +13,9 @@ jobs:
       issues: write # to be able to comment on released issues
       pull-requests: write # to be able to comment on released pull requests
       id-token: write # to enable use of OIDC for trusted publishing and npm provenance
-
+    id_tokens:
+      NPM_ID_TOKEN:
+        aud: 'npm:registry.npmjs.org'
     steps:
       - uses: actions/checkout@v5
         with:
