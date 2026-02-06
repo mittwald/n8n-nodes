@@ -1,8 +1,8 @@
-import { redisDatabaseResource } from '../resource';
+import { databaseResource } from '../resource';
 
-export default redisDatabaseResource
+export default databaseResource
 	.addOperation({
-		name: 'Get',
+		name: 'Get Redis',
 		action: 'Get a Redis database',
 	})
 	.withProperties({

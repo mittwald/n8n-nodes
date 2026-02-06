@@ -45,11 +45,11 @@ This node provides integration with the [mittwald API v2](https://developer.mitt
 - **Get**: Get project membership details
 - **Remove**: Delete project membership
 
-### RedisDatabase
-- **Create**: Create a new Redis database in a project
-- **Remove**: Delete a Redis database by ID
-- **Get**: Get details of a Redis database by ID
-- **List All**: List all Redis databases in a project
+### Database
+- **Create Redis**: Create a new Redis database in a project
+- **Remove Redis**: Delete a Redis database by ID
+- **Get Redis**: Get details of a Redis database by ID
+- **List All Redis**: List all Redis databases in a project
 
 ### Server
 - Operations for managing servers

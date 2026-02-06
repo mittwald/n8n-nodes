@@ -1,11 +1,11 @@
-import { redisDatabaseResource } from '../resource';
+import { databaseResource } from '../resource';
 import projectProperty from '../../shared/projectProperty';
 import redisVersionProperty from '../../shared/redisVersionProperty';
 import Z from 'zod';
 
-export default redisDatabaseResource
+export default databaseResource
 	.addOperation({
-		name: 'Create',
+		name: 'Create Redis',
 		action: 'Create Redis database',
 	})
 	.withProperties({

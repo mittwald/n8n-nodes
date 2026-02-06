@@ -1,9 +1,9 @@
 import projectProperty from '../../shared/projectProperty';
-import { redisDatabaseResource } from '../resource';
+import { databaseResource } from '../resource';
 
-export default redisDatabaseResource
+export default databaseResource
 	.addOperation({
-		name: 'List All',
+		name: 'List Redis',
 		action: 'List all Redis databases',
 	})
 	.withProperties({

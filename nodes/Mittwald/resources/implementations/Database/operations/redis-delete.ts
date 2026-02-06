@@ -1,13 +1,13 @@
-import { redisDatabaseResource } from '../resource';
+import { databaseResource } from '../resource';
 
-export default redisDatabaseResource
+export default databaseResource
 	.addOperation({
-		name: 'Remove',
+		name: 'Remove Redis',
 		action: 'Delete Redis database',
 	})
 	.withProperties({
 		redisDatabaseId: {
-			displayName: 'Redis Database ID',
+			displayName: 'Redis database ID',
 			type: 'string',
 			default: '',
 		},
