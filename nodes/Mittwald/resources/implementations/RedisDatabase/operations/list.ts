@@ -1,6 +1,5 @@
 import projectProperty from '../../shared/projectProperty';
 import { redisDatabaseResource } from '../resource';
-import { ListRedisDatabasesResponseSchema } from '../schemas';
 
 export default redisDatabaseResource
 	.addOperation({
@@ -17,6 +16,5 @@ export default redisDatabaseResource
 		return apiClient.request({
 			path: `/projects/${project}/redis-databases`,
 			method: 'GET',
-			responseSchema: ListRedisDatabasesResponseSchema,
 		});
 	});
