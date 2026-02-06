@@ -81,9 +81,9 @@ _By the time users are looking for community nodes, they probably already know n
 
 ## Resources
 
-* [n8n community nodes documentation](https://docs.n8n.io/integrations/#community-nodes)
-* [mittwald API documentation](https://developer.mittwald.de/)
-* [mittwald API v2 Reference](https://developer.mittwald.de/docs/v2/api/intro/)
+- [n8n community nodes documentation](https://docs.n8n.io/integrations/#community-nodes)
+- [mittwald API documentation](https://developer.mittwald.de/)
+- [mittwald API v2 Reference](https://developer.mittwald.de/docs/v2/api/intro/)
 
 ## Version history
 
