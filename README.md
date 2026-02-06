@@ -2,7 +2,7 @@
 
 This is an n8n community node. It lets you use the mittwald API in your n8n workflows.
 
-[Mittwald](https://www.mittwald.de/) is a German hosting and cloud service provider. This node allows you to automate interactions with Mittwald resources such as projects, Redis databases, applications, and more.
+[mittwald](https://www.mittwald.de/) is a German hosting and cloud service provider. This node allows you to automate interactions with mittwald resources such as projects, Redis databases, applications, and more.
 
 [n8n](https://n8n.io/) is a [fair-code licensed](https://docs.n8n.io/sustainable-use-license/) workflow automation platform.
 
