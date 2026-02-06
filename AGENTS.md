@@ -26,6 +26,10 @@ There is no test runner configured yet (vitest is installed but no test files ex
 - Strict TypeScript: `strict`, `noImplicitAny`, `noUnusedLocals`, `strictNullChecks` all enabled
 - ESLint config is inherited from `@n8n/node-cli/eslint`
 
+### Commit messages
+
+Use Semantic Commit Messages to keep our commit history readable and to enable automated tooling (like changelogs or releases).
+
 ## Architecture
 
 ### Entry Points
@@ -42,6 +46,7 @@ The codebase uses a **declarative builder pattern** to define n8n node resources
 **Operation** (`resources/base/Operation/`) — Represents a CRUD action on a resource. Created via the fluent builder: `resource.addOperation(config).withProperties({...}).withExecuteFn(fn)`.
 
 **OperationProperty** (`resources/base/OperationProperty/`) — Handles three property types:
+
 - `resourceLocator` — Searchable dropdown backed by an API list method
 - `resourceMapper` — Dynamic field mapping (used for version config, etc.)
 - Primitives (`string`, `number`, `boolean`) — Standard n8n property types
@@ -62,24 +67,26 @@ import { myResource } from '../resource';
 import Z from 'zod';
 
 export default myResource
-  .addOperation({ name: 'Get', action: 'Get a Thing' })
-  .withProperties({
-    thingId: { displayName: 'Thing ID', type: 'string', default: '' },
-    foo: { displayName: 'Example property', type: 'string' }
-  })
-  .withExecuteFn(async ({ apiClient, properties }) => {
-    return apiClient.request({ 
-      path: `/things/${properties.thingId}`, 
-      method: 'PUT',
-      body: {
-        foo: properties.foo,
-      },
-      requestSchema: Z.object({
-        foo: Z.string(),
-      }),
-      responseSchema: Z.object({/* response schema here; will also be used for return type inference */})
-    });
-  });
+	.addOperation({ name: 'Get', action: 'Get a Thing' })
+	.withProperties({
+		thingId: { displayName: 'Thing ID', type: 'string', default: '' },
+		foo: { displayName: 'Example property', type: 'string' },
+	})
+	.withExecuteFn(async ({ apiClient, properties }) => {
+		return apiClient.request({
+			path: `/things/${properties.thingId}`,
+			method: 'PUT',
+			body: {
+				foo: properties.foo,
+			},
+			requestSchema: Z.object({
+				foo: Z.string(),
+			}),
+			responseSchema: Z.object({
+				/* response schema here; will also be used for return type inference */
+			}),
+		});
+	});
 ```
 
 Then import it from the resource's `operations/index.ts`.
@@ -91,6 +98,7 @@ Reusable property configs live in `resources/implementations/shared/`. These exp
 ### API Client
 
 `nodes/Mittwald/api/ApiClient.ts` wraps `httpRequestWithAuthentication` to call the Mittwald API (`https://api.mittwald.de/v2`). Features:
+
 - Zod schema validation for request/response bodies
 - Polling support for async operations (exponential backoff)
 - Full response mode (`returnFullResponse: true`)
@@ -103,6 +111,7 @@ When `Mittwald.node.ts` imports `'./resources/implementations/operations'`, all 
 
 - All available resources and operations should be documented in `README.md`.
 - Each operation should have a brief description of its purpose and parameters.
+- The brand name "mittwald" should ALWAYS be lowercase when referring to the company, even at the start of a sentence.
 - The operation `action` strings should follow the following requirements:
   - Correct english grammar and spelling; start with a capital letter and a verb.
   - Use "real" language, no API terminology or internal identifiers. For example, use `app installation` instead of `AppInstallation` or `app_installation`.
@@ -111,5 +120,7 @@ When `Mittwald.node.ts` imports `'./resources/implementations/operations'`, all 
 ## Coding instructions
 
 - Follow the established Resource/Operation/Property pattern for any new functionality.
-- Ensure all API interactions use the `ApiClient` with proper Zod validation.
 - For API operations, use the Context7 MCP server to lookup API operations and data structures. You may also refer to any guides you find on https://developer.mittwald.de/docs/v2/category/how-tos/.
+- **NEVER** modify `package-lock.json` or `yarn.lock` files. These are managed by the package manager and should not be manually edited or committed unless explicitly updating dependencies.
+- Ensure all API interactions use the `ApiClient` with proper Zod validation.
+- Exception: you MAY skip Zod validation **only** for the **response body schema** of the **final HTTP request in the successful execution path** of an operation's `execute()` function, when nothing more is done with the response than returning it as a result from the execute function.
