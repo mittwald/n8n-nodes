@@ -16,7 +16,7 @@ interface OperationExecutionContext<TProps extends OperationProperties = Operati
 
 export type OperationExecutionFunction<TProps extends OperationProperties = OperationProperties> = (
 	context: OperationExecutionContext<TProps>,
-) => Promise<IDataObject>;
+) => Promise<IDataObject | IDataObject[]>;
 
 export type OperationExecutionProperties<TProps extends OperationProperties = OperationProperties> =
 	{

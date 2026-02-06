@@ -1,4 +1,5 @@
 import { redisDatabaseResource } from '../resource';
+import { RedisDatabaseSchema } from '../schemas';
 
 export default redisDatabaseResource
 	.addOperation({
@@ -19,5 +20,6 @@ export default redisDatabaseResource
 		return apiClient.request({
 			path: `/redis-databases/${redisDatabaseId}`,
 			method: 'GET',
+			responseSchema: RedisDatabaseSchema,
 		});
 	});

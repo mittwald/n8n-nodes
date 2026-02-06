@@ -19,5 +19,6 @@ export default redisDatabaseResource
 		return await apiClient.request({
 			path: `/redis-databases/${redisDatabaseId}`,
 			method: 'DELETE',
+			// DELETE returns no response body (204 No Content)
 		});
 	});

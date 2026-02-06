@@ -1,7 +1,11 @@
 import { redisDatabaseResource } from '../resource';
 import projectProperty from '../../shared/projectProperty';
 import redisVersionProperty from '../../shared/redisVersionProperty';
-import Z from 'zod';
+import {
+	CreateRedisDatabaseRequestSchema,
+	CreateRedisDatabaseResponseSchema,
+	RedisDatabaseSchema,
+} from '../schemas';
 
 export default redisDatabaseResource
 	.addOperation({
@@ -24,13 +28,8 @@ export default redisDatabaseResource
 		const redisDatabase = await apiClient.request({
 			path: `/projects/${project}/redis-databases`,
 			method: 'POST',
-			requestSchema: Z.object({
-				description: Z.string(),
-				version: Z.string(),
-			}),
-			responseSchema: Z.object({
-				id: Z.string(),
-			}),
+			requestSchema: CreateRedisDatabaseRequestSchema,
+			responseSchema: CreateRedisDatabaseResponseSchema,
 			body: {
 				description,
 				version,
@@ -40,6 +39,7 @@ export default redisDatabaseResource
 		return apiClient.request({
 			path: `/redis-databases/${redisDatabase.id}`,
 			method: 'GET',
+			responseSchema: RedisDatabaseSchema,
 			polling: {
 				waitUntil: {
 					status: 200,
