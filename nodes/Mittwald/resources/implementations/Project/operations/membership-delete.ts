@@ -16,7 +16,7 @@ export default projectResource
 		const { properties, apiClient } = context;
 		const { projectMembershipId } = properties;
 
-		return await apiClient.request({
+		return apiClient.request({
 			path: `/project-memberships/${projectMembershipId}`,
 			method: 'DELETE',
 		});
