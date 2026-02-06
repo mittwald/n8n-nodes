@@ -38,6 +38,11 @@
 				"channel": "beta",
 				"prerelease": true
 			}
+		],
+		"plugins": [
+			"@semantic-release/commit-analyzer",
+			"@semantic-release/release-notes-generator",
+			"@semantic-release/npm"
 		]
 	},
 	"publishConfig": {
@@ -56,9 +61,6 @@
 	},
 	"devDependencies": {
 		"@n8n/node-cli": "*",
-		"@semantic-release/commit-analyzer": "^13.0.1",
-		"@semantic-release/npm": "^13.1.3",
-		"@semantic-release/release-notes-generator": "^14.1.0",
 		"eslint": "9.32.0",
 		"n8n-workflow": "^2.6.0",
 		"prettier": "3.6.2",
