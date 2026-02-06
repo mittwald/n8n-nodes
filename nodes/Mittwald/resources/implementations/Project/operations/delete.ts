@@ -4,7 +4,7 @@ import projectProperty from '../../shared/projectProperty';
 export default projectResource
 	.addOperation({
 		name: 'Remove',
-		action: 'Delete Project',
+		action: 'Delete a project',
 	})
 	.withProperties({
 		project: projectProperty,

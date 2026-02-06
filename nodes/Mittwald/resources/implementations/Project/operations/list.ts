@@ -3,7 +3,7 @@ import { projectResource } from '../resource';
 export default projectResource
 	.addOperation({
 		name: 'List All',
-		action: 'List all Projects',
+		action: 'List all projects',
 	})
 	.withProperties({})
 	.withExecuteFn(async (context) => {
