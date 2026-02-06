@@ -3,5 +3,3 @@ dist
 .idea
 .vscode
 .env
-package-lock.json
-yarn.lock

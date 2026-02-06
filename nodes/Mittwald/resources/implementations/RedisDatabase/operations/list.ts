@@ -4,7 +4,7 @@ import { redisDatabaseResource } from '../resource';
 export default redisDatabaseResource
 	.addOperation({
 		name: 'List All',
-		action: 'List all Redis Databases',
+		action: 'List all Redis databases',
 	})
 	.withProperties({
 		project: projectProperty,

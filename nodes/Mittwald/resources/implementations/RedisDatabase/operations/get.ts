@@ -3,7 +3,7 @@ import { redisDatabaseResource } from '../resource';
 export default redisDatabaseResource
 	.addOperation({
 		name: 'Get',
-		action: 'Get a Redis Database',
+		action: 'Get a Redis database',
 	})
 	.withProperties({
 		redisDatabaseId: {
