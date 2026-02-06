@@ -52,7 +52,8 @@ This node provides integration with the [mittwald API v2](https://developer.mitt
 - **List All Redis**: List all Redis databases in a project
 
 ### Server
-- Operations for managing servers
+- **Get**: Get server details
+- **List All**: List all servers
 
 ## Credentials
 
