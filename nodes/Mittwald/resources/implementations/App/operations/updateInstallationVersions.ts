@@ -23,11 +23,7 @@ export default appResource
 			{ systemSoftwareVersion: string; updatePolicy: string }
 		> = {};
 
-		// @ts-ignore
-		console.log(systemSoftware);
 		for (const [systemSoftwareId, semverTarget] of Object.entries(systemSoftware ?? {})) {
-			// @ts-ignore
-			console.log(`System Software ID: ${systemSoftwareId}, Target Version: ${semverTarget}`);
 			const matchingVersions = await apiClient.request<
 				Array<{
 					id: string;
@@ -40,10 +36,7 @@ export default appResource
 					versionRange: semverTarget,
 				},
 			});
-			// @ts-ignore
-			console.log(
-				`${semverTarget} Resolved Version ID: ${JSON.stringify(matchingVersions[matchingVersions.length - 1])}`,
-			);
+
 			systemSoftwareTargetRequest[systemSoftwareId] = {
 				systemSoftwareVersion: matchingVersions[matchingVersions.length - 1].id,
 				updatePolicy: 'inheritedFromApp',
@@ -78,11 +71,6 @@ export default appResource
 		const currentVersion =
 			currentInstallationData.appVersion.desired ?? currentInstallationData.appVersion.current;
 
-		// @ts-ignore
-		console.log({
-			appVersionId: !version || version === '' ? currentVersion! : version,
-			systemSoftware: systemSoftwareTargetRequest,
-		});
 		await apiClient.request({
 			method: 'PATCH',
 			path: '/app-installations/' + appInstallation,
