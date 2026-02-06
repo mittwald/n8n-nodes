@@ -11,7 +11,7 @@ export default databaseResource
 	.withProperties({
 		project: projectProperty,
 		description: {
-			displayName: 'Description',
+			displayName: 'Name',
 			type: 'string',
 			default: '',
 		},

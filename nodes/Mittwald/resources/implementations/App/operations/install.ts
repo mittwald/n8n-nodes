@@ -12,8 +12,10 @@ export default appResource
 	})
 	.withProperties({
 		project: projectProperty,
+		software: softwareProperty,
+		version: versionProperty,
 		description: {
-			displayName: 'Description',
+			displayName: 'Name',
 			type: 'string',
 			default: '',
 		},
@@ -22,8 +24,6 @@ export default appResource
 			type: 'string',
 			default: '',
 		},
-		software: softwareProperty,
-		version: versionProperty,
 		versionConfig: versionConfigProperty,
 	})
 	.withExecuteFn(async (context) => {

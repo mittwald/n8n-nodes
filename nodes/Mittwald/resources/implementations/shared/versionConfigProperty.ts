@@ -24,15 +24,26 @@ export default {
 			method: 'GET',
 		});
 
+		// Map of field names to their help text/examples
+		const fieldHelpText: Record<string, string> = {
+			host: '(requires protocol, e.g., https://)',
+			site_title: '(e.g., tab name in your browser)',
+		};
+
 		return {
-			fields: version.userInputs.map((input) => ({
-				displayName: input.name,
-				display: true,
-				required: true,
-				id: input.name,
-				defaultMatch: false,
-				type: input.type,
-			})),
+			fields: version.userInputs.map((input) => {
+				const helpText = fieldHelpText[input.name];
+				const formattedDisplayName = helpText ? `${input.name} ${helpText}` : input.name;
+
+				return {
+					displayName: formattedDisplayName,
+					display: true,
+					required: true,
+					id: input.name,
+					defaultMatch: false,
+					type: input.type,
+				};
+			}),
 		};
 	},
 } satisfies OperationPropertyConfig;
