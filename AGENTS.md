@@ -26,6 +26,10 @@ There is no test runner configured yet (vitest is installed but no test files ex
 - Strict TypeScript: `strict`, `noImplicitAny`, `noUnusedLocals`, `strictNullChecks` all enabled
 - ESLint config is inherited from `@n8n/node-cli/eslint`
 
+### Commit messages
+
+Use Semantic Commit Messages to keep our commit history readable and to enable automated tooling (like changelogs or releases).
+
 ## Architecture
 
 ### Entry Points
