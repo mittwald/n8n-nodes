@@ -103,10 +103,16 @@ When `Mittwald.node.ts` imports `'./resources/implementations/operations'`, all 
 
 - All available resources and operations should be documented in `README.md`.
 - Each operation should have a brief description of its purpose and parameters.
+- The brand name "mittwald" should ALWAYS be lowercase when referring to the company, even at the start of a sentence.
+- The operation `action` strings should follow the following requirements:
+  - Correct english grammar and spelling; start with a capital letter and a verb.
+  - Use "real" language, no API terminology or internal identifiers. For example, use `app installation` instead of `AppInstallation` or `app_installation`.
+  - Try to use domain-specific terminology where possible. For example, use `Uninstall app` instead of `Delete app installation`.
 
 ## Coding instructions
 
 - Follow the established Resource/Operation/Property pattern for any new functionality.
-- Ensure all API interactions use the `ApiClient` with proper Zod validation.
 - For API operations, use the Context7 MCP server to lookup API operations and data structures. You may also refer to any guides you find on https://developer.mittwald.de/docs/v2/category/how-tos/.
 - **NEVER** modify `package-lock.json` or `yarn.lock` files. These are managed by the package manager and should not be manually edited or committed unless explicitly updating dependencies.
+- Ensure all API interactions use the `ApiClient` with proper Zod validation.
+- Exception: you MAY skip Zod validation **only** for the **response body schema** of the **final HTTP request in the successful execution path** of an operation's `execute()` function, when nothing more is done with the response than returning it as a result from the execute function.

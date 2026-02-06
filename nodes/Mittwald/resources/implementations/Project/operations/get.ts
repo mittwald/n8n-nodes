@@ -3,7 +3,7 @@ import { projectResource } from '../resource';
 export default projectResource
 	.addOperation({
 		name: 'Get',
-		action: 'Get a Project',
+		action: 'Get a project',
 	})
 	.withProperties({
 		projectId: {

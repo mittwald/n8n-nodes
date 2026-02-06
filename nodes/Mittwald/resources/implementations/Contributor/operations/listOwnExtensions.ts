@@ -4,7 +4,7 @@ import { contributorResource } from '../resource';
 export default contributorResource
 	.addOperation({
 		name: 'List own extensions',
-		action: 'list own extensions',
+		action: 'List own extensions',
 	})
 	.withProperties({
 		organisation: organisationProperty,
