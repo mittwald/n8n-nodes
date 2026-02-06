@@ -46,6 +46,7 @@ The codebase uses a **declarative builder pattern** to define n8n node resources
 **Operation** (`resources/base/Operation/`) — Represents a CRUD action on a resource. Created via the fluent builder: `resource.addOperation(config).withProperties({...}).withExecuteFn(fn)`.
 
 **OperationProperty** (`resources/base/OperationProperty/`) — Handles three property types:
+
 - `resourceLocator` — Searchable dropdown backed by an API list method
 - `resourceMapper` — Dynamic field mapping (used for version config, etc.)
 - Primitives (`string`, `number`, `boolean`) — Standard n8n property types
@@ -66,24 +67,26 @@ import { myResource } from '../resource';
 import Z from 'zod';
 
 export default myResource
-  .addOperation({ name: 'Get', action: 'Get a Thing' })
-  .withProperties({
-    thingId: { displayName: 'Thing ID', type: 'string', default: '' },
-    foo: { displayName: 'Example property', type: 'string' }
-  })
-  .withExecuteFn(async ({ apiClient, properties }) => {
-    return apiClient.request({ 
-      path: `/things/${properties.thingId}`, 
-      method: 'PUT',
-      body: {
-        foo: properties.foo,
-      },
-      requestSchema: Z.object({
-        foo: Z.string(),
-      }),
-      responseSchema: Z.object({/* response schema here; will also be used for return type inference */})
-    });
-  });
+	.addOperation({ name: 'Get', action: 'Get a Thing' })
+	.withProperties({
+		thingId: { displayName: 'Thing ID', type: 'string', default: '' },
+		foo: { displayName: 'Example property', type: 'string' },
+	})
+	.withExecuteFn(async ({ apiClient, properties }) => {
+		return apiClient.request({
+			path: `/things/${properties.thingId}`,
+			method: 'PUT',
+			body: {
+				foo: properties.foo,
+			},
+			requestSchema: Z.object({
+				foo: Z.string(),
+			}),
+			responseSchema: Z.object({
+				/* response schema here; will also be used for return type inference */
+			}),
+		});
+	});
 ```
 
 Then import it from the resource's `operations/index.ts`.
@@ -95,6 +98,7 @@ Reusable property configs live in `resources/implementations/shared/`. These exp
 ### API Client
 
 `nodes/Mittwald/api/ApiClient.ts` wraps `httpRequestWithAuthentication` to call the Mittwald API (`https://api.mittwald.de/v2`). Features:
+
 - Zod schema validation for request/response bodies
 - Polling support for async operations (exponential backoff)
 - Full response mode (`returnFullResponse: true`)
