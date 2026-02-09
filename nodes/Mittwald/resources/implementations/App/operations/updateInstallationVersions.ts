@@ -7,7 +7,7 @@ import Z from 'zod';
 export default appResource
 	.addOperation({
 		name: 'Update Software Versions',
-		action: 'Update System Software Versions',
+		action: 'Update system software versions',
 	})
 	.withProperties({
 		appInstallation: appInstallationProperty,
@@ -20,18 +20,22 @@ export default appResource
 
 		const systemSoftwareTargetRequest: Record<
 			string,
-			{ systemSoftwareVersion: string; updatePolicy: string }
+			{
+				systemSoftwareVersion: string;
+				updatePolicy: 'none' | 'inheritedFromApp' | 'patchLevel' | 'all';
+			}
 		> = {};
 
 		for (const [systemSoftwareId, semverTarget] of Object.entries(systemSoftware ?? {})) {
-			const matchingVersions = await apiClient.request<
-				Array<{
-					id: string;
-					externalVersion: string;
-				}>
-			>({
+			const matchingVersions = await apiClient.request({
 				method: 'GET',
 				path: `/system-softwares/${systemSoftwareId}/versions`,
+				responseSchema: Z.array(
+					Z.object({
+						id: Z.string(),
+						externalVersion: Z.string(),
+					}),
+				),
 				qs: {
 					versionRange: semverTarget,
 				},

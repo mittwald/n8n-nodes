@@ -1,5 +1,6 @@
 import { ApiClient } from '../../../api';
 import type { OperationPropertyConfig } from '../../base';
+import Z from 'zod';
 
 export default {
 	displayName: 'Version',
@@ -8,14 +9,7 @@ export default {
 	default: '',
 	searchListMethodName: 'listVersions',
 	async searchListMethod(this, filter) {
-		// TODO: Add support for pagination
-		// reference: https://developer.mittwald.de/docs/v2/reference/project/project-list-servers/
 		const installationId = this.getCurrentNodeParameter('appInstallation') as { value: string };
-
-		interface App {
-			id: string;
-			externalVersion: string;
-		}
 
 		const apiClient = new ApiClient(this);
 
@@ -23,13 +17,20 @@ export default {
 			appId: string;
 		}>({
 			path: `/app-installations/${installationId.value}`,
+			responseSchema: Z.object({ appId: Z.string() }),
 			method: 'GET',
 		});
 		const appId = appInstallation.appId;
 
-		const versions = await apiClient.request<Array<App>>({
+		const versions = await apiClient.request({
 			path: `/apps/${appId}/versions`,
 			method: 'GET',
+			responseSchema: Z.array(
+				Z.object({
+					id: Z.string(),
+					externalVersion: Z.string(),
+				}),
+			),
 			qs: {
 				searchTerm: filter,
 			},

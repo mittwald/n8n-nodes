@@ -1,5 +1,6 @@
 import { ApiClient } from '../../../api';
 import type { OperationPropertyConfig } from '../../base';
+import Z from 'zod';
 
 export default {
 	displayName: 'System Software Version Configuration Fields',
@@ -8,25 +9,21 @@ export default {
 	dependsOn: ['appInstallation.value'],
 	resourceMapperMethodName: 'getVersionConfigFields',
 	async resourceMapperMethod(this) {
-		// TODO: Add support for pagination
-		// reference: https://developer.mittwald.de/docs/v2/reference/project/project-list-servers/
 		const appInstallation = this.getCurrentNodeParameter('appInstallation') as { value: string };
-
-		interface UsedSystemSoftware {
-			systemSoftwareId: string;
-			systemSoftwareVersion: {
-				desired: string;
-			};
-		}
-
-		interface AppInstallation {
-			systemSoftware: UsedSystemSoftware[];
-		}
-
 		const apiClient = new ApiClient(this);
 
-		const installation = await apiClient.request<AppInstallation>({
+		const installation = await apiClient.request({
 			path: `/app-installations/${appInstallation.value}`,
+			responseSchema: Z.object({
+				systemSoftware: Z.array(
+					Z.object({
+						systemSoftwareId: Z.string(),
+						systemSoftwareVersion: Z.object({
+							desired: Z.string(),
+						}),
+					}),
+				),
+			}),
 			method: 'GET',
 		});
 
@@ -52,8 +49,12 @@ export default {
 						);
 					}
 
-					const currentVersion = await apiClient.request<{ id: string; externalVersion: string }>({
+					const currentVersion = await apiClient.request({
 						path: `/system-softwares/${input.systemSoftwareId}/versions/${input.systemSoftwareVersion.desired}`,
+						responseSchema: Z.object({
+							id: Z.string(),
+							externalVersion: Z.string(),
+						}),
 						method: 'GET',
 					});
 

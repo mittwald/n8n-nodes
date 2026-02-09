@@ -1,6 +1,7 @@
 import type { JsonObject } from '../shared';
 import type { PollingConfig } from './polling';
 import Z from 'zod';
+import { IDataObject } from 'n8n-workflow';
 
 type ResponseHeaders = Record<string, unknown>;
 
@@ -20,7 +21,8 @@ export type RequestConfig<TRequestBody = JsonObject, TResponseBody = JsonObject>
 	method: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
 	body?: NoInfer<TRequestBody>;
 	polling?: PollingConfig<TResponseBody>;
-	qs?: Record<string, string | number | undefined>;
+	qs?: IDataObject;
+	returnFullResponse?: true;
 	requestSchema?: Z.Schema<TRequestBody>;
 	responseSchema?: Z.Schema<TResponseBody>;
 } & Partial<RequestConfigWithFullResponse & RequestConfigWithPagination>;
