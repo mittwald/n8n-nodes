@@ -33,7 +33,7 @@
     {
       "parameters": {
         "resource": "Project",
-        "operation": "Create",
+        "operation": "create",
         "server": {
           "__rl": true,
           "value": "0e2fdd85-a788-402a-94f6-5002e1ef7015",
@@ -45,11 +45,11 @@
       "type": "CUSTOM.mittwald",
       "typeVersion": 1,
       "position": [
-        80,
+        48,
         0
       ],
-      "id": "18f242b7-12d5-4c40-a1d0-f6424ee48233",
-      "name": "Create Project on Server",
+      "id": "a4c771d9-143c-4eeb-bf07-8eb9f1e7aaf1",
+      "name": "Create a project on a server",
       "credentials": {
         "mittwaldApi": {
           "id": "vOb34VeTSX96I3Co",
@@ -60,15 +60,13 @@
     {
       "parameters": {
         "resource": "App",
-        "operation": "Install",
+        "operation": "install",
         "project": {
           "__rl": true,
           "value": "={{ $json.id }}",
-          "mode": "id"
+          "mode": ""
         },
-        "description": "default bootstrap wordpress",
-        "installationPath": "wordpress-base",
-        "software": {
+        "app": {
           "__rl": true,
           "value": "da3aa3ae-4b6b-4398-a4a8-ee8def827876",
           "mode": "list",
@@ -76,55 +74,62 @@
         },
         "version": {
           "__rl": true,
-          "value": "7238cf84-0bd8-48bf-b7c7-2c3202ea4035",
+          "value": "b62ef321-28c8-4e28-9813-d48c9e8456d2",
           "mode": "list",
-          "cachedResultName": "6.9.1"
+          "cachedResultName": "6.2.2"
         },
+        "description": "Test Wordpress",
+        "installationPath": "wordpress-path",
         "versionConfig": {
           "mappingMode": "defineBelow",
           "value": {
             "host": "=https://{{ $('On form submission').item.json['Domain Name'] }}",
-            "admin_pass": "={{ $('On form submission').item.json['Admin Password'] }}",
-            "admin_user": "default-admin",
             "site_title": "={{ $('On form submission').item.json['Projekt Name'] }}",
-            "admin_email": "default-admin@example.com"
+            "admin_user": "admin",
+            "admin_pass": "={{ $('On form submission').item.json['Admin Password'] }}",
+            "admin_email": "admin@example.com"
           },
           "matchingColumns": [],
           "schema": [
             {
-              "displayName": "host",
+              "displayName": "host (requires protocol, e.g., https://)",
               "display": true,
               "required": true,
               "id": "host",
-              "defaultMatch": false
+              "defaultMatch": false,
+              "type": "string"
             },
             {
-              "displayName": "site_title",
+              "displayName": "site_title (e.g., tab name in your browser)",
               "display": true,
               "required": true,
               "id": "site_title",
-              "defaultMatch": false
+              "defaultMatch": false,
+              "type": "string"
             },
             {
               "displayName": "admin_user",
               "display": true,
               "required": true,
               "id": "admin_user",
-              "defaultMatch": false
+              "defaultMatch": false,
+              "type": "string"
             },
             {
               "displayName": "admin_pass",
               "display": true,
               "required": true,
               "id": "admin_pass",
-              "defaultMatch": false
+              "defaultMatch": false,
+              "type": "string"
             },
             {
               "displayName": "admin_email",
               "display": true,
               "required": true,
               "id": "admin_email",
-              "defaultMatch": false
+              "defaultMatch": false,
+              "type": "string"
             }
           ],
           "attemptToConvertTypes": false,
@@ -134,11 +139,11 @@
       "type": "CUSTOM.mittwald",
       "typeVersion": 1,
       "position": [
-        336,
+        256,
         0
       ],
-      "id": "729351bf-677c-4e4c-9fff-a48de30d6b4b",
-      "name": "Install App",
+      "id": "a536a192-0b0b-488e-a2c4-0527fcd6b925",
+      "name": "Install an app",
       "credentials": {
         "mittwaldApi": {
           "id": "vOb34VeTSX96I3Co",
@@ -148,16 +153,28 @@
     },
     {
       "parameters": {
-        "resource": "Domain"
+        "resource": "Domain",
+        "operation": "create",
+        "project": {
+          "__rl": true,
+          "value": "={{ $('Create a project on a server').item.json.id }}",
+          "mode": ""
+        },
+        "fullName": "={{ $('On form submission').item.json['Domain Name'] }}",
+        "targetInstallation": {
+          "__rl": true,
+          "value": "={{ $json.id }}",
+          "mode": ""
+        }
       },
       "type": "CUSTOM.mittwald",
       "typeVersion": 1,
       "position": [
-        544,
+        464,
         0
       ],
-      "id": "99f9387d-0f81-47f2-bdc1-e5bfd6bbe52b",
-      "name": "Link Subdomain to Installation",
+      "id": "9bbe1b6a-fc30-49e5-80e0-2e2881f72a52",
+      "name": "Create and link subdomain",
       "credentials": {
         "mittwaldApi": {
           "id": "vOb34VeTSX96I3Co",
@@ -172,29 +189,29 @@
       "main": [
         [
           {
-            "node": "Create Project on Server",
+            "node": "Create a project on a server",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Create Project on Server": {
+    "Create a project on a server": {
       "main": [
         [
           {
-            "node": "Install App",
+            "node": "Install an app",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Install App": {
+    "Install an app": {
       "main": [
         [
           {
-            "node": "Link Subdomain to Installation",
+            "node": "Create and link subdomain",
             "type": "main",
             "index": 0
           }
@@ -208,7 +225,7 @@
     "binaryMode": "separate",
     "availableInMCP": false
   },
-  "versionId": "84830dd6-b35b-4b96-8460-3c1d8fd1a7fd",
+  "versionId": "d5c707bd-c1d9-4b8a-b116-6f4a8de165b6",
   "meta": {
     "templateCredsSetupCompleted": true,
     "instanceId": "05de660234c38e407b9b1882d63b5ad9973ad2a79c2969d8535c575c8f7e5eb3"
