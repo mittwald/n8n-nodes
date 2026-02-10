@@ -6,7 +6,7 @@ import Z from 'zod';
 
 export default appResource
 	.addOperation({
-		name: 'Update Software Versions',
+		name: 'Update software versions',
 		action: 'Update system software versions',
 	})
 	.withProperties({
