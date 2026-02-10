@@ -3,7 +3,7 @@ import Z from 'zod';
 
 domainResource
 	.addOperation({
-		name: 'IsRegistrable',
+		name: 'isRegistrable',
 		action: 'Check if domain is registrable',
 	})
 	.withProperties({

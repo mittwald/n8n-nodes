@@ -30,46 +30,46 @@ domainResource
 			returnFullResponse: true,
 		});
 
-		// create subdomain for already existing domain
-		if (domain.statusCode === 200) {
-			const ingress = await apiClient.request({
-				path: `/ingresses/`,
-				method: 'POST',
-				responseSchema: Z.object({
-					id: Z.string(),
-				}),
-				requestSchema: Z.object({
-					projectId: Z.string(),
-					hostname: Z.string(),
-					paths: Z.array(
-						Z.object({
-							path: Z.string(),
-							target: Z.object({ installationId: Z.string() }),
-						}),
-					),
-				}),
-				body: {
-					projectId: project,
-					hostname: fullName,
-					paths: [{ path: '/', target: { installationId: targetInstallation } }],
-				},
-			});
-
-			return apiClient.request({
-				path: `/ingresses/${ingress.id}`,
-				method: 'GET',
-				polling: {
-					waitUntil: {
-						status: 200,
-					},
-					timeoutMs: 5000,
-				},
-			});
+		//TODO: allow to order domains with handles
+		if (domain.statusCode !== 200) {
+			throw new Error(
+				'Domain does not exist. Please order the domain first before creating a subdomain. Ordering is not yet supported',
+			);
 		}
 
-		//TODO: allow to order domains with handles
+		// create subdomain for already existing domain
 
-		throw new Error(
-			'Domain does not exist. Please order the domain first before creating a subdomain. Ordering is not yet supported',
-		);
+		const ingress = await apiClient.request({
+			path: `/ingresses/`,
+			method: 'POST',
+			responseSchema: Z.object({
+				id: Z.string(),
+			}),
+			requestSchema: Z.object({
+				projectId: Z.string(),
+				hostname: Z.string(),
+				paths: Z.array(
+					Z.object({
+						path: Z.string(),
+						target: Z.object({ installationId: Z.string() }),
+					}),
+				),
+			}),
+			body: {
+				projectId: project,
+				hostname: fullName,
+				paths: [{ path: '/', target: { installationId: targetInstallation } }],
+			},
+		});
+
+		return apiClient.request({
+			path: `/ingresses/${ingress.id}`,
+			method: 'GET',
+			polling: {
+				waitUntil: {
+					status: 200,
+				},
+				timeoutMs: 5000,
+			},
+		});
 	});

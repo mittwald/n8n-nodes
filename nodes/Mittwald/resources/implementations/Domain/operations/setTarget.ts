@@ -6,7 +6,7 @@ import ingressesProperty from '../../shared/ingressesProperty';
 domainResource
 	.addOperation({
 		name: 'setTarget',
-		action: 'Change target installation for domain',
+		action: 'Set target installation for domain',
 	})
 	.withProperties({
 		ingress: ingressesProperty,
