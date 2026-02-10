@@ -1,3 +1,5 @@
+packages:
+  - .
 onlyBuiltDependencies:
   - esbuild
   - eslint-plugin-n8n-nodes-base

@@ -4,7 +4,7 @@ import Z from 'zod';
 
 projectResource
 	.addOperation({
-		name: 'Create',
+		name: 'create',
 		action: 'Create a project on a server',
 	})
 	.withProperties({
@@ -38,6 +38,7 @@ projectResource
 				waitUntil: {
 					status: 200,
 				},
+				timeoutMs: 5000,
 			},
 		});
 	});

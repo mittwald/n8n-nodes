@@ -2,12 +2,12 @@ import { databaseResource } from '../resource';
 
 export default databaseResource
 	.addOperation({
-		name: 'Get Redis',
-		action: 'Get a Redis database',
+		name: 'redisDelete',
+		action: 'Delete Redis database',
 	})
 	.withProperties({
 		redisDatabaseId: {
-			displayName: 'Redis Database ID',
+			displayName: 'Redis database ID',
 			type: 'string',
 			default: '',
 		},
@@ -18,6 +18,6 @@ export default databaseResource
 
 		return apiClient.request({
 			path: `/redis-databases/${redisDatabaseId}`,
-			method: 'GET',
+			method: 'DELETE',
 		});
 	});

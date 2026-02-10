@@ -1,18 +1,18 @@
 import { appResource } from '../resource';
 import projectProperty from '../../shared/projectProperty';
-import softwareProperty from '../../shared/softwareProperty';
+import appProperty from '../../shared/appProperty';
 import versionProperty from '../../shared/versionProperty';
 import versionConfigProperty from '../../shared/versionConfigProperty';
 import Z from 'zod';
 
 export default appResource
 	.addOperation({
-		name: 'Install',
+		name: 'install',
 		action: 'Install an app',
 	})
 	.withProperties({
 		project: projectProperty,
-		software: softwareProperty,
+		software: appProperty,
 		version: versionProperty,
 		description: {
 			displayName: 'Name',
@@ -61,7 +61,7 @@ export default appResource
 			path: `/app-installations/${appInstallation.id}`,
 			method: 'GET',
 			polling: {
-				timeoutMs: 5000,
+				timeoutMs: 10000,
 				waitUntil: {
 					status: 200,
 				},

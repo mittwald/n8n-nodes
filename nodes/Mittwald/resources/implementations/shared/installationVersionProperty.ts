@@ -3,17 +3,25 @@ import type { OperationPropertyConfig } from '../../base';
 import Z from 'zod';
 
 export default {
-	displayName: 'App version',
+	displayName: 'Version',
 	type: 'resourceLocator',
-	default: '',
+	required: false,
+	default: null,
 	searchListMethodName: 'listVersions',
-	async searchListMethod(this) {
-		const appId = this.getCurrentNodeParameter('software') as { value: string };
+	async searchListMethod(this, filter) {
+		const installationId = this.getCurrentNodeParameter('appInstallation') as { value: string };
 
 		const apiClient = new ApiClient(this);
 
+		const appInstallation = await apiClient.request({
+			path: `/app-installations/${installationId.value}`,
+			responseSchema: Z.object({ appId: Z.string() }),
+			method: 'GET',
+		});
+		const appId = appInstallation.appId;
+
 		const versions = await apiClient.request({
-			path: `/apps/${appId.value}/versions`,
+			path: `/apps/${appId}/versions`,
 			method: 'GET',
 			responseSchema: Z.array(
 				Z.object({
@@ -21,6 +29,9 @@ export default {
 					externalVersion: Z.string(),
 				}),
 			),
+			qs: {
+				searchTerm: filter,
+			},
 		});
 
 		return {
