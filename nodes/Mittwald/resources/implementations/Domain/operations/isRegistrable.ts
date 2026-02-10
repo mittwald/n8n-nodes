@@ -8,7 +8,7 @@ domainResource
 	})
 	.withProperties({
 		fullName: {
-			displayName: 'full domain name',
+			displayName: 'Full domain name',
 			type: 'string',
 			default: '',
 		},
