@@ -6,9 +6,7 @@ export default {
 	type: 'resourceLocator',
 	default: '',
 	searchListMethodName: 'listIngresses',
-	async searchListMethod(this, filter) {
-		// TODO: Add support for pagination
-		// reference: https://developer.mittwald.de/docs/v2/reference/project/project-list-servers/
+	async searchListMethod(this, filter, paginationToken) {
 		this.logger.info('fetching ingresses from mittwald API https://api.mittwald.de/v2/servers');
 
 		interface Ingress {
@@ -17,19 +15,21 @@ export default {
 		}
 
 		const apiClient = new ApiClient(this);
-		const servers = await apiClient.request<Array<Ingress>>({
+		const response = await apiClient.request<Array<Ingress>>({
 			path: '/ingresses',
 			method: 'GET',
 			qs: {
 				searchTerm: filter,
 			},
+			pagination: { token: paginationToken },
 		});
 
 		return {
-			results: servers.map((ingress) => ({
+			results: response.body.map((ingress) => ({
 				name: `${ingress.hostname}`,
 				value: ingress.id,
 			})),
+			paginationToken: response.nextPaginationToken,
 		};
 	},
 } satisfies OperationPropertyConfig;
