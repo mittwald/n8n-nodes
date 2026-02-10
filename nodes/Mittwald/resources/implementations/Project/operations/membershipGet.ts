@@ -2,8 +2,8 @@ import { projectResource } from '../resource';
 
 export default projectResource
 	.addOperation({
-		name: 'Delete membership',
-		action: 'Delete a project membership',
+		name: 'membershipGet',
+		action: 'Get a project membership',
 	})
 	.withProperties({
 		projectMembershipId: {
@@ -16,8 +16,8 @@ export default projectResource
 		const { properties, apiClient } = context;
 		const { projectMembershipId } = properties;
 
-		return apiClient.request({
+		return await apiClient.request({
 			path: `/project-memberships/${projectMembershipId}`,
-			method: 'DELETE',
+			method: 'GET',
 		});
 	});

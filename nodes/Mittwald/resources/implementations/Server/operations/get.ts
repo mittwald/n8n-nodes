@@ -3,7 +3,7 @@ import serverProperty from '../../shared/serverProperty';
 
 export default serverResource
 	.addOperation({
-		name: 'Get',
+		name: 'get',
 		action: 'Get a server',
 	})
 	.withProperties({

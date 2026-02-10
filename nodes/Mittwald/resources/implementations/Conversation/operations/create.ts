@@ -4,7 +4,7 @@ import Z from 'zod';
 
 export default conversationResource
 	.addOperation({
-		name: 'Create',
+		name: 'create',
 		action: 'Create a ticket',
 	})
 	.withProperties({

@@ -2,7 +2,7 @@ import { serverResource } from '../resource';
 
 export default serverResource
 	.addOperation({
-		name: 'List All',
+		name: 'list',
 		action: 'List all servers',
 	})
 	.withProperties({})

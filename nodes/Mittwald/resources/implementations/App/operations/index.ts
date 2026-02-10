@@ -1,2 +1,4 @@
 import './install';
-import './delete';
+import './uninstall';
+import './list';
+import './updateInstallationVersions';

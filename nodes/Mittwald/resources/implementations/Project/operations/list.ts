@@ -2,7 +2,7 @@ import { projectResource } from '../resource';
 
 export default projectResource
 	.addOperation({
-		name: 'List All',
+		name: 'list',
 		action: 'List all projects',
 	})
 	.withProperties({})

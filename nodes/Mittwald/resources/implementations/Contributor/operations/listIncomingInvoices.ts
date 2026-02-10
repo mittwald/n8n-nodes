@@ -3,7 +3,7 @@ import { contributorResource } from '../resource';
 
 export default contributorResource
 	.addOperation({
-		name: 'List incoming invoices',
+		name: 'listIncomingInvoices',
 		action: 'List incoming invoices',
 	})
 	.withProperties({
