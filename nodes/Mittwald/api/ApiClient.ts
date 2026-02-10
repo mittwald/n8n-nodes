@@ -1,7 +1,13 @@
 import { type IAllExecuteFunctions } from 'n8n-workflow';
-import type { RequestConfig, Response } from './types';
+import type {
+	RequestConfig,
+	RequestConfigWithFullResponse,
+	RequestConfigWithPagination,
+	Response,
+} from './types';
 import { poll } from './polling';
 import { config, type JsonObject } from '../shared';
+import { setupPagination } from './pagination';
 
 export class ApiClient {
 	private readonly node: IAllExecuteFunctions;
@@ -11,7 +17,11 @@ export class ApiClient {
 	}
 
 	public async request<TResponseBody = JsonObject, TRequestBody = JsonObject>(
-		requestConfig: RequestConfig<TRequestBody, TResponseBody> & { returnFullResponse: true },
+		requestConfig: RequestConfig<TRequestBody, TResponseBody> & RequestConfigWithFullResponse,
+	): Promise<Response<TResponseBody>>;
+
+	public async request<TResponseBody = JsonObject, TRequestBody = JsonObject>(
+		requestConfig: RequestConfig<TRequestBody, TResponseBody> & RequestConfigWithPagination,
 	): Promise<Response<TResponseBody>>;
 
 	public async request<TResponseBody = JsonObject, TRequestBody = JsonObject>(
@@ -20,8 +30,11 @@ export class ApiClient {
 
 	public async request<TResponseBody = JsonObject, TRequestBody = JsonObject>(
 		requestConfig: RequestConfig<TRequestBody, TResponseBody>,
-	): Promise<TResponseBody> {
+	) {
 		const { logger, helpers } = this.node;
+
+		const pagination = setupPagination(requestConfig);
+
 		const {
 			path,
 			polling,
@@ -29,7 +42,7 @@ export class ApiClient {
 			responseSchema,
 			returnFullResponse,
 			...restRequestConfig
-		} = requestConfig;
+		} = pagination.requestConfig;
 
 		const pathInfos = `${requestConfig.method} ${requestConfig.path}`;
 		logger.info(`[mittwald] ${pathInfos}`);
@@ -52,7 +65,7 @@ export class ApiClient {
 				baseURL: config.apiBaseUrl,
 				ignoreHttpStatusErrors: !!polling,
 				json: true,
-			});
+			}) as Promise<Response<TResponseBody>>;
 
 		const fullResponse = polling
 			? await poll<TResponseBody>({
@@ -75,8 +88,10 @@ export class ApiClient {
 			}
 		}
 
-		if (returnFullResponse) {
-			return fullResponse;
+		const fullResponseWithPaginationToken = pagination.withPaginationToken(fullResponse);
+
+		if (returnFullResponse || pagination.enabled) {
+			return fullResponseWithPaginationToken;
 		}
 
 		return fullResponse.body;
