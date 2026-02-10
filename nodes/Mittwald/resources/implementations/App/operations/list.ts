@@ -7,13 +7,13 @@ export default appResource
 		action: 'List all installed apps',
 	})
 	.withProperties({
-		software: appProperty,
+		app: appProperty,
 	})
 	.withExecuteFn(async (context) => {
 		const { apiClient } = context;
-		const { software } = context.properties;
+		const { app } = context.properties;
 
-		const qs = software ? { appIds: [software] } : {};
+		const qs = app ? { appIds: [app] } : {};
 
 		return apiClient.request({
 			path: `/app-installations`,
