@@ -22,7 +22,6 @@ export type RequestConfig<TRequestBody = JsonObject, TResponseBody = JsonObject>
 	body?: NoInfer<TRequestBody>;
 	polling?: PollingConfig<TResponseBody>;
 	qs?: IDataObject;
-	returnFullResponse?: true;
 	requestSchema?: Z.Schema<TRequestBody>;
 	responseSchema?: Z.Schema<TResponseBody>;
 } & Partial<RequestConfigWithFullResponse & RequestConfigWithPagination>;
