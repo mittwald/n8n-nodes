@@ -1,4 +1,4 @@
-import './redis-create';
-import './redis-delete';
-import './redis-get';
-import './redis-list';
+import './redisCreate';
+import './redisDelete';
+import './redisGet';
+import './redisList';
