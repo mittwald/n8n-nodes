@@ -13,9 +13,7 @@ export default {
 
 		const apiClient = new ApiClient(this);
 
-		const appInstallation = await apiClient.request<{
-			appId: string;
-		}>({
+		const appInstallation = await apiClient.request({
 			path: `/app-installations/${installationId.value}`,
 			responseSchema: Z.object({ appId: Z.string() }),
 			method: 'GET',
