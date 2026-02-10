@@ -97,7 +97,7 @@ export class Resource {
 			{
 				displayName: 'Operation',
 				name: 'operation',
-				default: null,
+				default: options.length > 0 ? options[0].value : null,
 				type: 'options',
 				noDataExpression: true,
 				options,
