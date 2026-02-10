@@ -36,9 +36,14 @@ export const setupPagination = <TRequestBody, TResponseBody>(
 
 			const parsePaginationHeader = (subject: string) => {
 				const headerName = `x-pagination-${subject}`;
-				return headerName in headers && typeof headers[headerName] === 'string'
-					? parseInt(headers[headerName], 10)
-					: undefined;
+				const headerValue =
+					headerName in headers && typeof headers[headerName] === 'string'
+						? parseInt(headers[headerName], 10)
+						: undefined;
+				if (headerValue !== undefined && isNaN(headerValue)) {
+					throw new Error(`Invalid or missing pagination header: ${headerName}`);
+				}
+				return headerValue;
 			};
 
 			const page = parsePaginationHeader('page');
