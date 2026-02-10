@@ -61,7 +61,7 @@ export default appResource
 			path: `/app-installations/${appInstallation.id}`,
 			method: 'GET',
 			polling: {
-				timeoutMs: 5000,
+				timeoutMs: 10000,
 				waitUntil: {
 					status: 200,
 				},
