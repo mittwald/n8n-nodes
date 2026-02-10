@@ -22,7 +22,7 @@ export default appResource
 			string,
 			{
 				systemSoftwareVersion: string;
-				updatePolicy: 'none' | 'inheritedFromApp' | 'patchLevel' | 'all';
+				updatePolicy: 'inheritedFromApp';
 			}
 		> = {};
 
