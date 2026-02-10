@@ -6,12 +6,12 @@ import appInstallationProperty from '../../shared/appInstallationProperty';
 domainResource
 	.addOperation({
 		name: 'Create',
-		action: 'Create and link Subdomain',
+		action: 'Create and link subdomain',
 	})
 	.withProperties({
 		project: projectProperty,
 		fullName: {
-			displayName: 'Full Domain Name',
+			displayName: 'full domain name',
 			type: 'string',
 			default: '',
 		},
@@ -67,7 +67,9 @@ domainResource
 			});
 		}
 
-		// create domain
+		//TODO: allow to order domains with handles
 
-		return {};
+		throw new Error(
+			'Domain does not exist. Please order the domain first before creating a subdomain. Ordering is not yet supported',
+		);
 	});
