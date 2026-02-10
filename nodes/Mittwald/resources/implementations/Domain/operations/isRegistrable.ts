@@ -3,12 +3,12 @@ import Z from 'zod';
 
 domainResource
 	.addOperation({
-		name: 'Is Registrable',
-		action: 'Check if Domain is Registrable',
+		name: 'Is registrable',
+		action: 'Check if domain is registrable',
 	})
 	.withProperties({
 		fullName: {
-			displayName: 'Full Domain Name',
+			displayName: 'full domain name',
 			type: 'string',
 			default: '',
 		},
