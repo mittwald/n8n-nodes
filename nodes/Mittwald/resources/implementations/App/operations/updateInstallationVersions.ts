@@ -46,8 +46,8 @@ export default appResource
 			};
 		}
 
-		const fetchCurrentInstallationData = async () => {
-			return await apiClient.request({
+		const fetchCurrentInstallationData = () =>
+			apiClient.request({
 				method: 'GET',
 				path: `/app-installations/${appInstallation}`,
 				responseSchema: Z.object({
@@ -67,7 +67,6 @@ export default appResource
 					),
 				}),
 			});
-		};
 
 		const currentInstallationData = await fetchCurrentInstallationData();
 
@@ -87,7 +86,7 @@ export default appResource
 				),
 			}),
 			body: {
-				appVersionId: !version || version === '' ? currentVersion! : version,
+				appVersionId: !version || version === '' ? currentVersion : version,
 				systemSoftware: systemSoftwareTargetRequest,
 			},
 		});
