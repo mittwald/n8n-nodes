@@ -1,7 +1,7 @@
 import { appResource } from '../resource';
 import projectProperty from '../../shared/projectProperty';
 import appProperty from '../../shared/appProperty';
-import versionProperty from '../../shared/versionProperty';
+import versionProperty from '../../shared/appVersionProperty';
 import versionConfigProperty from '../../shared/versionConfigProperty';
 import Z from 'zod';
 
@@ -13,7 +13,7 @@ export default appResource
 	})
 	.withProperties({
 		project: projectProperty,
-		software: appProperty,
+		app: appProperty,
 		version: versionProperty,
 		description: {
 			displayName: 'Name',

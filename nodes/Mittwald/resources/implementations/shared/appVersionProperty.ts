@@ -6,9 +6,9 @@ export default {
 	displayName: 'App version',
 	type: 'resourceLocator',
 	default: '',
-	searchListMethodName: 'listVersions',
+	searchListMethodName: 'searchVersionProperty',
 	async searchListMethod(this) {
-		const appId = this.getCurrentNodeParameter('software') as { value: string };
+		const appId = this.getCurrentNodeParameter('app') as { value: string };
 
 		const apiClient = new ApiClient(this);
 
