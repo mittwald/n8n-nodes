@@ -1,4 +1,5 @@
 import { projectResource } from '../resource';
+import projectProperty from '../../shared/projectProperty';
 
 export default projectResource
 	.addOperation({
@@ -6,18 +7,14 @@ export default projectResource
 		action: 'Get a project',
 	})
 	.withProperties({
-		projectId: {
-			displayName: 'Project ID',
-			type: 'string',
-			default: '',
-		},
+		project: projectProperty,
 	})
 	.withExecuteFn(async (context) => {
 		const { properties, apiClient } = context;
-		const { projectId } = properties;
+		const { project } = properties;
 
 		return apiClient.request({
-			path: `/projects/${projectId}`,
+			path: `/projects/${project}`,
 			method: 'GET',
 		});
 	});

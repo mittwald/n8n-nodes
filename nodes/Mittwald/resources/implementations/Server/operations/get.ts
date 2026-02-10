@@ -1,4 +1,5 @@
 import { serverResource } from '../resource';
+import serverProperty from '../../shared/serverProperty';
 
 export default serverResource
 	.addOperation({
@@ -6,18 +7,14 @@ export default serverResource
 		action: 'Get a server',
 	})
 	.withProperties({
-		serverId: {
-			displayName: 'Server ID',
-			type: 'string',
-			default: '',
-		},
+		server: serverProperty,
 	})
 	.withExecuteFn(async (context) => {
 		const { properties, apiClient } = context;
-		const { serverId } = properties;
+		const { server } = properties;
 
 		return apiClient.request({
-			path: `/servers/${serverId}`,
+			path: `/servers/${server}`,
 			method: 'GET',
 		});
 	});

@@ -1,29 +1,26 @@
 import { ApiClient } from '../../../api';
 import type { OperationPropertyConfig } from '../../base';
+import Z from 'zod';
 
 export default {
 	displayName: 'Version',
 	type: 'resourceLocator',
 	default: '',
 	searchListMethodName: 'listVersions',
-	async searchListMethod(this, filter) {
-		// TODO: Add support for pagination
-		// reference: https://developer.mittwald.de/docs/v2/reference/project/project-list-servers/
+	async searchListMethod(this) {
 		const appId = this.getCurrentNodeParameter('software') as { value: string };
-
-		interface App {
-			id: string;
-			externalVersion: string;
-		}
 
 		const apiClient = new ApiClient(this);
 
-		const versions = await apiClient.request<Array<App>>({
+		const versions = await apiClient.request({
 			path: `/apps/${appId.value}/versions`,
 			method: 'GET',
-			qs: {
-				searchTerm: filter,
-			},
+			responseSchema: Z.array(
+				Z.object({
+					id: Z.string(),
+					externalVersion: Z.string(),
+				}),
+			),
 		});
 
 		return {

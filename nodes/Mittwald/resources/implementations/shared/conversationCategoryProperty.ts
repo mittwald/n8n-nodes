@@ -1,31 +1,29 @@
 import type { OperationPropertyConfig } from '../../base';
 import { ApiClient } from '../../../api';
+import Z from 'zod';
 
-// TODO: Helper class to config and map operation properties
 export default {
 	displayName: 'Conversation Category',
 	type: 'resourceLocator',
 	searchListMethodName: 'searchConversationCategories',
 	default: '',
-	async searchListMethod(this, filter) {
+	async searchListMethod(this) {
 		const apiClient = new ApiClient(this);
 
-		interface ConversationCategory {
-			categoryId: string;
-			name: string;
-			referenceType: string[];
-		}
-
-		const categories = await apiClient.request<Array<ConversationCategory>>({
+		const response = await apiClient.request({
 			path: '/conversation-categories',
 			method: 'GET',
-			qs: {
-				searchTerm: filter,
-			},
+			responseSchema: Z.array(
+				Z.object({
+					categoryId: Z.string(),
+					name: Z.string(),
+					referenceType: Z.array(Z.string()),
+				}),
+			),
 		});
 
 		return {
-			results: categories.map((category) => ({
+			results: response.map((category) => ({
 				name: category.name,
 				value: category.categoryId,
 			})),

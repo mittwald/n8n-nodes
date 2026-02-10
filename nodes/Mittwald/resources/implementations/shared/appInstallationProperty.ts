@@ -1,38 +1,36 @@
 import { ApiClient } from '../../../api';
 import type { OperationPropertyConfig } from '../../base';
+import Z from 'zod';
 
-// TODO: Helper class to config and map operation properties
 export default {
 	displayName: 'AppInstallation',
 	type: 'resourceLocator',
 	searchListMethodName: 'searchAppInstallation',
-	async searchListMethod(this, filter) {
-		// TODO: Add support for pagination
-		// reference: https://developer.mittwald.de/docs/v2/reference/project/project-list-servers/
-		this.logger.info(
-			'fetching appInstallations from mittwald API https://api.mittwald.de/v2/servers',
-		);
-
-		interface AppInstallation {
-			shortId: string;
-			id: string;
-			description: string;
-		}
-
+	async searchListMethod(this, filter, paginationToken) {
 		const apiClient = new ApiClient(this);
-		const appInstallations = await apiClient.request<Array<AppInstallation>>({
+
+		const response = await apiClient.request({
 			path: '/app-installations',
 			method: 'GET',
 			qs: {
 				searchTerm: filter,
 			},
+			pagination: { token: paginationToken },
+			responseSchema: Z.array(
+				Z.object({
+					shortId: Z.string(),
+					id: Z.string(),
+					description: Z.string(),
+				}),
+			),
 		});
 
 		return {
-			results: appInstallations.map((appInstalltion) => ({
-				name: `${appInstalltion.description} (${appInstalltion.shortId})`,
-				value: appInstalltion.id,
+			results: response.body.map((i) => ({
+				name: `${i.description} (${i.shortId})`,
+				value: i.id,
 			})),
+			paginationToken: response.nextPaginationToken,
 		};
 	},
 	default: '',

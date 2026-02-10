@@ -10,7 +10,7 @@ projectResource
 	.withProperties({
 		server: serverProperty,
 		description: {
-			displayName: 'Description',
+			displayName: 'Name',
 			type: 'string',
 			default: '',
 		},
