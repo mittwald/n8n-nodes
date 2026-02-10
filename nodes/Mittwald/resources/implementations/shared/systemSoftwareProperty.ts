@@ -27,14 +27,15 @@ export default {
 			method: 'GET',
 		});
 
-		interface SystemSoftware {
-			id: string;
-			name: string;
-		}
-
-		const allSystemSoftware = await apiClient.request<Array<SystemSoftware>>({
+		const allSystemSoftware = await apiClient.request({
 			path: '/system-softwares',
 			method: 'GET',
+			responseSchema: Z.array(
+				Z.object({
+					id: Z.string(),
+					name: Z.string(),
+				}),
+			),
 		});
 
 		return {
