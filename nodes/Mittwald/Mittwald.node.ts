@@ -15,7 +15,8 @@ export class Mittwald implements INodeType {
 		name: 'mittwald',
 		icon: 'file:mittwald.svg',
 		group: ['input'],
-		version: 1,
+		defaultVersion: 1,
+		version: [1],
 		subtitle: '={{ $parameter["operation"] + ": " + $parameter["resource"] }}',
 		description: 'Interact with the mittwald API',
 		defaults: {
@@ -70,7 +71,11 @@ export class Mittwald implements INodeType {
 				}
 			} catch (error) {
 				if (this.continueOnFail()) {
-					returnData.push({ json: this.getInputData(itemIndex)[0].json, error, pairedItem: itemIndex });
+					returnData.push({
+						json: this.getInputData(itemIndex)[0].json,
+						error,
+						pairedItem: itemIndex,
+					});
 				} else {
 					if (error.context) {
 						error.context.itemIndex = itemIndex;
