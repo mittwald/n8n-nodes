@@ -11,7 +11,13 @@ export const setupPagination = <TRequestBody, TResponseBody>(
 		const { token = '1', pageSize = config.apiPaginationPageSize } = paginationConfig;
 
 		const page = parseInt(token, 10);
-		const paginationHeader = page === undefined ? {} : { page, limit: pageSize };
+		if (isNaN(page)) {
+			throw new Error(
+				`Invalid pagination token: ${token}. Expected a string representing a number.`,
+			);
+		}
+
+		const paginationHeader = { page, limit: pageSize };
 		requestConfigWithPagination = {
 			...requestConfig,
 			qs: {

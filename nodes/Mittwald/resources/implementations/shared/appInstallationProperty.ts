@@ -26,9 +26,9 @@ export default {
 		});
 
 		return {
-			results: response.body.map((appInstalltion) => ({
-				name: `${appInstalltion.description} (${appInstalltion.shortId})`,
-				value: appInstalltion.id,
+			results: response.body.map((i) => ({
+				name: `${i.description} (${i.shortId})`,
+				value: i.id,
 			})),
 			paginationToken: response.nextPaginationToken,
 		};
