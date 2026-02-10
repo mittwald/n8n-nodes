@@ -5,7 +5,7 @@ import appInstallationProperty from '../../shared/appInstallationProperty';
 
 domainResource
 	.addOperation({
-		name: 'Create',
+		name: 'create',
 		action: 'Create and link subdomain',
 	})
 	.withProperties({

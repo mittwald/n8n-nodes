@@ -60,6 +60,7 @@ export class Resource {
 				default: '',
 				type: 'options',
 				noDataExpression: true,
+
 				options: Resource.getN8NOptions(),
 			},
 			...Resource.resourcesArray.flatMap((resource) => resource.getN8NProperties()),
