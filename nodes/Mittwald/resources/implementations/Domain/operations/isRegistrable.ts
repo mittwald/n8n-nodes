@@ -20,10 +20,6 @@ domainResource
 		return await apiClient.request({
 			path: `/domain-registrable`,
 			method: 'POST',
-			responseSchema: Z.object({
-				registrable: Z.boolean(),
-				isPremium: Z.boolean(),
-			}),
 			requestSchema: Z.object({
 				domain: Z.string(),
 			}),
