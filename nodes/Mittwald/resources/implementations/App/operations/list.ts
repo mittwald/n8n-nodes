@@ -3,7 +3,7 @@ import appProperty from '../../shared/appProperty';
 
 export default appResource
 	.addOperation({
-		name: 'List all',
+		name: 'list',
 		action: 'List all installed apps',
 	})
 	.withProperties({

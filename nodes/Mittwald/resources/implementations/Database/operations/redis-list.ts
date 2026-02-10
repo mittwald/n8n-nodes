@@ -3,7 +3,7 @@ import { databaseResource } from '../resource';
 
 export default databaseResource
 	.addOperation({
-		name: 'List Redis',
+		name: 'redis-list',
 		action: 'List all Redis databases',
 	})
 	.withProperties({

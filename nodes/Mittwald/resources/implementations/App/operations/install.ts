@@ -7,7 +7,7 @@ import Z from 'zod';
 
 export default appResource
 	.addOperation({
-		name: 'Install',
+		name: 'install',
 		action: 'Install an app',
 	})
 	.withProperties({

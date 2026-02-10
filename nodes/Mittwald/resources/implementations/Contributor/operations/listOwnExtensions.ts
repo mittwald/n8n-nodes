@@ -3,7 +3,7 @@ import { contributorResource } from '../resource';
 
 export default contributorResource
 	.addOperation({
-		name: 'List own extensions',
+		name: 'listOwnExtensions',
 		action: 'List own extensions',
 	})
 	.withProperties({

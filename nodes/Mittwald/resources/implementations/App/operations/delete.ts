@@ -3,7 +3,7 @@ import { appResource } from '../resource';
 
 export default appResource
 	.addOperation({
-		name: 'Uninstall',
+		name: 'delete',
 		action: 'Uninstall an app',
 	})
 	.withProperties({

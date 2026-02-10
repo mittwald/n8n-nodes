@@ -2,7 +2,7 @@ import { databaseResource } from '../resource';
 
 export default databaseResource
 	.addOperation({
-		name: 'Get Redis',
+		name: 'redis-get',
 		action: 'Get a Redis database',
 	})
 	.withProperties({
