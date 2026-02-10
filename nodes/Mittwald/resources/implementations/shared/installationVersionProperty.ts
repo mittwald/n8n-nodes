@@ -6,7 +6,7 @@ export default {
 	displayName: 'Version',
 	type: 'resourceLocator',
 	required: false,
-	default: '',
+	default: null,
 	searchListMethodName: 'listVersions',
 	async searchListMethod(this, filter) {
 		const installationId = this.getCurrentNodeParameter('appInstallation') as { value: string };

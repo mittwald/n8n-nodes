@@ -86,7 +86,7 @@ export default appResource
 				),
 			}),
 			body: {
-				appVersionId: !version || version === '' ? currentVersion : version,
+				appVersionId: !version ? currentVersion : version,
 				systemSoftware: systemSoftwareTargetRequest,
 			},
 		});
