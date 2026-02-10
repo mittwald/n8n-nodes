@@ -8,8 +8,6 @@ export default {
 	default: '',
 	searchListMethodName: 'listIngresses',
 	async searchListMethod(this, filter, paginationToken) {
-		this.logger.info('fetching ingresses from mittwald API https://api.mittwald.de/v2/servers');
-
 		const apiClient = new ApiClient(this);
 		const response = await apiClient.request({
 			path: '/ingresses',
