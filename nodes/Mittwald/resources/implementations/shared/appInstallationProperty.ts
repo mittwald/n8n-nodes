@@ -3,7 +3,7 @@ import type { OperationPropertyConfig } from '../../base';
 import Z from 'zod';
 
 export default {
-	displayName: 'AppInstallation',
+	displayName: 'App installation',
 	type: 'resourceLocator',
 	searchListMethodName: 'searchAppInstallation',
 	async searchListMethod(this, filter, paginationToken) {
