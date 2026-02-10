@@ -5,8 +5,8 @@ import ingressesProperty from '../../shared/ingressesProperty';
 
 domainResource
 	.addOperation({
-		name: 'Change Domain Target',
-		action: 'Change Target Installation for Domain',
+		name: 'Change domain target',
+		action: 'Change target installation for domain',
 	})
 	.withProperties({
 		ingress: ingressesProperty,
@@ -16,7 +16,7 @@ domainResource
 		const { properties, apiClient } = context;
 		const { ingress, targetInstallation } = properties;
 
-		await apiClient.request({
+		return await apiClient.request({
 			path: `/ingresses/${ingress}/paths`,
 			method: 'PATCH',
 			requestSchema: Z.array(
@@ -32,6 +32,4 @@ domainResource
 				},
 			],
 		});
-
-		return {};
 	});
