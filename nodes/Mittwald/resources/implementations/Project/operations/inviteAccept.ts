@@ -3,8 +3,9 @@ import Z from 'zod';
 
 export default projectResource
 	.addOperation({
-		name: 'inviteAccept',
+		name: 'Accept Invite',
 		action: 'Accept an invite to a project',
+		description: 'Accept a project invitation using an invitation token',
 	})
 	.withProperties({
 		projectInviteId: {

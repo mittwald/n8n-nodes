@@ -5,6 +5,7 @@ import type { ApiClient } from '../../../api';
 export interface OperationConfig {
 	name: string;
 	action: string;
+	description?: string;
 }
 
 export type OperationProperties = Record<string, OperationPropertyConfig>;

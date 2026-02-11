@@ -47,6 +47,7 @@ export class Operation {
 			name: this.name,
 			value: this.name,
 			action: this.config.action,
+			description: this.config.description,
 		};
 	}
 

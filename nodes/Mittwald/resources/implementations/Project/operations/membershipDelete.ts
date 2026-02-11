@@ -2,8 +2,9 @@ import { projectResource } from '../resource';
 
 export default projectResource
 	.addOperation({
-		name: 'membershipDelete',
+		name: 'Delete Membership',
 		action: 'Delete a project membership',
+		description: 'Remove a member from a project',
 	})
 	.withProperties({
 		projectMembershipId: {

@@ -5,8 +5,9 @@ import appInstallationProperty from '../../shared/appInstallationProperty';
 
 domainResource
 	.addOperation({
-		name: 'create',
+		name: 'Create',
 		action: 'Create and link subdomain',
+		description: 'Create a subdomain and link it to an app installation',
 	})
 	.withProperties({
 		project: projectProperty,

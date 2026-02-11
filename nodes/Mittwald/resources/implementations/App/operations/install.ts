@@ -7,8 +7,9 @@ import Z from 'zod';
 
 export default appResource
 	.addOperation({
-		name: 'install',
+		name: 'Install',
 		action: 'Install an app',
+		description: 'Install an app on a project',
 	})
 	.withProperties({
 		project: projectProperty,

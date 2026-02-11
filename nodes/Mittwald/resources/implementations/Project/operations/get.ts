@@ -3,8 +3,9 @@ import projectProperty from '../../shared/projectProperty';
 
 export default projectResource
 	.addOperation({
-		name: 'get',
+		name: 'Get',
 		action: 'Get a project',
+		description: 'Get details of a specific project',
 	})
 	.withProperties({
 		project: projectProperty,
