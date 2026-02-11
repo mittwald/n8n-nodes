@@ -3,8 +3,9 @@ import Z from 'zod';
 
 domainResource
 	.addOperation({
-		name: 'isRegistrable',
+		name: 'Check If Registrable',
 		action: 'Check if domain is registrable',
+		description: 'Check whether a domain name is available for registration',
 	})
 	.withProperties({
 		fullName: {

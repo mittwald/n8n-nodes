@@ -3,8 +3,9 @@ import { contributorResource } from '../resource';
 
 export default contributorResource
 	.addOperation({
-		name: 'listOwnExtensions',
+		name: 'List Own Extensions',
 		action: 'List own extensions',
+		description: 'Get a list of extensions owned by an organisation',
 	})
 	.withProperties({
 		organisation: organisationProperty,

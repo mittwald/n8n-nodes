@@ -2,8 +2,9 @@ import { projectResource } from '../resource';
 
 export default projectResource
 	.addOperation({
-		name: 'membershipGet',
+		name: 'Get Membership',
 		action: 'Get a project membership',
+		description: 'Get details of a specific project membership',
 	})
 	.withProperties({
 		projectMembershipId: {

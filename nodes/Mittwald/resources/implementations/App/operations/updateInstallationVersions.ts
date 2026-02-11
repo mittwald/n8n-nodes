@@ -6,8 +6,9 @@ import Z from 'zod';
 
 export default appResource
 	.addOperation({
-		name: 'updateInstallationVersions',
+		name: 'Update Installation Versions',
 		action: 'Update software versions',
+		description: 'Update the app or system software versions of an installation',
 	})
 	.withProperties({
 		appInstallation: appInstallationProperty,

@@ -4,8 +4,9 @@ import Z from 'zod';
 
 projectResource
 	.addOperation({
-		name: 'create',
+		name: 'Create',
 		action: 'Create a project on a server',
+		description: 'Create a new project on a server',
 	})
 	.withProperties({
 		server: serverProperty,

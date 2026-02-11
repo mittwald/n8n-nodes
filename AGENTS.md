@@ -112,10 +112,12 @@ When `Mittwald.node.ts` imports `'./resources/implementations/operations'`, all 
 - All available resources and operations should be documented in `README.md`.
 - Each operation should have a brief description of its purpose and parameters.
 - The brand name "mittwald" should ALWAYS be lowercase when referring to the company, even at the start of a sentence.
+- The operation `name` should be written in **Title Case** (e.g., `Install`, `List`, `Update Installation Versions`). This is the internal identifier used in n8n.
 - The operation `action` strings should follow the following requirements:
   - Correct english grammar and spelling; start with a capital letter and a verb.
   - Use "real" language, no API terminology or internal identifiers. For example, use `app installation` instead of `AppInstallation` or `app_installation`.
   - Try to use domain-specific terminology where possible. For example, use `Uninstall app` instead of `Delete app installation`.
+- The operation `description` field is **required** and should provide a brief, helpful explanation of what the operation does. This appears below the operation name in the n8n UI.
 
 ## Coding instructions
 
