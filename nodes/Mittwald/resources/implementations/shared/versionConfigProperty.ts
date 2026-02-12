@@ -11,9 +11,6 @@ export default {
 	async resourceMapperMethod(this) {
 		const apiClient = new ApiClient(this);
 
-		//@ts-ignore
-		console.log('HALLO from versionConfigProperty.ts');
-
 		const appId = this.getCurrentNodeParameter('app') as { value: string };
 		const versionId = this.getCurrentNodeParameter('version') as { value: string };
 
