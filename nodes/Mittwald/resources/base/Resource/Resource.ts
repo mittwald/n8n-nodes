@@ -92,12 +92,13 @@ export class Resource {
 
 	private getN8NProperties(): Array<INodeProperties> {
 		const options = this.operations.flatMap((operation) => operation.getN8NOption());
+		const defaultOption = options.length > 0 ? options[0].value : null;
 
 		const properties: INodeProperties[] = [
 			{
 				displayName: 'Operation',
 				name: 'operation',
-				default: null,
+				default: defaultOption,
 				type: 'options',
 				noDataExpression: true,
 				options,
