@@ -1,6 +1,5 @@
 import { domainResource } from '../resource';
 import Z from 'zod';
-import projectProperty from '../../shared/projectProperty';
 import appInstallationProperty from '../../shared/appInstallationProperty';
 
 domainResource
@@ -10,7 +9,6 @@ domainResource
 		description: 'Create a subdomain and link it to an app installation',
 	})
 	.withProperties({
-		project: projectProperty,
 		fullName: {
 			displayName: 'Full domain name',
 			type: 'string',
@@ -20,7 +18,7 @@ domainResource
 	})
 	.withExecuteFn(async (context) => {
 		const { properties, apiClient } = context;
-		const { fullName, project, targetInstallation } = properties;
+		const { fullName, targetInstallation } = properties;
 
 		const isSubdomain = fullName.split('.').length > 2;
 		const baseDomain = isSubdomain ? fullName.split('.').slice(1).join('.') : fullName;
@@ -37,6 +35,15 @@ domainResource
 				'Domain does not exist. Please order the domain first before creating a subdomain. Ordering is not yet supported',
 			);
 		}
+
+		const appInstallation = await apiClient.request({
+			method: 'GET',
+			path: `/app-installations/${targetInstallation}`,
+			responseSchema: Z.object({
+				id: Z.string(),
+				projectId: Z.string(),
+			}),
+		});
 
 		// create subdomain for already existing domain
 
@@ -57,7 +64,7 @@ domainResource
 				),
 			}),
 			body: {
-				projectId: project,
+				projectId: appInstallation.projectId,
 				hostname: fullName,
 				paths: [{ path: '/', target: { installationId: targetInstallation } }],
 			},
