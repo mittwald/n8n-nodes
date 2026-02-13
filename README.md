@@ -23,43 +23,62 @@ Follow the [installation guide](https://docs.n8n.io/integrations/community-nodes
 This node provides integration with the [mittwald API v2](https://developer.mittwald.de/). The following resources and operations are available:
 
 ### App
-- **Install App**: Install an application in a project
-- **Delete AppInstallation**: Remove an installed application
+
+- **Install an app**: Install an app on a project
+- **List all installed apps**: Get a list of all installed apps
+- **Uninstall an app**: Remove an app installation
+- **Update software versions**: Update the app or system software versions of an installation
 
 ### Contributor
-- Operations for managing contributors
+
+- **List incoming invoices**: Get a list of incoming invoices for an organisation
+- **List outgoing invoices**: Get a list of outgoing invoices for an organisation
+- **List own extensions**: Get a list of extensions owned by an organisation
 
 ### Conversation
-- **Create**: Create a new conversation
+
+- **Create a ticket**: Create a support ticket in a conversation category
 
 ### Project
-- **Create**: Create a new project on a server
-- **Remove**: Delete a project
-- **Get**: Get project details
-- **List**: List all projects
-- **Accept Invite**: Accept an invite to a project
-- **Get Membership**: Get project membership details
-- **Delete Membership**: Delete a project membership
+
+- **Create a project on a server**: Create a new project on a server
+- **Delete a project**: Delete an existing project
+- **Get a project**: Get details of a specific project
+- **List all projects**: Get a list of all projects
+- **Accept an invite to a project**: Accept a project invitation using an invitation token
+- **Create an invite to a project**: Create a project invitation
+- **Get a project membership**: Get details of a specific project membership
+- **Delete a project membership**: Remove a member from a project
 
 ### Database
-- **Create Redis**: Create a new Redis database in a project
-- **Remove Redis**: Delete a Redis database by ID
-- **Get Redis**: Get details of a Redis database by ID
-- **List All Redis**: List all Redis databases in a project
+
+- **List all Redis databases**: Get a list of all Redis databases in a project
+- **Create Redis database**: Create a new Redis database in a project
+- **Delete Redis database**: Delete an existing Redis database
+- **Get a Redis database**: Get details of a specific Redis database
 
 ### Server
-- **Get**: Get server details
-- **List All**: List all servers
+
+- **Get a server**: Get details of a specific server
+- **List all servers**: Get a list of all servers
+
+### Domain
+
+- **Create and link subdomain**: Create a subdomain and link it to an app installation
+- **Check if domain is registrable**: Check whether a domain name is available for registration
+- **Set target installation for domain**: Set the target app installation for a domain
 
 ## Credentials
 
 To use this node, you need to authenticate with the mittwald API using an API key.
 
 ### Prerequisites
+
 - A mittwald account
 - An API key generated from your mittwald account settings
 
 ### Setting up credentials
+
 1. Log in to your mittwald account
 2. Navigate to your account settings
 3. Generate an API key
