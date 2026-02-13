@@ -1,6 +1,7 @@
 import { ApiClient } from '../../../api';
 import type { OperationPropertyConfig } from '../../base';
 import Z from 'zod';
+import { FieldType } from 'n8n-workflow';
 
 export default {
 	displayName: 'Version Config',
@@ -33,7 +34,7 @@ export default {
 			site_title: '(e.g., tab name in your browser)',
 		};
 
-		const supportedTypes = ['string', 'number', 'boolean'] as const;
+		const supportedTypes = ['string', 'number', 'boolean'];
 
 		return {
 			fields: version.userInputs.map((input) => {
@@ -46,10 +47,7 @@ export default {
 					required: true,
 					id: input.name,
 					defaultMatch: false,
-					type:
-						input.dataType in supportedTypes
-							? (input.dataType as (typeof supportedTypes)[number])
-							: 'string', // Default to string if type is missing or unsupported
+					type: input.dataType in supportedTypes ? (input.dataType as FieldType) : 'string', // Default to string if type is missing or unsupported
 				};
 			}),
 		};
