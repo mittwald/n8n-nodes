@@ -4,7 +4,7 @@
 	"description": "n8n nodes for interacting with the mittwald API",
 	"license": "MIT",
 	"packageManager": "pnpm@10.28.2",
-	"homepage": "",
+	"homepage": "https://www.mittwald.de",
 	"keywords": [
 		"n8n-community-node-package"
 	],
