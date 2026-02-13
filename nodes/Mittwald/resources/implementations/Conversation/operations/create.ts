@@ -57,7 +57,7 @@ export default conversationResource
 		await apiClient.request({
 			path: `/conversations/${createdConversation.conversationId}`,
 			method: 'GET',
-			polling: { waitUntil: { status: 200 } },
+			polling: { waitUntil: { untilSuccess: true } },
 		});
 
 		return await apiClient.request({

@@ -1,11 +1,11 @@
-import { sleep, type Logger } from 'n8n-workflow';
+import { type Logger, sleep } from 'n8n-workflow';
 import type { Response } from './types';
 import type { JsonObject } from '../shared';
 
 export type PollingRequestCondition<TBody = JsonObject> = (response: Response<TBody>) => boolean;
 
 export interface PollingConfig<TBody = JsonObject> {
-	waitUntil: PollingRequestCondition<TBody> | { status: number };
+	waitUntil: PollingRequestCondition<TBody> | { status: number } | { untilSuccess: true };
 	timeoutMs?: number;
 }
 
@@ -15,13 +15,43 @@ interface PollExecutionConfig<TBody = JsonObject> {
 	logger: Logger;
 }
 
+function buildPollingFunction<TBody>(
+	waitUntil: PollingConfig<TBody>['waitUntil'],
+): PollingRequestCondition<TBody> {
+	if (typeof waitUntil === 'function') {
+		return waitUntil;
+	}
+
+	if ('status' in waitUntil) {
+		return (response) => response.statusCode === waitUntil.status;
+	}
+
+	if ('untilSuccess' in waitUntil) {
+		return (response) => {
+			if (response.statusCode >= 200 && response.statusCode < 300) {
+				return true;
+			}
+
+			if (response.statusCode === 403) {
+				return false;
+			}
+
+			throw new Error(`unexpected status code ${response.statusCode} received: ${JSON.stringify(response.body)}`);
+		};
+	}
+
+	return () => true;
+}
+
 export const poll = async <TBody = JsonObject>(
 	executionConfig: PollExecutionConfig<TBody>,
 ): Promise<Response<TBody>> => {
 	const { config, executeRequest, logger } = executionConfig;
-	const { waitUntil, timeoutMs = 2000 } = config;
+	const { timeoutMs = 2000 } = config;
+
 	let backoff = 100;
 	const maxTime = Date.now() + timeoutMs;
+	const waitUntil = buildPollingFunction(config.waitUntil);
 
 	while (true) {
 		if (Date.now() > maxTime) {
@@ -29,13 +59,7 @@ export const poll = async <TBody = JsonObject>(
 		}
 		const response = await executeRequest();
 
-		if (
-			typeof waitUntil === 'function'
-				? waitUntil(response)
-				: 'status' in waitUntil
-					? response.statusCode === waitUntil.status
-					: false
-		) {
+		if (waitUntil(response)) {
 			return response as Response<TBody>;
 		}
 
