@@ -4,7 +4,7 @@ import type { OperationPropertyConfig } from '../../base';
 import Z from 'zod';
 
 export default {
-	displayName: 'Apps',
+	displayName: 'App',
 	type: 'resourceLocator',
 	default: '',
 	searchListMethodName: 'listApps',
