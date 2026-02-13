@@ -87,20 +87,20 @@ To use this node, you need to authenticate with the mittwald API using an API ke
 
 ## Compatibility
 
-_State the minimum n8n version, as well as which versions you test against. You can also include any known version incompatibility issues._
+This node is tested with n8n Version 2.7.4.
 
 ## Usage
 
-_This is an optional section. Use it to help users with any difficult or confusing aspects of the node._
+1. Add the "Mittwald API" node to your workflow
+2. Set up credentials using your mittwald API key (API keys can be generated in the studio [here](https://studio.mittwald.de/app/profile/api-tokens))
+3. Select the desired resource and operation
+4. Configure the required parameters for the operation
+5. Execute the workflow to interact with the mittwald API and automate your tasks
 
-_By the time users are looking for community nodes, they probably already know n8n basics. But if you expect new users, you can link to the [Try it out](https://docs.n8n.io/try-it-out/) documentation to help them get started._
+If you aren't familiar with n8n and creating workflows, you can find help here: [Try it out](https://docs.n8n.io/try-it-out/)
 
 ## Resources
 
 - [n8n community nodes documentation](https://docs.n8n.io/integrations/#community-nodes)
 - [mittwald API documentation](https://developer.mittwald.de/)
 - [mittwald API v2 Reference](https://developer.mittwald.de/docs/v2/api/intro/)
-
-## Version history
-
-_This is another optional section. If your node has multiple versions, include a short description of available versions and what changed, as well as any compatibility impact._
