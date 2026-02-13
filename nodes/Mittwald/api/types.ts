@@ -19,7 +19,7 @@ export interface RequestConfigWithFullResponse {
 export type RequestConfig<TRequestBody = JsonObject, TResponseBody = JsonObject> = {
 	path: string;
 	method: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
-	body?: NoInfer<TRequestBody>;
+	body?: NoInfer<Record<keyof TRequestBody, unknown>>;
 	polling?: PollingConfig<TResponseBody>;
 	qs?: IDataObject;
 	requestSchema?: Z.Schema<TRequestBody>;

@@ -96,14 +96,16 @@ export class OperationProperty {
 	}
 
 	public getPropertyValue(node: IAllExecuteFunctions, itemIndex: number): unknown {
+		const type = this.config.type;
+
 		const value = node.getNodeParameter(this.name, itemIndex, undefined, {
 			extractValue: true,
 			ensureType:
-				this.config.type === 'resourceLocator'
+				type === 'resourceLocator' || type === 'dateTime' || type === 'options'
 					? 'string'
-					: this.config.type === 'resourceMapper'
+					: type === 'resourceMapper'
 						? 'json'
-						: this.config.type,
+						: type,
 		});
 
 		if (this.config.type === 'resourceMapper') {

@@ -5,3 +5,4 @@ import './list';
 import './membershipDelete';
 import './membershipGet';
 import './inviteAccept';
+import './inviteCreate';

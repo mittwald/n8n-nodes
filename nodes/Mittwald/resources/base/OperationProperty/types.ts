@@ -1,6 +1,7 @@
 import type {
 	ILoadOptionsFunctions,
 	INodeListSearchResult,
+	INodeProperties,
 	NodeParameterValueType,
 	ResourceMapperFields,
 } from 'n8n-workflow';
@@ -24,12 +25,12 @@ type ResourceMapperMethod = (this: ILoadOptionsFunctions) => Promise<ResourceMap
 
 export type OperationPropertyConfig =
 	| (BaseConfig & {
+			type: 'string' | 'number' | 'boolean' | 'dateTime' | 'options';
+	  } & Omit<INodeProperties, 'type' | 'name'>)
+	| (BaseConfig & {
 			type: 'resourceLocator';
 			searchListMethod: ListSearchMethod;
 			searchListMethodName: string;
-	  })
-	| (BaseConfig & {
-			type: 'string' | 'number' | 'boolean';
 	  })
 	| (BaseConfig & {
 			type: 'resourceMapper';
@@ -44,10 +45,14 @@ export type OperationPropertyValue<
 	? string
 	: T extends 'number'
 		? number
-		: T extends 'boolean'
-			? boolean
-			: T extends 'resourceLocator'
+		: T extends 'options'
+			? string
+			: T extends 'dateTime'
 				? string
-				: T extends 'resourceMapper'
-					? Json
-					: never;
+				: T extends 'boolean'
+					? boolean
+					: T extends 'resourceLocator'
+						? string
+						: T extends 'resourceMapper'
+							? Json
+							: never;
