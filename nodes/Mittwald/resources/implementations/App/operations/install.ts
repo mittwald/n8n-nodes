@@ -4,6 +4,8 @@ import appProperty from '../../shared/appProperty';
 import versionProperty from '../../shared/appVersionProperty';
 import versionConfigProperty from '../../shared/versionConfigProperty';
 import Z from 'zod';
+import { Response } from '../../../../api/types';
+import { PollingConfig } from '../../../../api/polling';
 
 export default appResource
 	.addOperation({
@@ -22,10 +24,18 @@ export default appResource
 		},
 		installationPath: {
 			displayName: 'Installation Path',
+			description:
+				'The path where the app should be installed; leave empty to generate a default path',
 			type: 'string',
 			default: '',
 		},
 		versionConfig: versionConfigProperty,
+		waitUntilInstalled: {
+			displayName: 'Wait Until Installed',
+			description: 'Whether to wait until the installation is completed before returning',
+			type: 'boolean',
+			default: false,
+		},
 	})
 	.withExecuteFn(async (context) => {
 		const { properties, apiClient } = context;
@@ -58,14 +68,28 @@ export default appResource
 			},
 		});
 
+		let polling: PollingConfig = { waitUntil: { untilSuccess: true }, timeoutMs: 2000 };
+		if (properties.waitUntilInstalled) {
+			polling = {
+				timeoutMs: 300 * 1000, // 5 minutes
+				waitUntil(response: Response) {
+					// Response status 403 is a typical symptom of the eventual consistency behavior in the API.
+					if (response.statusCode === 403) {
+						return false;
+					}
+
+					if (response.statusCode >= 400) {
+						throw new Error(`unexpected error while polling for app installation: ${response.statusCode}: ${JSON.stringify(response.body)}`);
+					}
+
+					return response.statusCode === 200 && response.body.phase === 'ready';
+				},
+			};
+		}
+
 		return apiClient.request({
 			path: `/app-installations/${appInstallation.id}`,
 			method: 'GET',
-			polling: {
-				timeoutMs: 10000,
-				waitUntil: {
-					status: 200,
-				},
-			},
+			polling,
 		});
 	});
