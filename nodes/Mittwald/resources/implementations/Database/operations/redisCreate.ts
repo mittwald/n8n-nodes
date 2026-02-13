@@ -43,7 +43,7 @@ export default databaseResource
 			method: 'GET',
 			polling: {
 				waitUntil: {
-					status: 200,
+					untilSuccess: true,
 				},
 			},
 		});

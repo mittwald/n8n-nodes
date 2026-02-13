@@ -75,7 +75,7 @@ domainResource
 			method: 'GET',
 			polling: {
 				waitUntil: {
-					status: 200,
+					untilSuccess: true,
 				},
 				timeoutMs: 5000,
 			},
