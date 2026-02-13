@@ -92,12 +92,12 @@ This node is tested with n8n Version 2.7.4.
 ## Usage
 
 1. Add the "Mittwald API" node to your workflow
-2. Setup Credentials using your mittwald API key (Api keys can be generated in the studio [here](https://studio.mittwald.de/app/profile/api-tokens)
+2. Set up credentials using your mittwald API key (API keys can be generated in the studio [here](https://studio.mittwald.de/app/profile/api-tokens))
 3. Select the desired resource and operation
 4. Configure the required parameters for the operation
 5. Execute the workflow to interact with the mittwald API and automate your tasks
 
-If you arent familiar with n8n and creating workflows you can find help here: [Try it out](https://docs.n8n.io/try-it-out/)
+If you aren't familiar with n8n and creating workflows, you can find help here: [Try it out](https://docs.n8n.io/try-it-out/)
 
 ## Resources
 
