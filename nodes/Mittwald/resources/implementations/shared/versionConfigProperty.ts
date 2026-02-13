@@ -1,17 +1,18 @@
 import { ApiClient } from '../../../api';
 import type { OperationPropertyConfig } from '../../base';
 import Z from 'zod';
+import { FieldType } from 'n8n-workflow';
 
 export default {
 	displayName: 'Version Config',
 	type: 'resourceMapper',
 	default: null,
-	dependsOn: ['software.value', 'version.value'],
-	resourceMapperMethodName: 'getVersionConfigFields',
+	dependsOn: ['app.value', 'version.value'],
+	resourceMapperMethodName: 'searchVersionConfigProperty',
 	async resourceMapperMethod(this) {
 		const apiClient = new ApiClient(this);
 
-		const appId = this.getCurrentNodeParameter('software') as { value: string };
+		const appId = this.getCurrentNodeParameter('app') as { value: string };
 		const versionId = this.getCurrentNodeParameter('version') as { value: string };
 
 		const version = await apiClient.request({
@@ -21,7 +22,7 @@ export default {
 				userInputs: Z.array(
 					Z.object({
 						name: Z.string(),
-						type: Z.enum(['string', 'number', 'boolean']),
+						dataType: Z.string(),
 					}),
 				),
 			}),
@@ -32,6 +33,8 @@ export default {
 			host: '(requires protocol, e.g., https://)',
 			site_title: '(e.g., tab name in your browser)',
 		};
+
+		const supportedTypes = ['string', 'number', 'boolean'];
 
 		return {
 			fields: version.userInputs.map((input) => {
@@ -44,7 +47,7 @@ export default {
 					required: true,
 					id: input.name,
 					defaultMatch: false,
-					type: input.type,
+					type: input.dataType in supportedTypes ? (input.dataType as FieldType) : 'string', // Default to string if type is missing or unsupported
 				};
 			}),
 		};

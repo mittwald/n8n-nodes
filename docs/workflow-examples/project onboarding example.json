@@ -1,0 +1,237 @@
+{
+  "name": "project onboarding example",
+  "nodes": [
+    {
+      "parameters": {
+        "formTitle": "Wordpress Starter Bootstrap",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "Projekt Name"
+            },
+            {
+              "fieldLabel": "Domain Name"
+            },
+            {
+              "fieldLabel": "Admin Password",
+              "fieldType": "password"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.5,
+      "position": [
+        -144,
+        -80
+      ],
+      "id": "36cdfc77-aed3-4734-b0e9-de990a6510d8",
+      "name": "On form submission1",
+      "webhookId": "8af3f24a-de82-436c-8ec9-3ec37d3d9170"
+    },
+    {
+      "parameters": {
+        "resource": "Project",
+        "server": {
+          "__rl": true,
+          "value": "0e2fdd85-a788-402a-94f6-5002e1ef7015",
+          "mode": "list",
+          "cachedResultName": "Olymp (s-piryq0)"
+        },
+        "description": "={{ $json['Projekt Name'] }}"
+      },
+      "type": "CUSTOM.mittwald",
+      "typeVersion": 1,
+      "position": [
+        112,
+        -80
+      ],
+      "id": "dd2e2838-4494-44ea-94e6-27ab34eaadca",
+      "name": "Create a Project",
+      "credentials": {
+        "mittwaldApi": {
+          "id": "vOb34VeTSX96I3Co",
+          "name": "mittwald account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "App",
+        "project": {
+          "__rl": true,
+          "value": "={{ $json.id }}",
+          "mode": ""
+        },
+        "app": {
+          "__rl": true,
+          "value": "da3aa3ae-4b6b-4398-a4a8-ee8def827876",
+          "mode": "list",
+          "cachedResultName": "WordPress"
+        },
+        "version": {
+          "__rl": true,
+          "value": "7238cf84-0bd8-48bf-b7c7-2c3202ea4035",
+          "mode": "list",
+          "cachedResultName": "6.9.1"
+        },
+        "description": "={{ $json.description }}",
+        "installationPath": "/html/starter-wordpress",
+        "versionConfig": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "host": "=https://{{ $('On form submission1').item.json['Domain Name'] }}",
+            "site_title": "={{ $('On form submission1').item.json['Projekt Name'] }}",
+            "admin_user": "admin-example-user",
+            "admin_pass": "={{ $('On form submission1').item.json['Admin Password'] }}",
+            "admin_email": "admin@example-agency.com"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "displayName": "host (requires protocol, e.g., https://)",
+              "display": true,
+              "required": true,
+              "id": "host",
+              "defaultMatch": false,
+              "type": "string"
+            },
+            {
+              "displayName": "site_title (e.g., tab name in your browser)",
+              "display": true,
+              "required": true,
+              "id": "site_title",
+              "defaultMatch": false,
+              "type": "string"
+            },
+            {
+              "displayName": "admin_user",
+              "display": true,
+              "required": true,
+              "id": "admin_user",
+              "defaultMatch": false,
+              "type": "string"
+            },
+            {
+              "displayName": "admin_pass",
+              "display": true,
+              "required": true,
+              "id": "admin_pass",
+              "defaultMatch": false,
+              "type": "string"
+            },
+            {
+              "displayName": "admin_email",
+              "display": true,
+              "required": true,
+              "id": "admin_email",
+              "defaultMatch": false,
+              "type": "string"
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "CUSTOM.mittwald",
+      "typeVersion": 1,
+      "position": [
+        320,
+        -80
+      ],
+      "id": "95a22f33-dba1-40a0-8617-bdefd463e192",
+      "name": "Install Wordpress",
+      "credentials": {
+        "mittwaldApi": {
+          "id": "vOb34VeTSX96I3Co",
+          "name": "mittwald account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "Domain",
+        "project": {
+          "__rl": true,
+          "value": "={{ $('Create a Project').item.json.id }}",
+          "mode": ""
+        },
+        "fullName": "={{ $('On form submission1').item.json['Domain Name'] }}",
+        "targetInstallation": {
+          "__rl": true,
+          "value": "={{ $json.id }}",
+          "mode": ""
+        }
+      },
+      "type": "CUSTOM.mittwald",
+      "typeVersion": 1,
+      "position": [
+        528,
+        -80
+      ],
+      "id": "0e19f8e2-d8f9-442c-aeab-a8414ef19a78",
+      "name": "Create and Link Subdomain",
+      "credentials": {
+        "mittwaldApi": {
+          "id": "vOb34VeTSX96I3Co",
+          "name": "mittwald account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "On form submission1": {
+      "main": [
+        [
+          {
+            "node": "Create a Project",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create a Project": {
+      "main": [
+        [
+          {
+            "node": "Install Wordpress",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Install Wordpress": {
+      "main": [
+        [
+          {
+            "node": "Create and Link Subdomain",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create and Link Subdomain": {
+      "main": [
+        []
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "c3a6932a-d9a5-4215-b5a2-c33917ea0eed",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "05de660234c38e407b9b1882d63b5ad9973ad2a79c2969d8535c575c8f7e5eb3"
+  },
+  "id": "09gzjQhH4OdBsoDadmnKu",
+  "tags": []
+}
