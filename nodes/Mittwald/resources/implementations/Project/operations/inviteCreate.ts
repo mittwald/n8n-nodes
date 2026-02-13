@@ -47,7 +47,7 @@ export default projectResource
 					description: 'Access to project areas for hosting; no paid actions',
 				},
 				{
-					name: 'E-Mail Admin',
+					name: 'Mail Administrator',
 					value: 'emailadmin',
 					description: 'Access only to email addresses and mailboxes',
 				},
