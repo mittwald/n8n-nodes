@@ -67,9 +67,18 @@ export class Operation {
 	public async execute(node: IAllExecuteFunctions, itemIndex: number) {
 		const apiClient = new ApiClient(node);
 		const properties = this.getExecutionProperties(node, itemIndex);
-		return this.executionFn({
+		const executionResult = await this.executionFn({
 			apiClient,
 			properties,
 		});
+
+		if (
+			Array.isArray(executionResult) ||
+			(typeof executionResult === 'object' && executionResult !== null)
+		) {
+			return executionResult;
+		}
+
+		return { result: executionResult, success: true };
 	}
 }

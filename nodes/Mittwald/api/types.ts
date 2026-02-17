@@ -1,7 +1,7 @@
 import type { JsonObject } from '../shared';
 import type { PollingConfig } from './polling';
 import Z from 'zod';
-import { IDataObject } from 'n8n-workflow';
+import { IDataObject, JsonValue } from 'n8n-workflow';
 
 type ResponseHeaders = Record<string, unknown>;
 
@@ -16,7 +16,7 @@ export interface RequestConfigWithFullResponse {
 	returnFullResponse: true;
 }
 
-export type RequestConfig<TRequestBody = JsonObject, TResponseBody = JsonObject> = {
+export type RequestConfig<TRequestBody = JsonObject, TResponseBody = JsonValue> = {
 	path: string;
 	method: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
 	body?: NoInfer<Record<keyof TRequestBody, unknown>>;
@@ -26,7 +26,7 @@ export type RequestConfig<TRequestBody = JsonObject, TResponseBody = JsonObject>
 	responseSchema?: Z.Schema<TResponseBody>;
 } & Partial<RequestConfigWithFullResponse & RequestConfigWithPagination>;
 
-export interface Response<TBody = JsonObject> {
+export interface Response<TBody = JsonValue> {
 	statusCode: number;
 	body: TBody;
 	headers: ResponseHeaders;
