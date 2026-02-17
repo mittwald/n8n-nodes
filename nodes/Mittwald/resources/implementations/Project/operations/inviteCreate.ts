@@ -37,12 +37,12 @@ export default projectResource
 			default: 'external',
 			options: [
 				{
-					name: 'Owner',
+					name: 'Project Administrator',
 					value: 'owner',
 					description: 'Full access to all project areas',
 				},
 				{
-					name: 'External',
+					name: 'Project Developer',
 					value: 'external',
 					description: 'Access to project areas for hosting; no paid actions',
 				},
