@@ -21,7 +21,7 @@ domainResource
 		const { fullName, targetInstallation } = properties;
 
 		const isSubdomain = fullName.split('.').length > 2;
-		let baseDomain = isSubdomain ? fullName.split('.').slice(1).join('.') : fullName;
+		const baseDomain = isSubdomain ? fullName.split('.').slice(1).join('.') : fullName;
 
 		//TODO: allow to order domains with handles
 		if (!isSubdomain) {
