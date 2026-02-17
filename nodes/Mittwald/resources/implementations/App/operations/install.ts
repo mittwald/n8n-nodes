@@ -4,8 +4,6 @@ import appProperty from '../../shared/appProperty';
 import versionProperty from '../../shared/appVersionProperty';
 import versionConfigProperty from '../../shared/versionConfigProperty';
 import Z from 'zod';
-import { Response } from '../../../../api/types';
-import { PollingConfig } from '../../../../api/polling';
 
 export default appResource
 	.addOperation({
@@ -68,28 +66,33 @@ export default appResource
 			},
 		});
 
-		let polling: PollingConfig = { waitUntil: { untilSuccess: true }, timeoutMs: 2000 };
-		if (properties.waitUntilInstalled) {
-			polling = {
-				timeoutMs: 300 * 1000, // 5 minutes
-				waitUntil(response: Response) {
-					// Response status 403 is a typical symptom of the eventual consistency behavior in the API.
-					if (response.statusCode === 403) {
-						return false;
-					}
-
-					if (response.statusCode >= 400) {
-						throw new Error(`unexpected error while polling for app installation: ${response.statusCode}: ${JSON.stringify(response.body)}`);
-					}
-
-					return response.statusCode === 200 && response.body.phase === 'ready';
-				},
-			};
-		}
-
 		return apiClient.request({
 			path: `/app-installations/${appInstallation.id}`,
 			method: 'GET',
-			polling,
+			polling: properties.waitUntilInstalled
+				? {
+						timeoutMs: 300 * 1000, // 5 minutes
+						waitUntil(response) {
+							// Response status 403 is a typical symptom of the eventual consistency behavior in the API.
+							if (response.statusCode === 403) {
+								return false;
+							}
+
+							if (response.statusCode >= 400) {
+								throw new Error(
+									`unexpected error while polling for app installation: ${response.statusCode}: ${JSON.stringify(response.body)}`,
+								);
+							}
+
+							return response.statusCode === 200 && response.body.phase === 'ready';
+						},
+					}
+				: {
+						waitUntil: { untilSuccess: true },
+						timeoutMs: 2000,
+					},
+			responseSchema: Z.object({
+				phase: Z.string(),
+			}),
 		});
 	});

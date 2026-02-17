@@ -1,4 +1,3 @@
-import { IDataObject } from 'n8n-workflow';
 import type { OperationPropertyConfig, OperationPropertyValue } from '../OperationProperty';
 import type { ApiClient } from '../../../api';
 
@@ -17,7 +16,7 @@ interface OperationExecutionContext<TProps extends OperationProperties = Operati
 
 export type OperationExecutionFunction<TProps extends OperationProperties = OperationProperties> = (
 	context: OperationExecutionContext<TProps>,
-) => Promise<IDataObject | IDataObject[]>;
+) => Promise<unknown>;
 
 export type OperationExecutionProperties<TProps extends OperationProperties = OperationProperties> =
 	{

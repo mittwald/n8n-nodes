@@ -1,4 +1,4 @@
-import { type IAllExecuteFunctions } from 'n8n-workflow';
+import { type IAllExecuteFunctions, type JsonValue } from 'n8n-workflow';
 import type {
 	RequestConfig,
 	RequestConfigWithFullResponse,
@@ -16,19 +16,19 @@ export class ApiClient {
 		this.node = node;
 	}
 
-	public async request<TResponseBody = JsonObject, TRequestBody = JsonObject>(
+	public async request<TResponseBody = JsonValue, TRequestBody = JsonObject>(
 		requestConfig: RequestConfig<TRequestBody, TResponseBody> & RequestConfigWithFullResponse,
 	): Promise<Response<TResponseBody>>;
 
-	public async request<TResponseBody = JsonObject, TRequestBody = JsonObject>(
+	public async request<TResponseBody = JsonValue, TRequestBody = JsonObject>(
 		requestConfig: RequestConfig<TRequestBody, TResponseBody> & RequestConfigWithPagination,
 	): Promise<Response<TResponseBody>>;
 
-	public async request<TResponseBody = JsonObject, TRequestBody = JsonObject>(
+	public async request<TResponseBody = JsonValue, TRequestBody = JsonObject>(
 		requestConfig: RequestConfig<TRequestBody, TResponseBody>,
 	): Promise<TResponseBody>;
 
-	public async request<TResponseBody = JsonObject, TRequestBody = JsonObject>(
+	public async request<TResponseBody = JsonValue, TRequestBody = JsonObject>(
 		requestConfig: RequestConfig<TRequestBody, TResponseBody>,
 	) {
 		const { logger, helpers } = this.node;
