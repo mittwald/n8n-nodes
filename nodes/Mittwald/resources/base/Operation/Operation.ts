@@ -1,5 +1,10 @@
 import { Resource } from '../Resource/Resource';
-import { INodeProperties, INodePropertyOptions, type IAllExecuteFunctions } from 'n8n-workflow';
+import {
+	INodeProperties,
+	INodePropertyOptions,
+	type IAllExecuteFunctions,
+	type IDataObject,
+} from 'n8n-workflow';
 import { OperationProperty } from '../OperationProperty/OperationProperty';
 import type {
 	OperationConfig,
@@ -64,21 +69,25 @@ export class Operation {
 		) as OperationExecutionProperties;
 	}
 
-	public async execute(node: IAllExecuteFunctions, itemIndex: number) {
+	public async execute(
+		node: IAllExecuteFunctions,
+		itemIndex: number,
+	): Promise<IDataObject | IDataObject[]> {
 		const apiClient = new ApiClient(node);
 		const properties = this.getExecutionProperties(node, itemIndex);
-		const executionResult = await this.executionFn({
+		const result = await this.executionFn({
 			apiClient,
 			properties,
 		});
 
-		if (
-			Array.isArray(executionResult) ||
-			(typeof executionResult === 'object' && executionResult !== null)
-		) {
-			return executionResult;
+		if (Array.isArray(result)) {
+			return result as IDataObject[];
 		}
 
-		return { result: executionResult, success: true };
+		if (result !== null && typeof result === 'object') {
+			return result as IDataObject;
+		}
+
+		return { result, success: true } as IDataObject;
 	}
 }

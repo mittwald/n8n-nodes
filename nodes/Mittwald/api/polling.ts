@@ -1,15 +1,15 @@
-import { type Logger, sleep } from 'n8n-workflow';
+import { type JsonValue, type Logger, sleep } from 'n8n-workflow';
 import type { Response } from './types';
 import type { JsonObject } from '../shared';
 
-export type PollingRequestCondition<TBody = JsonObject> = (response: Response<TBody>) => boolean;
+export type PollingRequestCondition<TBody = JsonValue> = (response: Response<TBody>) => boolean;
 
-export interface PollingConfig<TBody = JsonObject> {
+export interface PollingConfig<TBody = JsonValue> {
 	waitUntil: PollingRequestCondition<TBody> | { status: number } | { untilSuccess: true };
 	timeoutMs?: number;
 }
 
-interface PollExecutionConfig<TBody = JsonObject> {
+interface PollExecutionConfig<TBody = JsonValue> {
 	config: PollingConfig<TBody>;
 	executeRequest: () => Promise<Response<TBody>>;
 	logger: Logger;
@@ -36,7 +36,9 @@ function buildPollingFunction<TBody>(
 				return false;
 			}
 
-			throw new Error(`unexpected status code ${response.statusCode} received: ${JSON.stringify(response.body)}`);
+			throw new Error(
+				`unexpected status code ${response.statusCode} received: ${JSON.stringify(response.body)}`,
+			);
 		};
 	}
 

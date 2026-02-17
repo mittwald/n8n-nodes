@@ -1,7 +1,7 @@
 import type { JsonObject } from '../shared';
 import type { PollingConfig } from './polling';
 import Z from 'zod';
-import { IDataObject, JsonValue } from 'n8n-workflow';
+import { IDataObject, type JsonValue } from 'n8n-workflow';
 
 type ResponseHeaders = Record<string, unknown>;
 

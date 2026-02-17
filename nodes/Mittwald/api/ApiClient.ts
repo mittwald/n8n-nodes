@@ -1,4 +1,4 @@
-import { type IAllExecuteFunctions, JsonValue } from 'n8n-workflow';
+import { type IAllExecuteFunctions, type JsonValue } from 'n8n-workflow';
 import type {
 	RequestConfig,
 	RequestConfigWithFullResponse,
@@ -93,6 +93,7 @@ export class ApiClient {
 		if (returnFullResponse || pagination.enabled) {
 			return fullResponseWithPaginationToken;
 		}
+
 		return fullResponse.body;
 	}
 }
