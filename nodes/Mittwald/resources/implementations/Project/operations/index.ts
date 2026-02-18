@@ -1,4 +1,8 @@
 import './create';
+import './createSftpUser';
+import './createSshUser';
+import './deleteSftpUser';
+import './deleteSshUser';
 import './delete';
 import './get';
 import './list';
