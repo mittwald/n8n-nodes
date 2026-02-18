@@ -97,7 +97,7 @@ export default projectResource
 					password,
 				},
 				directories: parsedDirectories,
-				expiresAt: expiresAt ? new Date(expiresAt).toISOString() : undefined,
+				expiresAt: expiresAt ? expiresAt : undefined,
 			},
 		});
 	});
