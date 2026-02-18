@@ -2,6 +2,53 @@ import { domainResource } from '../resource';
 import Z from 'zod';
 import appInstallationProperty from '../../shared/appInstallationProperty';
 
+const LIST_OF_SECOND_LEVEL_TLDS = [
+	'co.uk',
+	'org.uk',
+	'me.uk',
+	'co.at',
+	'bz.it',
+	'co.in',
+	'co.nz',
+	'com.au',
+	'com.tw',
+	'com.pl',
+	'org.au',
+	'de.com',
+	'or.at',
+	'org.il',
+	'com.mx',
+	'org.pl',
+	'com.pt',
+	'co.id',
+	'cn.com',
+	'ltd.uk',
+	'co.jp',
+	'firm.in',
+	'gen.in',
+	'ind.in',
+	'org.in',
+	'net.in',
+	'co.za',
+	'uk.com',
+	'com.de',
+	'co.hu',
+	'ae.org',
+	'co.nl',
+	'com.co',
+	'net.au',
+	'id.au',
+	'com.ph',
+	'org.ph',
+	'net.ph',
+	'com.cm',
+	'net.cm',
+	'co.cm',
+	'com.pe',
+	'org.pe',
+	'net.pe',
+];
+
 domainResource
 	.addOperation({
 		name: 'Create',
@@ -21,7 +68,10 @@ domainResource
 		const { fullName, targetInstallation } = properties;
 
 		const isSubdomain = fullName.split('.').length > 2;
-		const baseDomain = isSubdomain ? fullName.split('.').slice(1).join('.') : fullName;
+		let baseDomain = fullName.split('.').slice(-2).join('.');
+		if (LIST_OF_SECOND_LEVEL_TLDS.includes(baseDomain)) {
+			baseDomain = fullName.split('.').slice(-3).join('.');
+		}
 
 		//TODO: allow to order domains with handles
 		if (!isSubdomain) {
