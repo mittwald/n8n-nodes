@@ -48,6 +48,8 @@ This node provides integration with the [mittwald API v2](https://developer.mitt
 - **Delete an SFTP user**: Delete an SFTP user from a project (parameter: SFTP User ID)
 - **Delete a project**: Delete an existing project
 - **Get a project**: Get details of a specific project
+- **Get an SSH user**: Get details of an SSH user by ID (parameter: SSH User ID)
+- **Get an SFTP user**: Get details of an SFTP user by ID (parameter: SFTP User ID)
 - **List all projects**: Get a list of all projects
 - **Accept an invite to a project**: Accept a project invitation using an invitation token
 - **Create an invite to a project**: Create a project invitation
