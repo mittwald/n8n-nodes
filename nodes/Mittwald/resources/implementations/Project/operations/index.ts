@@ -1,6 +1,12 @@
 import './create';
+import './createSftpUser';
+import './createSshUser';
+import './deleteSftpUser';
+import './deleteSshUser';
 import './delete';
 import './get';
+import './listSftpUsers';
+import './listSshUsers';
 import './list';
 import './membershipDelete';
 import './membershipGet';

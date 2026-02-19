@@ -42,8 +42,14 @@ This node provides integration with the [mittwald API v2](https://developer.mitt
 ### Project
 
 - **Create a project on a server**: Create a new project on a server
+- **Create an SSH user**: Create an SSH user for a project (parameters: Project, Name, Password, optional Expires At)
+- **Create an SFTP user**: Create an SFTP user for a project (parameters: Project, Name, Password, Access Level, Directories, optional Expires At)
+- **Delete an SSH user**: Delete an SSH user from a project (parameter: SSH User ID)
+- **Delete an SFTP user**: Delete an SFTP user from a project (parameter: SFTP User ID)
 - **Delete a project**: Delete an existing project
 - **Get a project**: Get details of a specific project
+- **List all SSH users**: Get a list of all SSH users in a project (parameter: Project)
+- **List all SFTP users**: Get a list of all SFTP users in a project (parameter: Project)
 - **List all projects**: Get a list of all projects
 - **Accept an invite to a project**: Accept a project invitation using an invitation token
 - **Create an invite to a project**: Create a project invitation
