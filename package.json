@@ -73,7 +73,5 @@
 	"peerDependencies": {
 		"n8n-workflow": "*"
 	},
-	"resolutions": {
-		"ajv": "8.18.0"
-	}
+	"resolutions": {}
 }
