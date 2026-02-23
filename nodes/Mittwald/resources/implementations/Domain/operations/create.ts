@@ -1,53 +1,7 @@
 import { domainResource } from '../resource';
 import Z from 'zod';
 import appInstallationProperty from '../../shared/appInstallationProperty';
-
-const LIST_OF_SECOND_LEVEL_TLDS = [
-	'co.uk',
-	'org.uk',
-	'me.uk',
-	'co.at',
-	'bz.it',
-	'co.in',
-	'co.nz',
-	'com.au',
-	'com.tw',
-	'com.pl',
-	'org.au',
-	'de.com',
-	'or.at',
-	'org.il',
-	'com.mx',
-	'org.pl',
-	'com.pt',
-	'co.id',
-	'cn.com',
-	'ltd.uk',
-	'co.jp',
-	'firm.in',
-	'gen.in',
-	'ind.in',
-	'org.in',
-	'net.in',
-	'co.za',
-	'uk.com',
-	'com.de',
-	'co.hu',
-	'ae.org',
-	'co.nl',
-	'com.co',
-	'net.au',
-	'id.au',
-	'com.ph',
-	'org.ph',
-	'net.ph',
-	'com.cm',
-	'net.cm',
-	'co.cm',
-	'com.pe',
-	'org.pe',
-	'net.pe',
-];
+import { extractBaseDomain, isSubdomain } from './domainHelper';
 
 domainResource
 	.addOperation({
@@ -67,14 +21,10 @@ domainResource
 		const { properties, apiClient } = context;
 		const { fullName, targetInstallation } = properties;
 
-		const isSubdomain = fullName.split('.').length > 2;
-		let baseDomain = fullName.split('.').slice(-2).join('.');
-		if (LIST_OF_SECOND_LEVEL_TLDS.includes(baseDomain)) {
-			baseDomain = fullName.split('.').slice(-3).join('.');
-		}
+		const baseDomain = extractBaseDomain(fullName);
 
 		//TODO: allow to order domains with handles
-		if (!isSubdomain) {
+		if (!isSubdomain(fullName)) {
 			throw new Error(
 				'Only subdomains can be created. Please provide a full domain name including at least one subdomain.',
 			);
