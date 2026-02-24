@@ -1,6 +1,7 @@
 import { domainResource } from '../resource';
 import Z from 'zod';
 import appInstallationProperty from '../../shared/appInstallationProperty';
+import { extractBaseDomain, isSubdomain } from './domainHelper';
 
 domainResource
 	.addOperation({
@@ -20,11 +21,10 @@ domainResource
 		const { properties, apiClient } = context;
 		const { fullName, targetInstallation } = properties;
 
-		const isSubdomain = fullName.split('.').length > 2;
-		const baseDomain = isSubdomain ? fullName.split('.').slice(1).join('.') : fullName;
+		const baseDomain = extractBaseDomain(fullName);
 
 		//TODO: allow to order domains with handles
-		if (!isSubdomain) {
+		if (!isSubdomain(fullName)) {
 			throw new Error(
 				'Only subdomains can be created. Please provide a full domain name including at least one subdomain.',
 			);
