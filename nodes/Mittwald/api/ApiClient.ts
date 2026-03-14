@@ -65,6 +65,9 @@ export class ApiClient {
 				baseURL: config.apiBaseUrl,
 				ignoreHttpStatusErrors: !!polling,
 				json: true,
+				headers: {
+					'User-Agent': config.userAgent,
+				},
 			}) as Promise<Response<TResponseBody>>;
 
 		const fullResponse = polling
