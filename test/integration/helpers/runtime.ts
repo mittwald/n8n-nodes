@@ -9,7 +9,7 @@ type SearchParamsLike = {
 	set: (key: string, value: string) => void;
 };
 
-type UrlLike = {
+export type UrlLike = {
 	searchParams: SearchParamsLike;
 	toString: () => string;
 };

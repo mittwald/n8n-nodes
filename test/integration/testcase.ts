@@ -11,7 +11,11 @@ export interface TestcaseContext {
 	env: ReturnType<typeof getIntegrationEnv>;
 }
 
-export function testcase(name: string, fn: (context: TestcaseContext) => Promise<void>) {
+export function testcase(
+	name: string,
+	fn: (context: TestcaseContext) => Promise<void>,
+	timeoutMs = 10_000,
+) {
 	it(
 		name,
 		async () => {
@@ -59,7 +63,7 @@ export function testcase(name: string, fn: (context: TestcaseContext) => Promise
 				throw new AggregateError(teardownErrors, 'One or more teardown steps failed');
 			}
 		},
-		10_000,
+		timeoutMs,
 	);
 }
 

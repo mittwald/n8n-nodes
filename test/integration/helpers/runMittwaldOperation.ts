@@ -27,6 +27,7 @@ const mittwaldNodeName = 'mittwald';
 const mittwaldCredentialType = 'mittwaldApi';
 
 let cachedCredentialId: string | undefined;
+const n8nClientPromise = N8nApiClient.getInstance(getIntegrationEnv());
 
 export async function runMittwaldOperation({
 	resource,
@@ -34,7 +35,7 @@ export async function runMittwaldOperation({
 	parameters = {},
 }: RunMittwaldOperationInput): Promise<RunMittwaldOperationResult> {
 	const env = getIntegrationEnv();
-	const n8nClient = new N8nApiClient(env);
+	const n8nClient = await n8nClientPromise;
 	const credentialId = await resolveMittwaldCredentialId(n8nClient, env);
 	const webhookPath = env.n8nTriggerMode === 'webhook' ? `it-${runId('webhook')}` : undefined;
 

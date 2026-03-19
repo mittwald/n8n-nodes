@@ -60,6 +60,9 @@ export class N8nApiClient {
 	private readonly n8nRestLoginEmail?: string;
 	private readonly n8nRestLoginPassword?: string;
 	private restCookie?: string;
+	private restLoginPromise?: Promise<void>;
+
+	private static instance?: N8nApiClient;
 
 	public constructor(env: IntegrationEnv) {
 		this.n8nBaseUrl = env.n8nBaseUrl;
@@ -72,6 +75,15 @@ export class N8nApiClient {
 		this.n8nPollIntervalMs = env.n8nPollIntervalMs;
 		this.n8nRestLoginEmail = env.n8nRestLoginEmail;
 		this.n8nRestLoginPassword = env.n8nRestLoginPassword;
+	}
+
+	public static async getInstance(env: IntegrationEnv): Promise<N8nApiClient> {
+		if (!N8nApiClient.instance) {
+			N8nApiClient.instance = new N8nApiClient(env);
+		}
+
+		await N8nApiClient.instance.ensureRestLogin();
+		return N8nApiClient.instance;
 	}
 
 	public async createWorkflow(definition: N8nWorkflowDefinition): Promise<string> {
@@ -92,7 +104,6 @@ export class N8nApiClient {
 	}
 
 	public async deleteWorkflow(workflowId: string): Promise<void> {
-		return;
 		await this.request({
 			path: `/workflows/${workflowId}`,
 			method: 'DELETE',
@@ -523,31 +534,14 @@ export class N8nApiClient {
 		body?: unknown;
 		expectedStatusCodes?: number[];
 	}): Promise<unknown> {
+		await this.ensureRestLogin();
+
 		const headers: Record<string, string> = {
 			'X-N8N-API-KEY': this.n8nApiKey,
 		};
 
 		if (this.n8nBasicAuthHeader) {
 			headers.Authorization = this.n8nBasicAuthHeader;
-		}
-		const url = createUrl('/rest/login', this.n8nBaseUrl);
-		if (!this.restCookie && this.n8nRestLoginEmail && this.n8nRestLoginPassword) {
-			const loginResponse = await runtimeFetch(url.toString(), {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json',
-				},
-				body: JSON.stringify({
-					emailOrLdapLoginId: this.n8nRestLoginEmail,
-					password: this.n8nRestLoginPassword,
-				}),
-			});
-
-			const setCookieHeader = loginResponse.headers?.get('set-cookie') ?? '';
-			this.restCookie = extractCookieHeader(setCookieHeader);
-			if (!this.restCookie) {
-				throw new Error('n8n login did not return a session cookie');
-			}
 		}
 
 		if (this.restCookie) {
@@ -563,6 +557,46 @@ export class N8nApiClient {
 			expectedStatusCodes,
 			headers,
 		});
+	}
+
+	private async ensureRestLogin(): Promise<void> {
+		if (this.restCookie) {
+			return;
+		}
+
+		if (!this.n8nRestLoginEmail || !this.n8nRestLoginPassword) {
+			throw new Error(
+				'n8n REST API requests require N8N_REST_LOGIN_EMAIL and N8N_REST_LOGIN_PASSWORD.',
+			);
+		}
+
+		if (!this.restLoginPromise) {
+			this.restLoginPromise = this.generateCookie().finally(() => {
+				this.restLoginPromise = undefined;
+			});
+		}
+
+		await this.restLoginPromise;
+	}
+
+	private async generateCookie() {
+		const url = createUrl('/rest/login', this.n8nBaseUrl);
+		const loginResponse = await runtimeFetch(url.toString(), {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+			},
+			body: JSON.stringify({
+				emailOrLdapLoginId: this.n8nRestLoginEmail,
+				password: this.n8nRestLoginPassword,
+			}),
+		});
+
+		const setCookieHeader = loginResponse.headers?.get('set-cookie') ?? '';
+		this.restCookie = extractCookieHeader(setCookieHeader);
+		if (!this.restCookie) {
+			throw new Error('n8n login did not return a session cookie');
+		}
 	}
 }
 
