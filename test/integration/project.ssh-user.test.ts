@@ -1,8 +1,8 @@
 /* eslint-disable @n8n/community-nodes/no-restricted-imports */
-import { describe, expect } from 'vitest';
-import { hasIntegrationEnv, runId, runMittwaldOperation } from './helpers';
+import { expect } from 'vitest';
+import { runId, runMittwaldOperation } from './helpers';
 import { sleep } from './helpers/runtime';
-import { readRequiredString, testcase } from './testcase';
+import { integrationDescribe, readOptionalString, readRequiredString, testcase } from './testcase';
 
 type WaitForRemovalInput = {
 	context: {
@@ -13,8 +13,6 @@ type WaitForRemovalInput = {
 	timeoutMs?: number;
 	pollIntervalMs?: number;
 };
-
-const integrationDescribe = hasIntegrationEnv() ? describe : describe.skip;
 
 integrationDescribe('Project / SSH User (integration)', () => {
 	testcase(
@@ -142,9 +140,4 @@ async function waitForSshUserRemoval({
 	}
 
 	throw new Error(`Timed out waiting for SSH user "${sshUserId}" to be removed`);
-}
-
-function readOptionalString(source: Record<string, unknown>, key: string): string | undefined {
-	const value = source[key];
-	return typeof value === 'string' ? value : undefined;
 }

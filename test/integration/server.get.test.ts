@@ -1,9 +1,6 @@
 /* eslint-disable @n8n/community-nodes/no-restricted-imports */
-import { describe, expect } from 'vitest';
-import { hasIntegrationEnv } from './helpers';
-import { testcase } from './testcase';
-
-const integrationDescribe = hasIntegrationEnv() ? describe : describe.skip;
+import { expect } from 'vitest';
+import { integrationDescribe, testcase } from './testcase';
 
 integrationDescribe('Server / Get (integration)', () => {
 	testcase('fetches a single server by id', async ({ runOperation, env }) => {

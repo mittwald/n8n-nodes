@@ -1,6 +1,7 @@
 import { getIntegrationEnv, type IntegrationEnv } from './env';
 import {
 	N8nApiClient,
+	type N8nCredentialReference,
 	type N8nExecutionItem,
 	type N8nRunResult,
 	type N8nWorkflowDefinition,
@@ -11,7 +12,6 @@ import { runId } from './runMittwaldOperation';
 type JsonObject = Record<string, unknown>;
 
 export const defaultManualTriggerNodeName = 'Start Node';
-export const defaultWebhookTriggerNodeName = 'Webhook Trigger';
 
 export function createManualTriggerNode({
 	name = defaultManualTriggerNodeName,
@@ -37,9 +37,15 @@ export type MittwaldNodeInput = {
 	resource: string;
 	operation: string;
 	parameters?: JsonObject;
+	credential?: N8nCredentialReference;
 	id?: string;
 	position?: [number, number];
 	typeVersion?: number;
+};
+
+export type NodeReference = {
+	mode: 'id';
+	value: string;
 };
 
 export function createMittwaldNode(
@@ -49,14 +55,20 @@ export function createMittwaldNode(
 		resource,
 		operation,
 		parameters = {},
+		credential,
 		id,
 		position = [560, 300],
 		typeVersion = 1,
 	}: MittwaldNodeInput,
 ): N8nWorkflowNode {
-	if (!env.n8nMittwaldCredentialId) {
+	if (!credential && !env.n8nMittwaldCredentialId) {
 		throw new Error('Set N8N_MITTWALD_CREDENTIAL_ID for workflow-based tests.');
 	}
+
+	const credentialReference = credential ?? {
+		name: env.n8nMittwaldCredentialName,
+		id: env.n8nMittwaldCredentialId as string,
+	};
 
 	return {
 		id: id ?? `mittwald-${normalizeNodeId(name) || runId('node')}`,
@@ -70,11 +82,30 @@ export function createMittwaldNode(
 			...parameters,
 		},
 		credentials: {
-			mittwaldApi: {
-				name: env.n8nMittwaldCredentialName,
-				id: env.n8nMittwaldCredentialId,
-			},
+			mittwaldApi: credentialReference,
 		},
+	};
+}
+
+export function createMittwaldWorkflow(
+	env: IntegrationEnv,
+	steps: MittwaldNodeInput[],
+	name?: string,
+): WorkflowTestDefinition {
+	return createSequentialWorkflow(
+		[createManualTriggerNode(), ...steps.map((step) => createMittwaldNode(env, step))],
+		name,
+	);
+}
+
+export function nodeJsonExpression(nodeName: string, field = 'id'): string {
+	return `={{ $items("${nodeName}")[0].json["${field}"] }}`;
+}
+
+export function nodeIdReference(nodeName: string, field = 'id'): NodeReference {
+	return {
+		mode: 'id',
+		value: nodeJsonExpression(nodeName, field),
 	};
 }
 
@@ -93,28 +124,6 @@ export function createSequentialWorkflow(
 	};
 }
 
-export function createWorkflowBuilder({
-	name,
-}: {
-	name?: string;
-} = {}) {
-	const nodes: N8nWorkflowNode[] = [];
-
-	return {
-		append(node: N8nWorkflowNode) {
-			nodes.push(node);
-			return this;
-		},
-		appendMany(newNodes: N8nWorkflowNode[]) {
-			nodes.push(...newNodes);
-			return this;
-		},
-		build(): WorkflowTestDefinition {
-			return createSequentialWorkflow(nodes, name);
-		},
-	};
-}
-
 export type WorkflowTestDefinition = Omit<N8nWorkflowDefinition, 'name'> & {
 	name?: string;
 };
@@ -124,8 +133,6 @@ export interface RunWorkflowInput {
 	triggerNodeName?: string;
 	captureNodeNames?: string[];
 	allowEmptyNodeNames?: string[];
-	webhookPath?: string;
-	httpMethod?: 'GET' | 'POST';
 }
 
 export interface RunWorkflowResult {
@@ -147,10 +154,7 @@ export async function runWorkflow({
 	triggerNodeName = defaultManualTriggerNodeName,
 	captureNodeNames = [],
 	allowEmptyNodeNames = [],
-	webhookPath,
-	httpMethod = 'POST',
 }: RunWorkflowInput): Promise<RunWorkflowResult> {
-	const env = getIntegrationEnv();
 	const n8nClient = await n8nClientPromise;
 	const workflowDefinition: N8nWorkflowDefinition = {
 		settings: {},
@@ -164,22 +168,13 @@ export async function runWorkflow({
 	let runError: unknown;
 
 	try {
-		runResult =
-			env.n8nTriggerMode === 'webhook'
-				? await runWorkflowViaWebhook({
-						workflowId,
-						webhookPath,
-						httpMethod,
-						client: n8nClient,
-					})
-				: await n8nClient.runWorkflowViaRestRun({
-						workflowId,
-						triggerNodeName,
-					});
+		runResult = await n8nClient.runWorkflowViaRestRun({
+			workflowId,
+			triggerNodeName,
+		});
 	} catch (error) {
 		runError = error;
 	}
-
 	let cleanupError: unknown;
 	try {
 		await n8nClient.deleteWorkflow(workflowId);
@@ -241,26 +236,6 @@ export async function runWorkflow({
 			return items[0];
 		},
 	};
-}
-
-async function runWorkflowViaWebhook({
-	workflowId,
-	webhookPath,
-	httpMethod,
-	client,
-}: {
-	workflowId: string;
-	webhookPath?: string;
-	httpMethod: 'GET' | 'POST';
-	client: N8nApiClient;
-}): Promise<N8nRunResult> {
-	if (!webhookPath) {
-		throw new Error(
-			'Webhook trigger mode requires a webhookPath. Provide it in runWorkflow({ webhookPath }).',
-		);
-	}
-
-	return client.runWorkflowViaWebhook({ workflowId, webhookPath, httpMethod });
 }
 
 function toError(value: unknown): Error {

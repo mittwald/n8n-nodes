@@ -1,9 +1,6 @@
 /* eslint-disable @n8n/community-nodes/no-restricted-imports */
-import { describe, expect } from 'vitest';
-import { hasIntegrationEnv } from './helpers';
-import { testcase } from './testcase';
-
-const integrationDescribe = hasIntegrationEnv() ? describe : describe.skip;
+import { expect } from 'vitest';
+import { integrationDescribe, readOptionalString, testcase } from './testcase';
 
 integrationDescribe('Server / List (integration)', () => {
 	testcase('lists servers and includes the configured test server', async ({ runOperation, env }) => {
@@ -19,8 +16,3 @@ integrationDescribe('Server / List (integration)', () => {
 		expect(serverIds).toContain(env.testServerId);
 	});
 });
-
-function readOptionalString(source: Record<string, unknown>, key: string): string | undefined {
-	const value = source[key];
-	return typeof value === 'string' ? value : undefined;
-}

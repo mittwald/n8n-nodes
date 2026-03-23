@@ -23,7 +23,6 @@ export interface RunMittwaldOperationResult {
 }
 
 const manualTriggerNodeName = 'Start Node';
-const webhookTriggerNodeName = 'Webhook Trigger';
 const mittwaldNodeName = 'mittwald';
 const mittwaldCredentialType = 'mittwaldApi';
 
@@ -39,31 +38,15 @@ export async function runMittwaldOperation({
 	const env = getIntegrationEnv();
 	const n8nClient = await n8nClientPromise;
 	const credentialId = await resolveMittwaldCredentialId(n8nClient, env);
-	const webhookPath = env.n8nTriggerMode === 'webhook' ? `it-${runId('webhook')}` : undefined;
-
-	const triggerNodeName =
-		env.n8nTriggerMode === 'webhook' ? webhookTriggerNodeName : manualTriggerNodeName;
-	const triggerNode: N8nWorkflowNode =
-		env.n8nTriggerMode === 'webhook'
-			? {
-					id: 'webhook-trigger',
-					name: triggerNodeName,
-					type: 'n8n-nodes-base.webhook',
-					typeVersion: 1,
-					position: [280, 300],
-					parameters: {
-						path: webhookPath,
-						httpMethod: 'POST',
-					},
-				}
-			: {
-					id: 'manual-trigger',
-					name: triggerNodeName,
-					type: 'n8n-nodes-base.manualTrigger',
-					typeVersion: 1,
-					position: [280, 300],
-					parameters: {},
-				};
+	const triggerNodeName = manualTriggerNodeName;
+	const triggerNode: N8nWorkflowNode = {
+		id: 'manual-trigger',
+		name: triggerNodeName,
+		type: 'n8n-nodes-base.manualTrigger',
+		typeVersion: 1,
+		position: [280, 300],
+		parameters: {},
+	};
 
 	const workflowDefinition: N8nWorkflowDefinition = {
 		name: `IT ${resource}/${operation} ${runId()}`,
@@ -111,17 +94,10 @@ export async function runMittwaldOperation({
 	let runError: unknown;
 
 	try {
-		const runResult =
-			env.n8nTriggerMode === 'webhook'
-				? await n8nClient.runWorkflowViaWebhook({
-						workflowId,
-						webhookPath: webhookPath ?? '',
-						httpMethod: 'POST',
-					})
-				: await n8nClient.runWorkflowViaRestRun({
-						workflowId,
-						triggerNodeName: manualTriggerNodeName,
-					});
+		const runResult = await n8nClient.runWorkflowViaRestRun({
+			workflowId,
+			triggerNodeName: manualTriggerNodeName,
+		});
 		executionId = runResult.executionId;
 		items = n8nClient.extractNodeOutputItems(runResult.execution, mittwaldNodeName);
 	} catch (error) {

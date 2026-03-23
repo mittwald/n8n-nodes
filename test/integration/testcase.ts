@@ -1,6 +1,12 @@
 /* eslint-disable @n8n/community-nodes/no-restricted-imports */
-import { it } from 'vitest';
-import { getIntegrationEnv, MittwaldApiClient, runMittwaldOperation, runWorkflow } from './helpers';
+import { describe, it } from 'vitest';
+import {
+	getIntegrationEnv,
+	hasIntegrationEnv,
+	MittwaldApiClient,
+	runMittwaldOperation,
+	runWorkflow,
+} from './helpers';
 
 type TeardownFn = () => Promise<void> | void;
 
@@ -10,6 +16,10 @@ export interface TestcaseContext {
 	runWorkflow: typeof runWorkflow;
 	mittwaldApi: MittwaldApiClient;
 	env: ReturnType<typeof getIntegrationEnv>;
+}
+
+export function integrationDescribe(name: string, fn: () => void): void {
+	(hasIntegrationEnv() ? describe : describe.skip)(name, fn);
 }
 
 export function testcase(
@@ -84,4 +94,12 @@ export function readRequiredString(source: Record<string, unknown>, key: string)
 	}
 
 	throw new Error(`Expected property "${key}" to be a non-empty string`);
+}
+
+export function readOptionalString(
+	source: Record<string, unknown>,
+	key: string,
+): string | undefined {
+	const value = source[key];
+	return typeof value === 'string' ? value : undefined;
 }

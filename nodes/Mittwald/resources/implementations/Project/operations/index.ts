@@ -8,6 +8,7 @@ import './get';
 import './listSftpUsers';
 import './listSshUsers';
 import './list';
+import './listInvites';
 import './membershipDelete';
 import './membershipGet';
 import './inviteAccept';

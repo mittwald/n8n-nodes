@@ -53,6 +53,18 @@ export class MittwaldApiClient {
 		return record as MittwaldProject;
 	}
 
+	public async listProjects(): Promise<MittwaldProject[]> {
+		const response = await this.request({
+			path: '/v2/projects',
+			method: 'GET',
+		});
+		if (!Array.isArray(response)) {
+			throw new Error('Expected projects list response to be an array');
+		}
+
+		return response as MittwaldProject[];
+	}
+
 	public async deleteProject(projectId: string): Promise<void> {
 		await this.request({
 			path: `/v2/projects/${projectId}`,

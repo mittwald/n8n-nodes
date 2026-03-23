@@ -1,6 +1,6 @@
 import type { IntegrationEnv } from './env';
 import { HttpError, requestJson } from './http';
-import { base64Encode, createUrl, runtimeFetch, sleep } from './runtime';
+import { createUrl, runtimeFetch, sleep } from './runtime';
 
 type JsonObject = Record<string, unknown>;
 type JsonArray = unknown[];
@@ -53,12 +53,11 @@ export class N8nApiClient {
 	private readonly n8nApiKey: string;
 	private readonly n8nApiBasePath: string;
 	private readonly n8nRestBasePath: string;
-	private readonly n8nWebhookBasePath: string;
 	private readonly n8nBasicAuthHeader?: string;
 	private readonly n8nRunTimeoutMs: number;
 	private readonly n8nPollIntervalMs: number;
-	private readonly n8nRestLoginEmail?: string;
-	private readonly n8nRestLoginPassword?: string;
+	private readonly n8nRestLoginEmail: string;
+	private readonly n8nRestLoginPassword: string;
 	private restCookie?: string;
 	private restLoginPromise?: Promise<void>;
 
@@ -69,8 +68,7 @@ export class N8nApiClient {
 		this.n8nApiKey = env.n8nApiKey;
 		this.n8nApiBasePath = trimTrailingSlash(env.n8nApiBasePath);
 		this.n8nRestBasePath = trimTrailingSlash(env.n8nRestBasePath);
-		this.n8nWebhookBasePath = trimTrailingSlash(env.n8nWebhookBasePath);
-		this.n8nBasicAuthHeader = buildBasicAuthHeader(env.n8nBasicAuthUser, env.n8nBasicAuthPassword);
+
 		this.n8nRunTimeoutMs = env.n8nRunTimeoutMs;
 		this.n8nPollIntervalMs = env.n8nPollIntervalMs;
 		this.n8nRestLoginEmail = env.n8nRestLoginEmail;
@@ -111,83 +109,6 @@ export class N8nApiClient {
 		});
 	}
 
-	public async activateWorkflow(workflowId: string): Promise<void> {
-		try {
-			await this.request({
-				path: `/workflows/${workflowId}/activate`,
-				method: 'POST',
-				expectedStatusCodes: [200, 204],
-			});
-		} catch (error) {
-			if (error instanceof HttpError && error.statusCode === 404) {
-				await this.requestRest({
-					path: `/workflows/${workflowId}/activate`,
-					method: 'POST',
-					expectedStatusCodes: [200, 204],
-				});
-				return;
-			}
-			throw error;
-		}
-	}
-
-	public async deactivateWorkflow(workflowId: string): Promise<void> {
-		try {
-			await this.request({
-				path: `/workflows/${workflowId}/deactivate`,
-				method: 'POST',
-				expectedStatusCodes: [200, 204],
-			});
-		} catch (error) {
-			if (error instanceof HttpError && error.statusCode === 404) {
-				await this.requestRest({
-					path: `/workflows/${workflowId}/deactivate`,
-					method: 'POST',
-					expectedStatusCodes: [200, 204],
-				});
-				return;
-			}
-			throw error;
-		}
-	}
-
-	public async runWorkflow(workflowId: string): Promise<N8nRunResult> {
-		const runPayload = await this.startWorkflowRun(workflowId);
-		const directExecution = tryGetExecution(runPayload);
-		if (directExecution && this.isExecutionFinished(directExecution)) {
-			const directExecutionId = extractString(directExecution, 'id') ?? workflowId;
-			return { executionId: directExecutionId, execution: directExecution };
-		}
-
-		const executionId = extractExecutionId(runPayload);
-		if (!executionId) {
-			throw new Error('n8n did not return an execution id');
-		}
-
-		const execution = await this.waitForExecution(executionId);
-		return { executionId, execution };
-	}
-
-	public async runWorkflowViaWebhook({
-		workflowId,
-		webhookPath,
-		httpMethod = 'POST',
-	}: {
-		workflowId: string;
-		webhookPath: string;
-		httpMethod?: 'GET' | 'POST';
-	}): Promise<N8nRunResult> {
-		const existingExecutions = await this.listExecutions({ workflowId, limit: 10 });
-		const existingIds = new Set(existingExecutions.map((execution) => execution.id));
-
-		await this.activateWorkflow(workflowId);
-		await this.triggerWebhook(webhookPath, httpMethod);
-
-		const executionId = await this.waitForNewExecution(workflowId, existingIds);
-		const execution = await this.waitForExecution(executionId);
-		return { executionId, execution };
-	}
-
 	public async runWorkflowViaRestRun({
 		workflowId,
 		triggerNodeName = 'Start Node',
@@ -198,7 +119,7 @@ export class N8nApiClient {
 		const existingExecutions = await this.listExecutions({ workflowId, limit: 10 });
 		const existingIds = new Set(existingExecutions.map((execution) => execution.id));
 
-		await this.requestRest({
+		const runPayload = await this.requestRest({
 			path: `/workflows/${workflowId}/run`,
 			method: 'POST',
 			expectedStatusCodes: [200, 201, 202],
@@ -211,7 +132,19 @@ export class N8nApiClient {
 			},
 		});
 
-		const executionId = await this.waitForNewExecution(workflowId, existingIds);
+		const directExecution = tryGetExecution(runPayload);
+		if (directExecution && this.isExecutionFinished(directExecution)) {
+			const directExecutionId = extractString(directExecution, 'id') ?? workflowId;
+			return { executionId: directExecutionId, execution: directExecution };
+		}
+
+		const payloadError = extractRunPayloadError(runPayload);
+		if (payloadError) {
+			throw new Error(`n8n workflow run failed: ${payloadError}`);
+		}
+
+		const executionId =
+			extractExecutionId(runPayload) ?? (await this.waitForNewExecution(workflowId, existingIds));
 		const execution = await this.waitForExecution(executionId);
 		return { executionId, execution };
 	}
@@ -273,6 +206,14 @@ export class N8nApiClient {
 		}
 
 		return { id, name: createdName, type: createdType };
+	}
+
+	public async deleteCredential(credentialId: string): Promise<void> {
+		await this.request({
+			path: `/credentials/${credentialId}`,
+			method: 'DELETE',
+			expectedStatusCodes: [200, 202, 204, 404],
+		});
 	}
 
 	public async listExecutions({
@@ -353,60 +294,6 @@ export class N8nApiClient {
 		});
 	}
 
-	private async startWorkflowRun(workflowId: string): Promise<unknown> {
-		try {
-			return await this.request({
-				path: `/workflows/${workflowId}/run`,
-				method: 'POST',
-				query: {
-					waitTillComplete: true,
-				},
-			});
-		} catch (error) {
-			if (error instanceof HttpError) {
-				if (error.statusCode === 404) {
-					return await this.startWorkflowRunViaRest(workflowId);
-				}
-				if (error.statusCode === 400) {
-					return await this.request({
-						path: `/workflows/${workflowId}/run`,
-						method: 'POST',
-					});
-				}
-			}
-
-			throw error;
-		}
-	}
-
-	private async startWorkflowRunViaRest(workflowId: string): Promise<unknown> {
-		if (!this.n8nBasicAuthHeader) {
-			throw new Error(
-				'n8n REST API requires Basic Auth. Set N8N_BASIC_AUTH_USER and N8N_BASIC_AUTH_PASSWORD.',
-			);
-		}
-
-		return await this.requestRest({
-			path: `/workflows/${workflowId}/run`,
-			method: 'POST',
-		});
-	}
-
-	private async triggerWebhook(path: string, method: 'GET' | 'POST'): Promise<void> {
-		const headers: Record<string, string> = {};
-		if (this.n8nBasicAuthHeader) {
-			headers.Authorization = this.n8nBasicAuthHeader;
-		}
-
-		await requestJson({
-			baseUrl: this.n8nBaseUrl,
-			path: joinPath(this.n8nWebhookBasePath, path),
-			method,
-			headers,
-			expectedStatusCodes: [200, 201, 202, 204],
-		});
-	}
-
 	private async waitForNewExecution(workflowId: string, existingIds: Set<string>): Promise<string> {
 		const deadline = Date.now() + this.n8nRunTimeoutMs;
 
@@ -419,7 +306,9 @@ export class N8nApiClient {
 			await sleep(this.n8nPollIntervalMs);
 		}
 
-		throw new Error(`No new execution found for workflow ${workflowId}`);
+		throw new Error(
+			`No new execution found for workflow ${workflowId}. This can happen if the workflow is invalid or failed to start.`,
+		);
 	}
 
 	private async waitForExecution(executionId: string): Promise<JsonObject> {
@@ -462,14 +351,16 @@ export class N8nApiClient {
 	}
 
 	private isExecutionFinished(execution: JsonObject): boolean {
+		const status = execution.status;
+		if (typeof status === 'string') {
+			if (!['new', 'running', 'waiting'].includes(status)) {
+				return true;
+			}
+		}
+
 		const finished = execution.finished;
 		if (typeof finished === 'boolean') {
 			return finished;
-		}
-
-		const status = execution.status;
-		if (typeof status === 'string') {
-			return !['new', 'running', 'waiting'].includes(status);
 		}
 
 		return false;
@@ -643,6 +534,29 @@ function extractExecutionId(payload: unknown): string | undefined {
 	return extractString(dataRecord, 'executionId') ?? extractString(dataRecord, 'id');
 }
 
+function extractRunPayloadError(payload: unknown): string | undefined {
+	const root = asRecord(payload);
+	if (!root) {
+		return undefined;
+	}
+
+	const directMessage = extractString(root, 'message');
+	if (directMessage) {
+		return directMessage;
+	}
+
+	const errorRecord = asRecord(root.error) ?? asRecord(asRecord(root.data)?.error);
+	if (!errorRecord) {
+		return undefined;
+	}
+
+	return (
+		extractString(errorRecord, 'message') ??
+		extractString(errorRecord, 'description') ??
+		extractString(errorRecord, 'name')
+	);
+}
+
 function extractString(record: JsonObject, key: string): string | undefined {
 	const value = record[key];
 	if (typeof value === 'string' && value.length > 0) {
@@ -685,12 +599,6 @@ function trimTrailingSlash(value: string): string {
 	return value.endsWith('/') ? value.slice(0, -1) : value;
 }
 
-function joinPath(basePath: string, segment: string): string {
-	const normalizedBase = basePath.endsWith('/') ? basePath.slice(0, -1) : basePath;
-	const normalizedSegment = segment.startsWith('/') ? segment.slice(1) : segment;
-	return `${normalizedBase}/${normalizedSegment}`;
-}
-
 function extractCookieHeader(setCookieHeader: string): string | undefined {
 	if (!setCookieHeader) {
 		return undefined;
@@ -731,15 +639,4 @@ function buildNodeExecutionError(nodeName: string, runError: JsonObject): Error 
 	const contextDetails = data ? ` Details: ${JSON.stringify(data)}` : '';
 	const httpDetails = httpCode ? ` (HTTP ${httpCode})` : '';
 	return new Error(`Node "${nodeName}" failed${httpDetails}: ${message}.${contextDetails}`);
-}
-
-function buildBasicAuthHeader(
-	user: string | undefined,
-	password: string | undefined,
-): string | undefined {
-	if (!user || !password) {
-		return undefined;
-	}
-
-	return `Basic ${base64Encode(`${user}:${password}`)}`;
 }

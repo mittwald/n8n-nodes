@@ -1,16 +1,13 @@
 /* eslint-disable @n8n/community-nodes/no-restricted-imports */
 import { describe, expect } from 'vitest';
-import { hasIntegrationEnv } from './helpers';
 import { env } from './helpers/runtime';
-import { readRequiredString, testcase } from './testcase';
+import { integrationDescribe, readRequiredString, testcase } from './testcase';
 
 const membershipId = env('IT_PROJECT_MEMBERSHIP_ID');
 const membershipDeleteId = env('IT_PROJECT_MEMBERSHIP_DELETE_ID');
 
-const integrationDescribe = hasIntegrationEnv() ? describe : describe.skip;
-const membershipDescribe = hasIntegrationEnv() && membershipId ? describe : describe.skip;
-const membershipDeleteDescribe =
-	hasIntegrationEnv() && membershipDeleteId ? describe : describe.skip;
+const membershipDescribe = membershipId ? describe : describe.skip;
+const membershipDeleteDescribe = membershipDeleteId ? describe : describe.skip;
 
 integrationDescribe('Project / Membership (integration)', () => {
 	membershipDescribe('Get Membership', () => {
