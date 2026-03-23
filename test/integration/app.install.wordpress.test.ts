@@ -1,7 +1,13 @@
 /* eslint-disable @n8n/community-nodes/no-restricted-imports */
 import { describe, expect } from 'vitest';
-import { hasIntegrationEnv, runId } from './helpers';
-import { testcase } from './testcase';
+import {
+	createManualTriggerNode,
+	createMittwaldNode,
+	createSequentialWorkflow,
+	hasIntegrationEnv,
+	runId,
+} from './helpers';
+import { readRequiredString, testcase } from './testcase';
 
 const integrationDescribe = hasIntegrationEnv() ? describe : describe.skip;
 
@@ -13,23 +19,6 @@ integrationDescribe('App / Install WordPress (integration)', () => {
 			const installDescription = `it-${runId('wp-install')}`;
 			const installationPath = `/html/${runId('wp').slice(0, 8)}`;
 
-			const createdProject = await context.runOperation({
-				resource: 'Project',
-				operation: 'Create',
-				parameters: {
-					server: {
-						mode: 'id',
-						value: context.env.testServerId,
-					},
-					description: projectDescription,
-				},
-			});
-
-			const projectId = readRequiredString(createdProject.firstItem.json, 'id');
-			context.teardown(async () => {
-				await context.mittwaldApi.deleteProject(projectId);
-			});
-
 			const app = await findWordPressApp(context);
 			const version = await findLatestAppVersion(context, app.id);
 			const versionConfig = await buildVersionConfig({
@@ -40,13 +29,27 @@ integrationDescribe('App / Install WordPress (integration)', () => {
 				siteTitle: `WP ${runId('site')}`,
 			});
 
-			const installed = await context.runOperation({
+			const trigger = createManualTriggerNode();
+			const createProjectNode = createMittwaldNode(context.env, {
+				name: 'Create Project',
+				resource: 'Project',
+				operation: 'Create',
+				parameters: {
+					server: {
+						mode: 'id',
+						value: context.env.testServerId,
+					},
+					description: projectDescription,
+				},
+			});
+			const installNode = createMittwaldNode(context.env, {
+				name: 'Install WordPress',
 				resource: 'App',
 				operation: 'Install',
 				parameters: {
 					project: {
 						mode: 'id',
-						value: projectId,
+						value: '={{ $node["Create Project"].json["id"] }}',
 					},
 					app: {
 						mode: 'id',
@@ -63,7 +66,18 @@ integrationDescribe('App / Install WordPress (integration)', () => {
 				},
 			});
 
-			expect(readOptionalString(installed.firstItem.json, 'phase')).toBeDefined();
+			const result = await context.runWorkflow({
+				workflow: createSequentialWorkflow([trigger, createProjectNode, installNode]),
+			});
+
+			const createdItems = result.getNodeItems(createProjectNode.name, { allowEmpty: false });
+			const projectId = readRequiredString(createdItems[0]?.json ?? {}, 'id');
+			context.teardown(async () => {
+				await context.mittwaldApi.deleteProject(projectId);
+			});
+
+			const installedItems = result.getNodeItems(installNode.name, { allowEmpty: false });
+			expect(readOptionalString(installedItems[0]?.json ?? {}, 'phase')).toBeDefined();
 
 			const installation = await context.mittwaldApi.waitForAppInstallationByDescription({
 				description: installDescription,
@@ -198,15 +212,6 @@ function compareVersions(a: string, b: string): number {
 		}
 	}
 	return 0;
-}
-
-function readRequiredString(source: Record<string, unknown>, key: string): string {
-	const value = source[key];
-	if (typeof value === 'string' && value.length > 0) {
-		return value;
-	}
-
-	throw new Error(`Expected property "${key}" to be a non-empty string`);
 }
 
 function readOptionalString(source: Record<string, unknown>, key: string): string | undefined {
