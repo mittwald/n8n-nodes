@@ -12,6 +12,7 @@ export interface RunMittwaldOperationInput {
 	resource: string;
 	operation: string;
 	parameters?: JsonObject;
+	allowEmptyItems?: boolean;
 }
 
 export interface RunMittwaldOperationResult {
@@ -33,6 +34,7 @@ export async function runMittwaldOperation({
 	resource,
 	operation,
 	parameters = {},
+	allowEmptyItems = false,
 }: RunMittwaldOperationInput): Promise<RunMittwaldOperationResult> {
 	const env = getIntegrationEnv();
 	const n8nClient = await n8nClientPromise;
@@ -150,6 +152,14 @@ export async function runMittwaldOperation({
 
 	const firstItem = items[0];
 	if (!firstItem) {
+		if (allowEmptyItems) {
+			return {
+				workflowId,
+				executionId,
+				items,
+				firstItem: { json: {} },
+			};
+		}
 		throw new Error(`No output item returned for ${resource}/${operation}`);
 	}
 
