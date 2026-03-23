@@ -1,18 +1,12 @@
 /* eslint-disable @n8n/community-nodes/no-restricted-imports */
 import { describe, expect } from 'vitest';
-import { hasIntegrationEnv, runId } from './helpers';
+import { hasIntegrationEnv, runId, runMittwaldOperation } from './helpers';
 import { sleep } from './helpers/runtime';
 import { readRequiredString, testcase } from './testcase';
 
-type ExecutionItem = { json: Record<string, unknown> };
-
 type WaitForRemovalInput = {
 	context: {
-		runOperation: (input: {
-			resource: string;
-			operation: string;
-			parameters?: Record<string, unknown>;
-		}) => Promise<{ items: ExecutionItem[] }>;
+		runOperation: typeof runMittwaldOperation;
 	};
 	projectId: string;
 	sftpUserId: string;
