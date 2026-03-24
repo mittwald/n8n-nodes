@@ -16,8 +16,6 @@ the mittwald API.
 
 - `N8N_API_BASE_PATH` (default: `/api/v1`)
 - `N8N_REST_BASE_PATH` (default: `/rest`)
-- `N8N_BASIC_AUTH_USER` (optional, only needed if your n8n instance protects API or REST routes with Basic Auth)
-- `N8N_BASIC_AUTH_PASSWORD` (optional, only needed if your n8n instance protects API or REST routes with Basic Auth)
 - `N8N_MITTWALD_CREDENTIAL_ID` (recommended, and required for workflow-based tests using `runWorkflow` / `createMittwaldNode`)
 - `N8N_MITTWALD_CREDENTIAL_NAME` (default: `mittwald-it`, used by `runOperation` to look up or create credentials)
 - `N8N_MITTWALD_NODE_TYPE` (default: `CUSTOM.mittwald`)
@@ -28,10 +26,11 @@ the mittwald API.
 
 - `IT_INVITE_TARGET` (mail address used by invite tests)
 - `IT_INVITE_USER_TOKEN` (API token of the invited user for invite acceptance tests)
-- `IT_PROJECT_MEMBERSHIP_ID` (enables the membership get test)
-- `IT_PROJECT_MEMBERSHIP_DELETE_ID` (enables the membership delete test)
 
 ## Running tests
+
+First some initial setup is required. The n8n instance has to be started via docker compose.
+Then a User has to be created and an API key. Finally, the required environment variables have to be set. A convenient way to do this is to rename the .env.example file to .env and fill in the values.
 
 ```bash
 pnpm run test:integration

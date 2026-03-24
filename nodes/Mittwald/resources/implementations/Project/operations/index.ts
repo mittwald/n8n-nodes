@@ -5,6 +5,7 @@ import './deleteSftpUser';
 import './deleteSshUser';
 import './delete';
 import './get';
+import './listMemberships';
 import './listSftpUsers';
 import './listSshUsers';
 import './list';

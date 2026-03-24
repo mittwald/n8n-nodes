@@ -118,6 +118,41 @@ integrationDescribe('Project / Invites (integration)', () => {
 
 			const acceptedProject = await waitForProjectAccess(inviteUserApi, projectId);
 			expect(acceptedProject.id).toBe(projectId);
+
+			const membershipsOperationResult = await context.runOperation({
+				resource: 'Project',
+				operation: 'List memberships',
+				parameters: {
+					project: {
+						mode: 'id',
+						value: projectId,
+					},
+				},
+			});
+			expect(membershipsOperationResult.items.length).toBeGreaterThan(0);
+
+			const membershipId = membershipsOperationResult.items.find(
+				(item) => item.json.email === inviteTarget,
+			)?.json.id as string;
+			expect(membershipId).toBeDefined();
+
+			const membership = await context.runOperation({
+				resource: 'Project',
+				operation: 'Get Membership',
+				parameters: {
+					projectMembershipId: membershipId,
+				},
+			});
+
+			expect(membership.firstItem.json.projectId).toBe(projectId);
+
+			await context.runOperation({
+				resource: 'Project',
+				operation: 'Delete Membership',
+				parameters: {
+					projectMembershipId: membershipId,
+				},
+			});
 		},
 		90_000,
 	);

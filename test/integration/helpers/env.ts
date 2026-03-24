@@ -17,8 +17,6 @@ export interface IntegrationEnv {
 	n8nApiKey: string;
 	n8nApiBasePath: string;
 	n8nRestBasePath: string;
-	n8nBasicAuthUser?: string;
-	n8nBasicAuthPassword?: string;
 	n8nRestLoginEmail: string;
 	n8nRestLoginPassword: string;
 	n8nMittwaldCredentialId?: string;
@@ -49,8 +47,6 @@ export function getIntegrationEnv(): IntegrationEnv {
 		n8nApiKey: requiredEnv('N8N_API_KEY'),
 		n8nApiBasePath: env('N8N_API_BASE_PATH') ?? '/api/v1',
 		n8nRestBasePath: env('N8N_REST_BASE_PATH') ?? '/rest',
-		n8nBasicAuthUser: env('N8N_BASIC_AUTH_USER') ?? undefined,
-		n8nBasicAuthPassword: env('N8N_BASIC_AUTH_PASSWORD') ?? undefined,
 		n8nRestLoginEmail: requiredEnv('N8N_REST_LOGIN_EMAIL'),
 		n8nRestLoginPassword: requiredEnv('N8N_REST_LOGIN_PASSWORD'),
 		n8nMittwaldCredentialId: env('N8N_MITTWALD_CREDENTIAL_ID') ?? undefined,
