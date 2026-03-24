@@ -147,7 +147,7 @@ export interface RunWorkflowResult {
 	) => N8nExecutionItem | undefined;
 }
 
-const n8nClientPromise = N8nApiClient.getInstance(getIntegrationEnv());
+let n8nClientPromise: Promise<N8nApiClient> | undefined;
 
 export async function runWorkflow({
 	workflow,
@@ -155,7 +155,7 @@ export async function runWorkflow({
 	captureNodeNames = [],
 	allowEmptyNodeNames = [],
 }: RunWorkflowInput): Promise<RunWorkflowResult> {
-	const n8nClient = await n8nClientPromise;
+	const n8nClient = await getN8nClient();
 	const workflowDefinition: N8nWorkflowDefinition = {
 		settings: {},
 		...workflow,
@@ -244,6 +244,14 @@ function toError(value: unknown): Error {
 	}
 
 	return new Error(String(value));
+}
+
+function getN8nClient(): Promise<N8nApiClient> {
+	if (!n8nClientPromise) {
+		n8nClientPromise = N8nApiClient.getInstance(getIntegrationEnv());
+	}
+
+	return n8nClientPromise;
 }
 
 function buildSequentialConnections(nodes: N8nWorkflowNode[]): JsonObject {

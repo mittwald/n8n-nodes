@@ -1,28 +1,26 @@
 /* eslint-disable @n8n/community-nodes/no-restricted-imports */
 import { expect } from 'vitest';
-import { runId, runMittwaldOperation } from './helpers';
-import { sleep } from './helpers/runtime';
-import { integrationDescribe, readOptionalString, readRequiredString, testcase } from './testcase';
-
-type WaitForRemovalInput = {
-	context: {
-		runOperation: typeof runMittwaldOperation;
-	};
-	projectId: string;
-	sftpUserId: string;
-	timeoutMs?: number;
-	pollIntervalMs?: number;
-};
+import { fromStep, runId } from './helpers';
+import { integrationDescribe, testcase } from './testcase';
 
 integrationDescribe('Project / SFTP User (integration)', () => {
-	testcase(
-		'creates and deletes an SFTP user',
-		async (context) => {
-			const projectDescription = `it-${runId('sftp-project')}`;
-			const userDescription = `it-${runId('sftp-user')}`;
-			const password = `S3cure!${runId('pw')}`;
+	testcase('creates and deletes an SFTP user', async (context) => {
+		const projectDescription = `it-${runId('sftp-project')}`;
+		const userDescription = `it-${runId('sftp-user')}`;
+		const password = `S3cure!${runId('pw')}`;
 
-			const createdProject = await context.runOperation({
+		context.teardown(async () => {
+			const projects = await context.mittwaldApi.listProjects();
+			const project = projects.find((entry) => entry.description === projectDescription);
+			if (project) {
+				await context.mittwaldApi.deleteProject(project.id);
+			}
+		});
+
+		const result = await context
+			.scenario('SFTP user lifecycle')
+			.step({
+				name: 'Create Project',
 				resource: 'Project',
 				operation: 'Create',
 				parameters: {
@@ -32,114 +30,40 @@ integrationDescribe('Project / SFTP User (integration)', () => {
 					},
 					description: projectDescription,
 				},
-			});
-
-			const projectId = readRequiredString(createdProject.firstItem.json, 'id');
-			context.teardown(async () => {
-				await context.mittwaldApi.deleteProject(projectId);
-			});
-
-			let sftpUserId: string | undefined;
-			let sftpUserDeleted = false;
-			context.teardown(async () => {
-				if (!sftpUserId || sftpUserDeleted) {
-					return;
-				}
-				await context.runOperation({
-					resource: 'Project',
-					operation: 'Delete SFTP User',
-					parameters: {
-						sftpUserId,
-					},
-				});
-			});
-
-			const createdUser = await context.runOperation({
+			})
+			.step({
+				name: 'Create SFTP User',
 				resource: 'Project',
 				operation: 'Create SFTP User',
 				parameters: {
-					project: {
-						mode: 'id',
-						value: projectId,
-					},
+					project: fromStep('Create Project'),
 					description: userDescription,
 					password,
 					accessLevel: 'read',
 					directories: '/html',
 				},
-			});
-
-			sftpUserId = readRequiredString(createdUser.firstItem.json, 'id');
-			expect(readRequiredString(createdUser.firstItem.json, 'projectId')).toBe(projectId);
-
-			const listedUsers = await context.runOperation({
+			})
+			.step({
+				name: 'List SFTP Users',
 				resource: 'Project',
 				operation: 'List SFTP Users',
 				parameters: {
-					project: {
-						mode: 'id',
-						value: projectId,
-					},
+					project: fromStep('Create Project'),
 				},
-				allowEmptyItems: true,
-			});
-
-			const listedIds = listedUsers.items
-				.map((item) => readOptionalString(item.json, 'id'))
-				.filter((value): value is string => Boolean(value));
-			expect(listedIds).toContain(sftpUserId);
-
-			await context.runOperation({
+			})
+			.step({
+				name: 'Delete SFTP User',
 				resource: 'Project',
 				operation: 'Delete SFTP User',
 				parameters: {
-					sftpUserId,
+					sftpUserId: fromStep('Create SFTP User'),
 				},
-			});
-			sftpUserDeleted = true;
+			})
+			.run();
 
-			await waitForSftpUserRemoval({
-				context,
-				projectId,
-				sftpUserId,
-			});
-		},
-		30_000,
-	);
+		const projectId = result.step('Create Project').requireString('id');
+		const sftpUserId = result.step('Create SFTP User').requireString('id');
+		expect(result.step('Create SFTP User').requireString('projectId')).toBe(projectId);
+		expect(result.step('List SFTP Users').stringValues('id')).toContain(sftpUserId);
+	});
 });
-
-async function waitForSftpUserRemoval({
-	context,
-	projectId,
-	sftpUserId,
-	timeoutMs = 20_000,
-	pollIntervalMs = 1500,
-}: WaitForRemovalInput): Promise<void> {
-	const deadline = Date.now() + timeoutMs;
-
-	while (Date.now() <= deadline) {
-		const listedUsers = await context.runOperation({
-			resource: 'Project',
-			operation: 'List SFTP Users',
-			parameters: {
-				project: {
-					mode: 'id',
-					value: projectId,
-				},
-			},
-			allowEmptyItems: true,
-		});
-
-		const listedIds = listedUsers.items
-			.map((item) => readOptionalString(item.json, 'id'))
-			.filter((value): value is string => Boolean(value));
-
-		if (!listedIds.includes(sftpUserId)) {
-			return;
-		}
-
-		await sleep(pollIntervalMs);
-	}
-
-	throw new Error(`Timed out waiting for SFTP user "${sftpUserId}" to be removed`);
-}

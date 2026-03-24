@@ -1,6 +1,7 @@
 /* eslint-disable @n8n/community-nodes/no-restricted-imports */
 import { describe, it } from 'vitest';
 import {
+	createScenario,
 	getIntegrationEnv,
 	hasIntegrationEnv,
 	MittwaldApiClient,
@@ -12,6 +13,7 @@ type TeardownFn = () => Promise<void> | void;
 
 export interface TestcaseContext {
 	teardown: (fn: TeardownFn) => void;
+	scenario: (name?: string) => ReturnType<typeof createScenario>;
 	runOperation: typeof runMittwaldOperation;
 	runWorkflow: typeof runWorkflow;
 	mittwaldApi: MittwaldApiClient;
@@ -38,6 +40,12 @@ export function testcase(
 			try {
 				await fn({
 					teardown: (teardownFn) => teardowns.push(teardownFn),
+					scenario: (name) =>
+						createScenario({
+							env,
+							runWorkflow,
+							name,
+						}),
 					runOperation: runMittwaldOperation,
 					runWorkflow,
 					mittwaldApi,

@@ -1,46 +1,43 @@
 /* eslint-disable @n8n/community-nodes/no-restricted-imports */
 import { expect } from 'vitest';
-import { createMittwaldWorkflow, nodeIdReference } from './helpers';
-import { integrationDescribe, readRequiredString, testcase } from './testcase';
+import { fromStep } from './helpers';
+import { integrationDescribe, testcase } from './testcase';
 
 integrationDescribe('Workflow / Multi-Node (example)', () => {
 	testcase(
 		'creates a project and then lists SSH users in the same workflow',
 		async (context) => {
-			const createProjectStep = {
-				name: 'Create Project',
-				resource: 'Project',
-				operation: 'Create',
-				parameters: {
-					server: {
-						mode: 'id',
-						value: context.env.testServerId,
+			const result = await context
+				.scenario('Example multi-node workflow')
+				.step({
+					name: 'Create Project',
+					resource: 'Project',
+					operation: 'Create',
+					parameters: {
+						server: {
+							mode: 'id',
+							value: context.env.testServerId,
+						},
+						description: `it-${Date.now()}-workflow-project`,
 					},
-					description: `it-${Date.now()}-workflow-project`,
-				},
-			} as const;
-			const listSshUsersStep = {
-				name: 'List SSH Users',
-				resource: 'Project',
-				operation: 'List SSH Users',
-				parameters: {
-					project: nodeIdReference(createProjectStep.name),
-				},
-			} as const;
+				})
+				.step({
+					name: 'List SSH Users',
+					resource: 'Project',
+					operation: 'List SSH Users',
+					parameters: {
+						project: fromStep('Create Project'),
+					},
+				})
+				.run();
 
-			const result = await context.runWorkflow({
-				workflow: createMittwaldWorkflow(context.env, [createProjectStep, listSshUsersStep]),
-			});
-
-			const createItems = result.getNodeItems(createProjectStep.name, { allowEmpty: false });
-			const projectId = readRequiredString(createItems[0]?.json ?? {}, 'id');
+			const projectId = result.step('Create Project').requireString('id');
 
 			context.teardown(async () => {
 				await context.mittwaldApi.deleteProject(projectId);
 			});
 
-			const listItems = result.getNodeItems(listSshUsersStep.name);
-			expect(Array.isArray(listItems)).toBe(true);
+			expect(Array.isArray(result.step('List SSH Users').items())).toBe(true);
 		},
 		30_000,
 	);

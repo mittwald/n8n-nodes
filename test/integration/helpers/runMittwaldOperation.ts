@@ -27,7 +27,7 @@ const mittwaldNodeName = 'mittwald';
 const mittwaldCredentialType = 'mittwaldApi';
 
 let cachedCredentialId: string | undefined;
-const n8nClientPromise = N8nApiClient.getInstance(getIntegrationEnv());
+let n8nClientPromise: Promise<N8nApiClient> | undefined;
 
 export async function runMittwaldOperation({
 	resource,
@@ -36,7 +36,7 @@ export async function runMittwaldOperation({
 	allowEmptyItems = false,
 }: RunMittwaldOperationInput): Promise<RunMittwaldOperationResult> {
 	const env = getIntegrationEnv();
-	const n8nClient = await n8nClientPromise;
+	const n8nClient = await getN8nClient();
 	const credentialId = await resolveMittwaldCredentialId(n8nClient, env);
 	const triggerNodeName = manualTriggerNodeName;
 	const triggerNode: N8nWorkflowNode = {
@@ -196,4 +196,12 @@ function toError(value: unknown): Error {
 	}
 
 	return new Error(String(value));
+}
+
+function getN8nClient(): Promise<N8nApiClient> {
+	if (!n8nClientPromise) {
+		n8nClientPromise = N8nApiClient.getInstance(getIntegrationEnv());
+	}
+
+	return n8nClientPromise;
 }

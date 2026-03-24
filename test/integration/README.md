@@ -40,6 +40,51 @@ The test runner loads `.env` automatically if present. If required environment v
 missing, integration tests are skipped. Workflows are always started through a `manualTrigger`
 node via the n8n REST API.
 
-`runOperation` can look up or create the mittwald credential automatically. Workflow-based tests
-using `runWorkflow` are stricter and expect `N8N_MITTWALD_CREDENTIAL_ID`, because the credential is
-embedded directly into the generated n8n workflow definition.
+## Preferred way to write tests
+
+New integration tests should be written as business scenarios via `context.scenario()`.
+
+```ts
+testcase('creates and fetches a project', async (context) => {
+	const result = await context
+		.scenario('Project lifecycle')
+		})
+		.step({
+			name: 'Create Project',
+			resource: 'Project',
+			operation: 'Create',
+			parameters: {
+				server: {
+					mode: 'id',
+					value: context.env.testServerId,
+				},
+				description: 'it-example-project',
+			},
+		})
+		.step({
+			name: 'Get Project',
+			resource: 'Project',
+			operation: 'Get',
+			parameters: {
+				project: fromStep('Create Project'),
+			},
+		})
+		.run();
+
+	expect(result.step('Get Project').requireString('id')).toBe(
+		result.step('Create Project').requireString('id'),
+	);
+});
+```
+
+Why this is the preferred style:
+
+- tests read top to bottom like a real user flow
+- the n8n workflow wiring is hidden
+- step outputs are accessed by step name via `result.step('...')`
+
+`runOperation` and `runWorkflow` still exist as escape hatches for special cases, but they should
+not be the default starting point for new tests.
+
+Workflow-based tests use the same mittwald credential for all nodes and therefore expect
+`N8N_MITTWALD_CREDENTIAL_ID` to be set.
