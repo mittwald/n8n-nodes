@@ -32,9 +32,6 @@ interface FetchResponse {
 
 type FetchFn = (input: string, init?: FetchInit) => Promise<FetchResponse>;
 type SetTimeoutFn = (handler: () => void, timeout?: number) => unknown;
-type BufferLike = {
-	from: (input: string) => { toString: (encoding: 'base64') => string };
-};
 
 export function env(name: string): string | undefined {
 	return (globalThis as unknown as GlobalEnv).process?.env?.[name];
@@ -49,44 +46,29 @@ export function setEnv(name: string, value: string): void {
 }
 
 export function createUrl(path: string, baseUrl: string): UrlLike {
-	const URLImpl = (globalThis as unknown as { URL?: UrlConstructor }).URL;
-	if (!URLImpl) {
-		throw new Error('Global URL implementation is not available');
-	}
-
+	const URLImpl = requireGlobal('URL', (globalThis as unknown as { URL?: UrlConstructor }).URL);
 	return new URLImpl(path, baseUrl);
 }
 
 export async function runtimeFetch(input: string, init?: FetchInit): Promise<FetchResponse> {
-	const fetchImpl = (globalThis as unknown as { fetch?: FetchFn }).fetch;
-	if (!fetchImpl) {
-		throw new Error('Global fetch implementation is not available');
-	}
-
+	const fetchImpl = requireGlobal('fetch', (globalThis as unknown as { fetch?: FetchFn }).fetch);
 	return fetchImpl(input, init);
 }
 
 export async function sleep(ms: number): Promise<void> {
-	const setTimeoutImpl = (globalThis as unknown as { setTimeout?: SetTimeoutFn }).setTimeout;
-	if (!setTimeoutImpl) {
-		throw new Error('Global setTimeout implementation is not available');
-	}
-
+	const setTimeoutImpl = requireGlobal(
+		'setTimeout',
+		(globalThis as unknown as { setTimeout?: SetTimeoutFn }).setTimeout,
+	);
 	await new Promise<void>((resolve) => {
 		setTimeoutImpl(resolve, ms);
 	});
 }
 
-export function base64Encode(value: string): string {
-	const bufferImpl = (globalThis as unknown as { Buffer?: BufferLike }).Buffer;
-	if (bufferImpl) {
-		return bufferImpl.from(value).toString('base64');
+function requireGlobal<T>(name: string, value: T | undefined): T {
+	if (!value) {
+		throw new Error(`Global ${name} implementation is not available`);
 	}
 
-	const btoaImpl = (globalThis as unknown as { btoa?: (input: string) => string }).btoa;
-	if (btoaImpl) {
-		return btoaImpl(value);
-	}
-
-	throw new Error('No base64 encoder available for Basic Auth');
+	return value;
 }

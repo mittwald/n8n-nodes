@@ -53,7 +53,6 @@ export class N8nApiClient {
 	private readonly n8nApiKey: string;
 	private readonly n8nApiBasePath: string;
 	private readonly n8nRestBasePath: string;
-	private readonly n8nBasicAuthHeader?: string;
 	private readonly n8nRunTimeoutMs: number;
 	private readonly n8nPollIntervalMs: number;
 	private readonly n8nRestLoginEmail: string;
@@ -68,7 +67,6 @@ export class N8nApiClient {
 		this.n8nApiKey = env.n8nApiKey;
 		this.n8nApiBasePath = trimTrailingSlash(env.n8nApiBasePath);
 		this.n8nRestBasePath = trimTrailingSlash(env.n8nRestBasePath);
-
 		this.n8nRunTimeoutMs = env.n8nRunTimeoutMs;
 		this.n8nPollIntervalMs = env.n8nPollIntervalMs;
 		this.n8nRestLoginEmail = env.n8nRestLoginEmail;
@@ -393,22 +391,13 @@ export class N8nApiClient {
 		body?: unknown;
 		expectedStatusCodes?: number[];
 	}): Promise<unknown> {
-		const headers: Record<string, string> = {
-			'X-N8N-API-KEY': this.n8nApiKey,
-		};
-
-		if (this.n8nBasicAuthHeader) {
-			headers.Authorization = this.n8nBasicAuthHeader;
-		}
-
-		return requestJson({
-			baseUrl: this.n8nBaseUrl,
-			path: `${this.n8nApiBasePath}${path}`,
+		return this.requestWithBasePath({
+			basePath: this.n8nApiBasePath,
+			path,
 			method,
 			query,
 			body,
 			expectedStatusCodes,
-			headers,
 		});
 	}
 
@@ -426,27 +415,14 @@ export class N8nApiClient {
 		expectedStatusCodes?: number[];
 	}): Promise<unknown> {
 		await this.ensureRestLogin();
-
-		const headers: Record<string, string> = {
-			'X-N8N-API-KEY': this.n8nApiKey,
-		};
-
-		if (this.n8nBasicAuthHeader) {
-			headers.Authorization = this.n8nBasicAuthHeader;
-		}
-
-		if (this.restCookie) {
-			headers.Cookie = this.restCookie;
-		}
-
-		return requestJson({
-			baseUrl: this.n8nBaseUrl,
-			path: `${this.n8nRestBasePath}${path}`,
+		return this.requestWithBasePath({
+			basePath: this.n8nRestBasePath,
+			path,
 			method,
 			query,
 			body,
 			expectedStatusCodes,
-			headers,
+			includeRestCookie: true,
 		});
 	}
 
@@ -488,6 +464,46 @@ export class N8nApiClient {
 		if (!this.restCookie) {
 			throw new Error('n8n login did not return a session cookie');
 		}
+	}
+
+	private async requestWithBasePath({
+		basePath,
+		path,
+		method,
+		query,
+		body,
+		expectedStatusCodes,
+		includeRestCookie = false,
+	}: {
+		basePath: string;
+		path: string;
+		method: 'GET' | 'POST' | 'DELETE' | 'PUT';
+		query?: Record<string, string | number | boolean | undefined>;
+		body?: unknown;
+		expectedStatusCodes?: number[];
+		includeRestCookie?: boolean;
+	}): Promise<unknown> {
+		return requestJson({
+			baseUrl: this.n8nBaseUrl,
+			path: `${basePath}${path}`,
+			method,
+			query,
+			body,
+			expectedStatusCodes,
+			headers: this.buildHeaders(includeRestCookie),
+		});
+	}
+
+	private buildHeaders(includeRestCookie = false): Record<string, string> {
+		const headers: Record<string, string> = {
+			'X-N8N-API-KEY': this.n8nApiKey,
+		};
+
+		if (includeRestCookie && this.restCookie) {
+			headers.Cookie = this.restCookie;
+		}
+
+		return headers;
 	}
 }
 
