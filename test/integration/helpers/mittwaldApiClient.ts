@@ -1,5 +1,4 @@
 import { requestJson } from './http';
-import { sleep } from './runtime';
 
 type JsonObject = Record<string, unknown>;
 
@@ -21,13 +20,6 @@ export interface MittwaldAppVersion extends JsonObject {
 
 export interface MittwaldAppVersionDetails extends JsonObject {
 	userInputs?: Array<{ name: string; dataType?: string }>;
-}
-
-export interface MittwaldAppInstallation extends JsonObject {
-	id: string;
-	description?: string;
-	shortId?: string;
-	projectId?: string;
 }
 
 export class MittwaldApiClient {
@@ -104,43 +96,6 @@ export class MittwaldApiClient {
 			method: 'GET',
 		});
 		return toRecord(response) as MittwaldAppVersionDetails;
-	}
-
-	public async searchAppInstallations(searchTerm: string): Promise<MittwaldAppInstallation[]> {
-		const response = await this.request({
-			path: `/v2/app-installations`,
-			method: 'GET',
-			query: {
-				searchTerm,
-			},
-		});
-		if (!Array.isArray(response)) {
-			throw new Error('Expected app installations response to be an array');
-		}
-		return response as MittwaldAppInstallation[];
-	}
-
-	public async waitForAppInstallationByDescription({
-		description,
-		timeoutMs = 120000,
-		pollIntervalMs = 2000,
-	}: {
-		description: string;
-		timeoutMs?: number;
-		pollIntervalMs?: number;
-	}): Promise<MittwaldAppInstallation> {
-		const deadline = Date.now() + timeoutMs;
-
-		while (Date.now() <= deadline) {
-			const installations = await this.searchAppInstallations(description);
-			const match = installations.find((installation) => installation.description === description);
-			if (match) {
-				return match;
-			}
-			await sleep(pollIntervalMs);
-		}
-
-		throw new Error(`Timed out waiting for app installation "${description}"`);
 	}
 
 	private async request({
