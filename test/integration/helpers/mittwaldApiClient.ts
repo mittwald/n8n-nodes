@@ -1,4 +1,5 @@
-import { requestJson } from './http';
+/* eslint-disable @n8n/community-nodes/no-restricted-imports */
+import axios, { type AxiosInstance } from 'axios';
 
 type JsonObject = Record<string, unknown>;
 
@@ -23,26 +24,30 @@ export interface MittwaldAppVersionDetails extends JsonObject {
 }
 
 export class MittwaldApiClient {
-	private readonly apiToken: string;
-	private readonly baseUrl: string;
+	private readonly client: AxiosInstance;
 
 	public constructor(apiToken: string, baseUrl = 'https://api.mittwald.de') {
-		this.apiToken = apiToken;
-		this.baseUrl = baseUrl;
+		this.client = axios.create({
+			baseURL: baseUrl,
+			headers: {
+				Authorization: `Bearer ${apiToken}`,
+			},
+		});
 	}
 
 	public async getProject(projectId: string): Promise<MittwaldProject> {
 		const response = await this.request({
 			path: `/v2/projects/${projectId}`,
 			method: 'GET',
+			expectedStatusCodes: [200],
 		});
-		const record = toRecord(response);
-		const id = record.id;
+
+		const id = response.id;
 		if (typeof id !== 'string' || id.length === 0) {
 			throw new Error('mittwald API did not return a valid project id');
 		}
 
-		return record as MittwaldProject;
+		return response as MittwaldProject;
 	}
 
 	public async listProjects(): Promise<MittwaldProject[]> {
@@ -95,7 +100,7 @@ export class MittwaldApiClient {
 			path: `/v2/apps/${appId}/versions/${versionId}`,
 			method: 'GET',
 		});
-		return toRecord(response) as MittwaldAppVersionDetails;
+		return response as MittwaldAppVersionDetails;
 	}
 
 	private async request({
@@ -111,24 +116,16 @@ export class MittwaldApiClient {
 		expectedStatusCodes?: number[];
 		query?: Record<string, string | number | boolean | undefined>;
 	}) {
-		return requestJson({
-			baseUrl: this.baseUrl,
-			path,
+		const response = await this.client.request({
+			url: path,
 			method,
-			body,
-			expectedStatusCodes,
-			query,
-			headers: {
-				Authorization: `Bearer ${this.apiToken}`,
-			},
+			data: body,
+			params: query,
+			validateStatus: expectedStatusCodes
+				? (status) => expectedStatusCodes.includes(status)
+				: undefined,
 		});
-	}
-}
 
-function toRecord(value: unknown): JsonObject {
-	if (typeof value !== 'object' || value === null || Array.isArray(value)) {
-		throw new Error(`Expected response object, got: ${JSON.stringify(value)}`);
+		return response.data;
 	}
-
-	return value as JsonObject;
 }

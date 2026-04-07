@@ -1,6 +1,7 @@
+/* eslint-disable @n8n/community-nodes/no-restricted-imports */
+import axios from 'axios';
 import type { IntegrationEnv } from './env';
-import { HttpError, requestJson } from './http';
-import { createUrl, runtimeFetch, sleep } from './runtime';
+import { sleep } from './sleep';
 
 type JsonObject = Record<string, unknown>;
 type JsonArray = unknown[];
@@ -317,7 +318,7 @@ export class N8nApiClient {
 			try {
 				execution = await this.getExecution(executionId);
 			} catch (error) {
-				if (!(error instanceof HttpError) || error.statusCode !== 404) {
+				if (!axios.isAxiosError(error) || error.response?.status !== 404) {
 					throw error;
 				}
 			}
@@ -447,19 +448,18 @@ export class N8nApiClient {
 	}
 
 	private async generateCookie() {
-		const url = createUrl('/rest/login', this.n8nBaseUrl);
-		const loginResponse = await runtimeFetch(url.toString(), {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json',
-			},
-			body: JSON.stringify({
+		const loginResponse = await axios.post(
+			'/rest/login',
+			{
 				emailOrLdapLoginId: this.n8nRestLoginEmail,
 				password: this.n8nRestLoginPassword,
-			}),
-		});
+			},
+			{
+				baseURL: this.n8nBaseUrl,
+			},
+		);
 
-		const setCookieHeader = loginResponse.headers?.get('set-cookie') ?? '';
+		const setCookieHeader = loginResponse.headers['set-cookie'];
 		this.restCookie = extractCookieHeader(setCookieHeader);
 		if (!this.restCookie) {
 			throw new Error('n8n login did not return a session cookie');
@@ -483,27 +483,26 @@ export class N8nApiClient {
 		expectedStatusCodes?: number[];
 		includeRestCookie?: boolean;
 	}): Promise<unknown> {
-		return requestJson({
-			baseUrl: this.n8nBaseUrl,
-			path: `${basePath}${path}`,
-			method,
-			query,
-			body,
-			expectedStatusCodes,
-			headers: this.buildHeaders(includeRestCookie),
-		});
-	}
-
-	private buildHeaders(includeRestCookie = false): Record<string, string> {
 		const headers: Record<string, string> = {
 			'X-N8N-API-KEY': this.n8nApiKey,
 		};
-
 		if (includeRestCookie && this.restCookie) {
 			headers.Cookie = this.restCookie;
 		}
 
-		return headers;
+		const response = await axios.request({
+			baseURL: this.n8nBaseUrl,
+			url: `${basePath}${path}`,
+			method,
+			params: query,
+			data: body,
+			headers,
+			validateStatus: expectedStatusCodes
+				? (status) => expectedStatusCodes.includes(status)
+				: undefined,
+		});
+
+		return response.data;
 	}
 }
 
@@ -615,30 +614,15 @@ function trimTrailingSlash(value: string): string {
 	return value.endsWith('/') ? value.slice(0, -1) : value;
 }
 
-function extractCookieHeader(setCookieHeader: string): string | undefined {
+function extractCookieHeader(setCookieHeader: string | string[] | undefined): string | undefined {
 	if (!setCookieHeader) {
 		return undefined;
 	}
 
-	const ignoredAttributes = new Set([
-		'Path',
-		'Expires',
-		'Max-Age',
-		'Domain',
-		'Secure',
-		'HttpOnly',
-		'SameSite',
-	]);
-	const cookies: string[] = [];
-	const matches = setCookieHeader.matchAll(/(?:^|,)\s*([^=;,\s]+)=([^;,\s]+)/g);
-	for (const match of matches) {
-		const name = match[1];
-		const value = match[2];
-		if (!name || ignoredAttributes.has(name)) {
-			continue;
-		}
-		cookies.push(`${name}=${value}`);
-	}
+	const headerValues = Array.isArray(setCookieHeader) ? setCookieHeader : [setCookieHeader];
+	const cookies = headerValues
+		.map((headerValue) => headerValue.split(';', 1)[0])
+		.filter((cookie): cookie is string => Boolean(cookie));
 
 	if (cookies.length === 0) {
 		return undefined;

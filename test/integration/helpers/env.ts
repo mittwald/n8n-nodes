@@ -1,84 +1,77 @@
-import { loadDotEnv } from './dotenv';
-import { env } from './runtime';
+/* eslint-disable @n8n/community-nodes/no-restricted-imports */
+import { config } from 'dotenv';
+import Z from 'zod';
 
-const requiredEnvVarNames = [
-	'N8N_BASE_URL',
-	'N8N_API_KEY',
-	'N8N_REST_LOGIN_EMAIL',
-	'N8N_REST_LOGIN_PASSWORD',
-	'IT_MITTWALD_API_TOKEN',
-	'IT_SERVER_ID',
-] as const;
+const processEnv =
+	(globalThis as unknown as { process?: { env?: Record<string, string | undefined> } }).process
+		?.env ?? {};
 
-export type RequiredEnvVarName = (typeof requiredEnvVarNames)[number];
-
-export interface IntegrationEnv {
-	n8nBaseUrl: string;
-	n8nApiKey: string;
-	n8nApiBasePath: string;
-	n8nRestBasePath: string;
-	n8nRestLoginEmail: string;
-	n8nRestLoginPassword: string;
-	n8nMittwaldCredentialId?: string;
-	n8nMittwaldCredentialName: string;
-	n8nMittwaldNodeType: string;
-	n8nPollIntervalMs: number;
-	n8nRunTimeoutMs: number;
-	mittwaldApiToken: string;
-	testServerId: string;
-	inviteTarget?: string;
-	inviteUserToken?: string;
+const dotenvError = config({ quiet: true }).error as { code?: string } | undefined;
+if (dotenvError && dotenvError.code !== 'ENOENT') {
+	throw dotenvError;
 }
 
+const emptyStringToUndefined = (value: unknown) =>
+	typeof value === 'string' && value.trim() === '' ? undefined : value;
+
+const requiredString = Z.string().trim().min(1);
+const optionalString = Z.preprocess(emptyStringToUndefined, Z.string().trim().optional());
+const positiveInt = Z.preprocess(
+	emptyStringToUndefined,
+	Z.coerce.number().int().positive().optional(),
+);
+
+const integrationEnvSourceSchema = Z.object({
+	N8N_BASE_URL: requiredString,
+	N8N_API_KEY: requiredString,
+	N8N_API_BASE_PATH: optionalString.default('/api/v1'),
+	N8N_REST_BASE_PATH: optionalString.default('/rest'),
+	N8N_REST_LOGIN_EMAIL: requiredString,
+	N8N_REST_LOGIN_PASSWORD: requiredString,
+	N8N_MITTWALD_CREDENTIAL_ID: optionalString,
+	N8N_MITTWALD_CREDENTIAL_NAME: optionalString.default('mittwald-it'),
+	N8N_MITTWALD_NODE_TYPE: optionalString.default('CUSTOM.mittwald'),
+	N8N_POLL_INTERVAL_MS: positiveInt.default(1500),
+	N8N_RUN_TIMEOUT_MS: positiveInt.default(120000),
+	IT_MITTWALD_API_TOKEN: requiredString,
+	IT_SERVER_ID: requiredString,
+	IT_INVITE_TARGET: optionalString,
+	IT_INVITE_USER_TOKEN: optionalString,
+});
+
+const requiredIntegrationEnvSchema = integrationEnvSourceSchema.pick({
+	N8N_BASE_URL: true,
+	N8N_API_KEY: true,
+	N8N_REST_LOGIN_EMAIL: true,
+	N8N_REST_LOGIN_PASSWORD: true,
+	IT_MITTWALD_API_TOKEN: true,
+	IT_SERVER_ID: true,
+});
+
+const integrationEnvSchema = integrationEnvSourceSchema.transform((env) => ({
+	n8nBaseUrl: env.N8N_BASE_URL,
+	n8nApiKey: env.N8N_API_KEY,
+	n8nApiBasePath: env.N8N_API_BASE_PATH,
+	n8nRestBasePath: env.N8N_REST_BASE_PATH,
+	n8nRestLoginEmail: env.N8N_REST_LOGIN_EMAIL,
+	n8nRestLoginPassword: env.N8N_REST_LOGIN_PASSWORD,
+	n8nMittwaldCredentialId: env.N8N_MITTWALD_CREDENTIAL_ID,
+	n8nMittwaldCredentialName: env.N8N_MITTWALD_CREDENTIAL_NAME,
+	n8nMittwaldNodeType: env.N8N_MITTWALD_NODE_TYPE,
+	n8nPollIntervalMs: env.N8N_POLL_INTERVAL_MS,
+	n8nRunTimeoutMs: env.N8N_RUN_TIMEOUT_MS,
+	mittwaldApiToken: env.IT_MITTWALD_API_TOKEN,
+	testServerId: env.IT_SERVER_ID,
+	inviteTarget: env.IT_INVITE_TARGET,
+	inviteUserToken: env.IT_INVITE_USER_TOKEN,
+}));
+
+export type IntegrationEnv = Z.infer<typeof integrationEnvSchema>;
+
 export function hasIntegrationEnv(): boolean {
-	loadDotEnv();
-	return requiredEnvVarNames.every((name) => Boolean(env(name)));
+	return requiredIntegrationEnvSchema.safeParse(processEnv).success;
 }
 
 export function getIntegrationEnv(): IntegrationEnv {
-	loadDotEnv();
-	const missingVars = requiredEnvVarNames.filter((name) => !env(name));
-	if (missingVars.length > 0) {
-		throw new Error(`Missing integration env vars: ${missingVars.join(', ')}`);
-	}
-
-	return {
-		n8nBaseUrl: requiredEnv('N8N_BASE_URL'),
-		n8nApiKey: requiredEnv('N8N_API_KEY'),
-		n8nApiBasePath: env('N8N_API_BASE_PATH') ?? '/api/v1',
-		n8nRestBasePath: env('N8N_REST_BASE_PATH') ?? '/rest',
-		n8nRestLoginEmail: requiredEnv('N8N_REST_LOGIN_EMAIL'),
-		n8nRestLoginPassword: requiredEnv('N8N_REST_LOGIN_PASSWORD'),
-		n8nMittwaldCredentialId: env('N8N_MITTWALD_CREDENTIAL_ID') ?? undefined,
-		n8nMittwaldCredentialName: env('N8N_MITTWALD_CREDENTIAL_NAME') ?? 'mittwald-it',
-		n8nMittwaldNodeType: env('N8N_MITTWALD_NODE_TYPE') ?? 'CUSTOM.mittwald',
-		n8nPollIntervalMs: parsePositiveInt(env('N8N_POLL_INTERVAL_MS'), 1500),
-		n8nRunTimeoutMs: parsePositiveInt(env('N8N_RUN_TIMEOUT_MS'), 120000),
-		mittwaldApiToken: requiredEnv('IT_MITTWALD_API_TOKEN'),
-		testServerId: requiredEnv('IT_SERVER_ID').trim(),
-		inviteTarget: env('IT_INVITE_TARGET') ?? undefined,
-		inviteUserToken: env('IT_INVITE_USER_TOKEN') ?? undefined,
-	};
-}
-
-function requiredEnv(name: RequiredEnvVarName | string): string {
-	const value = env(name);
-	if (!value) {
-		throw new Error(`Missing required env var: ${name}`);
-	}
-
-	return value;
-}
-
-function parsePositiveInt(rawValue: string | undefined, defaultValue: number): number {
-	if (!rawValue) {
-		return defaultValue;
-	}
-
-	const parsed = Number.parseInt(rawValue, 10);
-	if (!Number.isFinite(parsed) || parsed <= 0) {
-		throw new Error(`Expected a positive integer, but got "${rawValue}"`);
-	}
-
-	return parsed;
+	return integrationEnvSchema.parse(processEnv);
 }

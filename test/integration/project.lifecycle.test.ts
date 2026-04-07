@@ -77,7 +77,7 @@ async function expectProjectToBeInaccessible(
 	try {
 		await context.mittwaldApi.getProject(projectId);
 	} catch (error) {
-		const statusCode = (error as { statusCode?: unknown }).statusCode;
+		const statusCode = (error as { status?: unknown }).status;
 		if (statusCode === 403 || statusCode === 404) {
 			return;
 		}

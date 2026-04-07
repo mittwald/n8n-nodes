@@ -1,4 +1,5 @@
 /* eslint-disable @n8n/community-nodes/no-restricted-imports */
+import axios from 'axios';
 import { expect } from 'vitest';
 import {
 	createMittwaldWorkflow,
@@ -6,9 +7,8 @@ import {
 	N8nApiClient,
 	nodeIdReference,
 	runId,
+	sleep,
 } from './helpers';
-import { HttpError } from './helpers/http';
-import { sleep } from './helpers/runtime';
 import { integrationDescribe, readOptionalString, readRequiredString, testcase } from './testcase';
 const inviteCredentialType = 'mittwaldApi';
 
@@ -170,7 +170,8 @@ async function waitForProjectAccess(
 		try {
 			return await apiClient.getProject(projectId);
 		} catch (error) {
-			if (!(error instanceof HttpError) || ![403, 404].includes(error.statusCode)) {
+			const statusCode = axios.isAxiosError(error) ? error.response?.status : undefined;
+			if (statusCode === undefined || ![403, 404].includes(statusCode)) {
 				throw error;
 			}
 		}
