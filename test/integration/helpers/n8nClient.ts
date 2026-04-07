@@ -1,7 +1,7 @@
 /* eslint-disable @n8n/community-nodes/no-restricted-imports */
 import axios from 'axios';
+import { setTimeout as sleep } from 'node:timers/promises';
 import type { IntegrationEnv } from './env';
-import { sleep } from './sleep';
 
 type JsonObject = Record<string, unknown>;
 type JsonArray = unknown[];
@@ -298,11 +298,11 @@ export class N8nApiClient {
 
 		while (Date.now() <= deadline) {
 			const executions = await this.listExecutions({ workflowId, limit: 10 });
-			const newExecution = executions.find((execution) => !existingIds.has(execution.id));
-			if (newExecution) {
-				return newExecution.id;
-			}
-			await sleep(this.n8nPollIntervalMs);
+				const newExecution = executions.find((execution) => !existingIds.has(execution.id));
+				if (newExecution) {
+					return newExecution.id;
+				}
+				await sleep(this.n8nPollIntervalMs);
 		}
 
 		throw new Error(

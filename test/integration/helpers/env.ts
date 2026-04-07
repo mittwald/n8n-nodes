@@ -2,9 +2,7 @@
 import { config } from 'dotenv';
 import Z from 'zod';
 
-const processEnv =
-	(globalThis as unknown as { process?: { env?: Record<string, string | undefined> } }).process
-		?.env ?? {};
+const processEnv = process.env;
 
 const dotenvError = config({ quiet: true }).error as { code?: string } | undefined;
 if (dotenvError && dotenvError.code !== 'ENOENT') {

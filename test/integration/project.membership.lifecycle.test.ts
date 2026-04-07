@@ -1,5 +1,6 @@
 /* eslint-disable @n8n/community-nodes/no-restricted-imports */
 import axios from 'axios';
+import { setTimeout as sleep } from 'node:timers/promises';
 import { expect } from 'vitest';
 import {
 	createMittwaldWorkflow,
@@ -7,7 +8,6 @@ import {
 	N8nApiClient,
 	nodeIdReference,
 	runId,
-	sleep,
 } from './helpers';
 import { integrationDescribe, readOptionalString, readRequiredString, testcase } from './testcase';
 const inviteCredentialType = 'mittwaldApi';
