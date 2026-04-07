@@ -2,6 +2,7 @@
 import { config } from 'dotenv';
 import Z from 'zod';
 
+/* eslint-disable @n8n/community-nodes/no-restricted-globals */
 const processEnv = process.env;
 
 const dotenvError = config({ quiet: true }).error as { code?: string } | undefined;
