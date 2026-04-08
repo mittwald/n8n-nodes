@@ -29,12 +29,70 @@ const mittwaldCredentialType = 'mittwaldApi';
 let cachedCredentialId: string | undefined;
 let n8nClientPromise: Promise<N8nApiClient> | undefined;
 
-export async function runMittwaldOperation({
+const resolveMittwaldCredentialId = async (
+	n8nClient: N8nApiClient,
+	env: ReturnType<typeof getIntegrationEnv>,
+): Promise<string> => {
+	if (cachedCredentialId) {
+		return cachedCredentialId;
+	}
+
+	const credentials = await n8nClient.listCredentials();
+	if (env.n8nMittwaldCredentialId) {
+		const byId = credentials.find((credential) => credential.id === env.n8nMittwaldCredentialId);
+		if (byId) {
+			cachedCredentialId = byId.id;
+			return byId.id;
+		}
+	}
+
+	const existing = credentials.find(
+		(credential) =>
+			credential.name === env.n8nMittwaldCredentialName &&
+			credential.type === mittwaldCredentialType,
+	);
+	if (existing) {
+		cachedCredentialId = existing.id;
+		return existing.id;
+	}
+
+	const created = await n8nClient.createCredential({
+		name: env.n8nMittwaldCredentialName,
+		type: mittwaldCredentialType,
+		data: {
+			apiKey: env.mittwaldApiToken,
+			allowedDomains: 'All',
+		},
+	});
+	cachedCredentialId = created.id;
+	return created.id;
+};
+
+const toError = (value: unknown): Error => {
+	if (value instanceof Error) {
+		return value;
+	}
+
+	return new Error(String(value));
+};
+
+const getN8nClient = (): Promise<N8nApiClient> => {
+	if (!n8nClientPromise) {
+		n8nClientPromise = N8nApiClient.getInstance(getIntegrationEnv());
+	}
+
+	return n8nClientPromise;
+};
+
+export const runId = (prefix = 'it'): string =>
+	`${prefix}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+
+export const runMittwaldOperation = async ({
 	resource,
 	operation,
 	parameters = {},
 	allowEmptyItems = false,
-}: RunMittwaldOperationInput): Promise<RunMittwaldOperationResult> {
+}: RunMittwaldOperationInput): Promise<RunMittwaldOperationResult> => {
 	const env = getIntegrationEnv();
 	const n8nClient = await getN8nClient();
 	const credentialId = await resolveMittwaldCredentialId(n8nClient, env);
@@ -145,63 +203,4 @@ export async function runMittwaldOperation({
 		items,
 		firstItem,
 	};
-}
-
-export function runId(prefix = 'it'): string {
-	return `${prefix}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
-}
-
-async function resolveMittwaldCredentialId(
-	n8nClient: N8nApiClient,
-	env: ReturnType<typeof getIntegrationEnv>,
-): Promise<string> {
-	if (cachedCredentialId) {
-		return cachedCredentialId;
-	}
-
-	const credentials = await n8nClient.listCredentials();
-	if (env.n8nMittwaldCredentialId) {
-		const byId = credentials.find((credential) => credential.id === env.n8nMittwaldCredentialId);
-		if (byId) {
-			cachedCredentialId = byId.id;
-			return byId.id;
-		}
-	}
-
-	const existing = credentials.find(
-		(credential) =>
-			credential.name === env.n8nMittwaldCredentialName &&
-			credential.type === mittwaldCredentialType,
-	);
-	if (existing) {
-		cachedCredentialId = existing.id;
-		return existing.id;
-	}
-
-	const created = await n8nClient.createCredential({
-		name: env.n8nMittwaldCredentialName,
-		type: mittwaldCredentialType,
-		data: {
-			apiKey: env.mittwaldApiToken,
-			allowedDomains: 'All',
-		},
-	});
-	cachedCredentialId = created.id;
-	return created.id;
-}
-
-function toError(value: unknown): Error {
-	if (value instanceof Error) {
-		return value;
-	}
-
-	return new Error(String(value));
-}
-
-function getN8nClient(): Promise<N8nApiClient> {
-	if (!n8nClientPromise) {
-		n8nClientPromise = N8nApiClient.getInstance(getIntegrationEnv());
-	}
-
-	return n8nClientPromise;
-}
+};

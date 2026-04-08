@@ -26,30 +26,35 @@ export type WordPressInstallInput = {
 	};
 };
 
-export async function getLatestWordPressInstallInput({
-	mittwaldApi,
-	hostDomain,
-	siteTitle,
-}: {
-	mittwaldApi: MittwaldApiClient;
-	hostDomain: string;
-	siteTitle: string;
-}): Promise<WordPressInstallInput> {
-	const app = await findWordPressApp(mittwaldApi);
-	const version = await findLatestAppVersion(mittwaldApi, app.id);
-	const versionDetails = await mittwaldApi.getAppVersionDetails(app.id, version.id);
+const normalizeDataType = (dataType: string | undefined): 'string' | 'number' | 'boolean' => {
+	if (dataType === 'number' || dataType === 'boolean') {
+		return dataType;
+	}
 
-	return {
-		app,
-		version,
-		versionConfig: buildVersionConfig(versionDetails, {
-			hostDomain,
-			siteTitle,
-		}),
-	};
-}
+	return 'string';
+};
 
-async function findWordPressApp(mittwaldApi: MittwaldApiClient): Promise<MittwaldApp> {
+const compareVersions = (a: string, b: string): number => {
+	const parse = (input: string) =>
+		input
+			.split('.')
+			.map((segment) => Number.parseInt(segment.replace(/[^\d]/g, ''), 10))
+			.map((segment) => (Number.isNaN(segment) ? 0 : segment));
+
+	const aParts = parse(a);
+	const bParts = parse(b);
+	const length = Math.max(aParts.length, bParts.length);
+	for (let i = 0; i < length; i += 1) {
+		const diff = (aParts[i] ?? 0) - (bParts[i] ?? 0);
+		if (diff !== 0) {
+			return diff;
+		}
+	}
+
+	return 0;
+};
+
+const findWordPressApp = async (mittwaldApi: MittwaldApiClient): Promise<MittwaldApp> => {
 	const apps = await mittwaldApi.listApps();
 	const app = apps.find((entry) => entry.name.toLowerCase().includes('wordpress'));
 	if (!app) {
@@ -57,12 +62,12 @@ async function findWordPressApp(mittwaldApi: MittwaldApiClient): Promise<Mittwal
 	}
 
 	return app;
-}
+};
 
-async function findLatestAppVersion(
+const findLatestAppVersion = async (
 	mittwaldApi: MittwaldApiClient,
 	appId: string,
-): Promise<MittwaldAppVersion> {
+): Promise<MittwaldAppVersion> => {
 	const versions = await mittwaldApi.listAppVersions(appId);
 	if (versions.length === 0) {
 		throw new Error('No app versions returned for WordPress');
@@ -77,9 +82,9 @@ async function findLatestAppVersion(
 	}
 
 	return latestVersion;
-}
+};
 
-function buildVersionConfig(
+const buildVersionConfig = (
 	versionDetails: MittwaldAppVersionDetails,
 	{
 		hostDomain,
@@ -88,7 +93,7 @@ function buildVersionConfig(
 		hostDomain: string;
 		siteTitle: string;
 	},
-): WordPressInstallInput['versionConfig'] {
+): WordPressInstallInput['versionConfig'] => {
 	const userInputs = versionDetails.userInputs ?? [];
 	const value: Record<string, string | number | boolean> = {};
 
@@ -143,32 +148,27 @@ function buildVersionConfig(
 		attemptToConvertTypes: false,
 		convertFieldsToString: false,
 	};
-}
+};
 
-function normalizeDataType(dataType: string | undefined): 'string' | 'number' | 'boolean' {
-	if (dataType === 'number' || dataType === 'boolean') {
-		return dataType;
-	}
+export const getLatestWordPressInstallInput = async ({
+	mittwaldApi,
+	hostDomain,
+	siteTitle,
+}: {
+	mittwaldApi: MittwaldApiClient;
+	hostDomain: string;
+	siteTitle: string;
+}): Promise<WordPressInstallInput> => {
+	const app = await findWordPressApp(mittwaldApi);
+	const version = await findLatestAppVersion(mittwaldApi, app.id);
+	const versionDetails = await mittwaldApi.getAppVersionDetails(app.id, version.id);
 
-	return 'string';
-}
-
-function compareVersions(a: string, b: string): number {
-	const parse = (input: string) =>
-		input
-			.split('.')
-			.map((segment) => Number.parseInt(segment.replace(/[^\d]/g, ''), 10))
-			.map((segment) => (Number.isNaN(segment) ? 0 : segment));
-
-	const aParts = parse(a);
-	const bParts = parse(b);
-	const length = Math.max(aParts.length, bParts.length);
-	for (let i = 0; i < length; i += 1) {
-		const diff = (aParts[i] ?? 0) - (bParts[i] ?? 0);
-		if (diff !== 0) {
-			return diff;
-		}
-	}
-
-	return 0;
-}
+	return {
+		app,
+		version,
+		versionConfig: buildVersionConfig(versionDetails, {
+			hostDomain,
+			siteTitle,
+		}),
+	};
+};

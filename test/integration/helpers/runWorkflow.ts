@@ -13,7 +13,7 @@ type JsonObject = Record<string, unknown>;
 
 export const defaultManualTriggerNodeName = 'Start Node';
 
-export function createManualTriggerNode({
+export const createManualTriggerNode = ({
 	name = defaultManualTriggerNodeName,
 	id = 'manual-trigger',
 	position = [280, 300],
@@ -21,16 +21,14 @@ export function createManualTriggerNode({
 	name?: string;
 	id?: string;
 	position?: [number, number];
-} = {}): N8nWorkflowNode {
-	return {
-		id,
-		name,
-		type: 'n8n-nodes-base.manualTrigger',
-		typeVersion: 1,
-		position,
-		parameters: {},
-	};
-}
+} = {}): N8nWorkflowNode => ({
+	id,
+	name,
+	type: 'n8n-nodes-base.manualTrigger',
+	typeVersion: 1,
+	position,
+	parameters: {},
+});
 
 export type MittwaldNodeInput = {
 	name: string;
@@ -48,7 +46,7 @@ export type NodeReference = {
 	value: string;
 };
 
-export function createMittwaldNode(
+export const createMittwaldNode = (
 	env: IntegrationEnv,
 	{
 		name,
@@ -60,7 +58,7 @@ export function createMittwaldNode(
 		position = [560, 300],
 		typeVersion = 1,
 	}: MittwaldNodeInput,
-): N8nWorkflowNode {
+): N8nWorkflowNode => {
 	if (!credential && !env.n8nMittwaldCredentialId) {
 		throw new Error('Set N8N_MITTWALD_CREDENTIAL_ID for workflow-based tests.');
 	}
@@ -85,34 +83,12 @@ export function createMittwaldNode(
 			mittwaldApi: credentialReference,
 		},
 	};
-}
+};
 
-export function createMittwaldWorkflow(
-	env: IntegrationEnv,
-	steps: MittwaldNodeInput[],
-	name?: string,
-): WorkflowTestDefinition {
-	return createSequentialWorkflow(
-		[createManualTriggerNode(), ...steps.map((step) => createMittwaldNode(env, step))],
-		name,
-	);
-}
-
-export function nodeJsonExpression(nodeName: string, field = 'id'): string {
-	return `={{ $items("${nodeName}")[0].json["${field}"] }}`;
-}
-
-export function nodeIdReference(nodeName: string, field = 'id'): NodeReference {
-	return {
-		mode: 'id',
-		value: nodeJsonExpression(nodeName, field),
-	};
-}
-
-export function createSequentialWorkflow(
+export const createSequentialWorkflow = (
 	nodes: N8nWorkflowNode[],
 	name?: string,
-): WorkflowTestDefinition {
+): WorkflowTestDefinition => {
 	if (nodes.length === 0) {
 		throw new Error('At least one node is required to build a workflow.');
 	}
@@ -122,7 +98,25 @@ export function createSequentialWorkflow(
 		nodes,
 		connections: buildSequentialConnections(nodes),
 	};
-}
+};
+
+export const createMittwaldWorkflow = (
+	env: IntegrationEnv,
+	steps: MittwaldNodeInput[],
+	name?: string,
+): WorkflowTestDefinition =>
+	createSequentialWorkflow(
+		[createManualTriggerNode(), ...steps.map((step) => createMittwaldNode(env, step))],
+		name,
+	);
+
+export const nodeJsonExpression = (nodeName: string, field = 'id'): string =>
+	`={{ $items("${nodeName}")[0].json["${field}"] }}`;
+
+export const nodeIdReference = (nodeName: string, field = 'id'): NodeReference => ({
+	mode: 'id',
+	value: nodeJsonExpression(nodeName, field),
+});
 
 export type WorkflowTestDefinition = Omit<N8nWorkflowDefinition, 'name'> & {
 	name?: string;

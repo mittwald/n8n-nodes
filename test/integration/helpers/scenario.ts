@@ -2,9 +2,7 @@ import type { IntegrationEnv } from './env';
 import type { N8nExecutionItem } from './n8nClient';
 import { type MittwaldNodeInput, createMittwaldWorkflow, nodeIdReference } from './runWorkflow';
 
-type RunWorkflowFn = (input: {
-	workflow: ReturnType<typeof createMittwaldWorkflow>;
-}) => Promise<{
+type RunWorkflowFn = (input: { workflow: ReturnType<typeof createMittwaldWorkflow> }) => Promise<{
 	workflowId: string;
 	executionId: string;
 	execution: Record<string, unknown>;
@@ -40,7 +38,21 @@ export interface ScenarioStepResult {
 	stringValues: (field: string) => string[];
 }
 
-export function createScenario({
+const readRequiredString = (source: JsonObject, key: string): string => {
+	const value = source[key];
+	if (typeof value === 'string' && value.length > 0) {
+		return value;
+	}
+
+	throw new Error(`Expected property "${key}" to be a non-empty string`);
+};
+
+const readOptionalString = (source: JsonObject, key: string): string | undefined => {
+	const value = source[key];
+	return typeof value === 'string' ? value : undefined;
+};
+
+export const createScenario = ({
 	env,
 	runWorkflow,
 	name,
@@ -48,7 +60,7 @@ export function createScenario({
 	env: IntegrationEnv;
 	runWorkflow: RunWorkflowFn;
 	name?: string;
-}): ScenarioBuilder {
+}): ScenarioBuilder => {
 	const steps: ScenarioStepInput[] = [];
 
 	const builder: ScenarioBuilder = {
@@ -74,9 +86,15 @@ export function createScenario({
 						items: (options) => result.getNodeItems(stepName, options),
 						first: (options) => result.getFirstItem(stepName, options),
 						requireString: (field) =>
-							readRequiredString(result.getFirstItem(stepName, { allowEmpty: false })?.json ?? {}, field),
+							readRequiredString(
+								result.getFirstItem(stepName, { allowEmpty: false })?.json ?? {},
+								field,
+							),
 						optionalString: (field) =>
-							readOptionalString(result.getFirstItem(stepName, { allowEmpty: false })?.json ?? {}, field),
+							readOptionalString(
+								result.getFirstItem(stepName, { allowEmpty: false })?.json ?? {},
+								field,
+							),
 						stringValues: (field) =>
 							result
 								.getNodeItems(stepName)
@@ -89,22 +107,6 @@ export function createScenario({
 	};
 
 	return builder;
-}
+};
 
-export function fromStep(stepName: string, field = 'id') {
-	return nodeIdReference(stepName, field);
-}
-
-function readRequiredString(source: JsonObject, key: string): string {
-	const value = source[key];
-	if (typeof value === 'string' && value.length > 0) {
-		return value;
-	}
-
-	throw new Error(`Expected property "${key}" to be a non-empty string`);
-}
-
-function readOptionalString(source: JsonObject, key: string): string | undefined {
-	const value = source[key];
-	return typeof value === 'string' ? value : undefined;
-}
+export const fromStep = (stepName: string, field = 'id') => nodeIdReference(stepName, field);

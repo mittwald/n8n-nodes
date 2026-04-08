@@ -67,10 +67,7 @@ const integrationEnvSchema = integrationEnvSourceSchema.transform((env) => ({
 
 export type IntegrationEnv = Z.infer<typeof integrationEnvSchema>;
 
-export function hasIntegrationEnv(): boolean {
-	return requiredIntegrationEnvSchema.safeParse(processEnv).success;
-}
+export const hasIntegrationEnv = (): boolean =>
+	requiredIntegrationEnvSchema.safeParse(processEnv).success;
 
-export function getIntegrationEnv(): IntegrationEnv {
-	return integrationEnvSchema.parse(processEnv);
-}
+export const getIntegrationEnv = (): IntegrationEnv => integrationEnvSchema.parse(processEnv);
