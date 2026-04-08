@@ -96,11 +96,10 @@ export class MittwaldApiClient {
 		appId: string,
 		versionId: string,
 	): Promise<MittwaldAppVersionDetails> {
-		const response = await this.request({
+		return (await this.request({
 			path: `/v2/apps/${appId}/versions/${versionId}`,
 			method: 'GET',
-		});
-		return response as MittwaldAppVersionDetails;
+		})) as MittwaldAppVersionDetails;
 	}
 
 	private async request({
