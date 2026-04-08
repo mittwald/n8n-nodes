@@ -49,6 +49,132 @@ export interface N8nRunResult {
 	execution: JsonObject;
 }
 
+const asRecord = (value: unknown): JsonObject | undefined => {
+	if (typeof value !== 'object' || value === null || Array.isArray(value)) {
+		return undefined;
+	}
+
+	return value as JsonObject;
+};
+
+const extractArray = (value: unknown): JsonArray | undefined => {
+	if (Array.isArray(value)) {
+		return value;
+	}
+
+	return undefined;
+};
+
+const requireRecord = (value: unknown): JsonObject => {
+	const record = asRecord(value);
+	if (!record) {
+		throw new Error(`Expected object value, got: ${JSON.stringify(value)}`);
+	}
+
+	return record;
+};
+
+const trimTrailingSlash = (value: string): string =>
+	value.endsWith('/') ? value.slice(0, -1) : value;
+
+const extractCookieHeader = (
+	setCookieHeader: string | string[] | undefined,
+): string | undefined => {
+	if (!setCookieHeader) {
+		return undefined;
+	}
+
+	const headerValues = Array.isArray(setCookieHeader) ? setCookieHeader : [setCookieHeader];
+	const cookies = headerValues
+		.map((headerValue) => headerValue.split(';', 1)[0])
+		.filter((cookie): cookie is string => Boolean(cookie));
+
+	if (cookies.length === 0) {
+		return undefined;
+	}
+
+	return cookies.join('; ');
+};
+
+const extractString = (record: JsonObject, key: string): string | undefined => {
+	const value = record[key];
+	if (typeof value === 'string' && value.length > 0) {
+		return value;
+	}
+
+	if (typeof value === 'number') {
+		return String(value);
+	}
+
+	return undefined;
+};
+
+const unwrapData = (payload: unknown): unknown => {
+	const payloadRecord = requireRecord(payload);
+	if ('data' in payloadRecord) {
+		return payloadRecord.data;
+	}
+
+	return payload;
+};
+
+const tryGetExecution = (payload: unknown): JsonObject | undefined => {
+	const candidate = unwrapData(payload);
+	const record = asRecord(candidate);
+	if (!record) {
+		return undefined;
+	}
+
+	const hasExecutionFields = 'finished' in record || 'status' in record || 'resultData' in record;
+	if (!hasExecutionFields) {
+		return undefined;
+	}
+
+	return record;
+};
+
+const extractExecutionId = (payload: unknown): string | undefined => {
+	const root = asRecord(payload);
+	if (!root) {
+		return undefined;
+	}
+
+	const directExecutionId = extractString(root, 'executionId');
+	if (directExecutionId) {
+		return directExecutionId;
+	}
+
+	const dataRecord = asRecord(root.data);
+	if (!dataRecord) {
+		return undefined;
+	}
+
+	return extractString(dataRecord, 'executionId') ?? extractString(dataRecord, 'id');
+};
+
+const extractRunPayloadError = (payload: unknown): string | undefined => {
+	const root = asRecord(payload);
+	if (!root) {
+		return undefined;
+	}
+
+	const directMessage = extractString(root, 'message');
+	if (directMessage) {
+		return directMessage;
+	}
+
+	const errorRecord = asRecord(root.error) ?? asRecord(asRecord(root.data)?.error);
+	if (!errorRecord) {
+		return undefined;
+	}
+
+	return (
+		extractString(errorRecord, 'message') ??
+		extractString(errorRecord, 'description') ??
+		extractString(errorRecord, 'name')
+	);
+};
+
 export class N8nApiClient {
 	private readonly n8nBaseUrl: string;
 	private readonly n8nApiKey: string;
@@ -91,7 +217,7 @@ export class N8nApiClient {
 			expectedStatusCodes: [200, 201],
 		});
 
-		const workflowRecord = toRecord(unwrapData(payload));
+		const workflowRecord = requireRecord(unwrapData(payload));
 		const workflowId = extractString(workflowRecord, 'id');
 		if (!workflowId) {
 			throw new Error('n8n did not return a workflow id');
@@ -196,7 +322,7 @@ export class N8nApiClient {
 			expectedStatusCodes: [200, 201],
 		});
 
-		const record = toRecord(unwrapData(payload));
+		const record = requireRecord(unwrapData(payload));
 		const id = extractString(record, 'id');
 		const createdName = extractString(record, 'name') ?? name;
 		const createdType = extractString(record, 'type') ?? type;
@@ -262,7 +388,7 @@ export class N8nApiClient {
 		}
 
 		const lastRun = nodeRuns[nodeRuns.length - 1];
-		const runRecord = toRecord(lastRun);
+		const runRecord = requireRecord(lastRun);
 		const runError = asRecord(runRecord.error);
 		if (runError) {
 			throw buildNodeExecutionError(nodeName, runError);
@@ -283,8 +409,8 @@ export class N8nApiClient {
 		}
 
 		return firstOutputBranch.map((item, index) => {
-			const itemRecord = toRecord(item);
-			const json = toRecord(itemRecord.json);
+			const itemRecord = requireRecord(item);
+			const json = requireRecord(itemRecord.json);
 			return {
 				...itemRecord,
 				json,
@@ -298,11 +424,11 @@ export class N8nApiClient {
 
 		while (Date.now() <= deadline) {
 			const executions = await this.listExecutions({ workflowId, limit: 10 });
-				const newExecution = executions.find((execution) => !existingIds.has(execution.id));
-				if (newExecution) {
-					return newExecution.id;
-				}
-				await sleep(this.n8nPollIntervalMs);
+			const newExecution = executions.find((execution) => !existingIds.has(execution.id));
+			if (newExecution) {
+				return newExecution.id;
+			}
+			await sleep(this.n8nPollIntervalMs);
 		}
 
 		throw new Error(
@@ -346,7 +472,7 @@ export class N8nApiClient {
 			},
 		});
 
-		return toRecord(payload);
+		return requireRecord(payload);
 	}
 
 	private isExecutionFinished(execution: JsonObject): boolean {
@@ -366,9 +492,9 @@ export class N8nApiClient {
 	}
 
 	private extractRunData(execution: JsonObject): Record<string, JsonArray> {
-		const rootData = toRecord(execution.data);
-		const resultData = toRecord(rootData.resultData ?? execution.resultData);
-		const runData = toRecord(resultData.runData);
+		const rootData = requireRecord(execution.data);
+		const resultData = requireRecord(rootData.resultData ?? execution.resultData);
+		const runData = requireRecord(resultData.runData);
 		return Object.fromEntries(
 			Object.entries(runData).map(([key, value]) => {
 				if (!Array.isArray(value)) {
@@ -504,131 +630,6 @@ export class N8nApiClient {
 
 		return response.data;
 	}
-}
-
-function unwrapData(payload: unknown): unknown {
-	const payloadRecord = toRecord(payload);
-	if ('data' in payloadRecord) {
-		return payloadRecord.data;
-	}
-
-	return payload;
-}
-
-function tryGetExecution(payload: unknown): JsonObject | undefined {
-	const candidate = unwrapData(payload);
-	const record = asRecord(candidate);
-	if (!record) {
-		return undefined;
-	}
-
-	const hasExecutionFields = 'finished' in record || 'status' in record || 'resultData' in record;
-	if (!hasExecutionFields) {
-		return undefined;
-	}
-
-	return record;
-}
-
-function extractExecutionId(payload: unknown): string | undefined {
-	const root = asRecord(payload);
-	if (!root) {
-		return undefined;
-	}
-
-	const directExecutionId = extractString(root, 'executionId');
-	if (directExecutionId) {
-		return directExecutionId;
-	}
-
-	const dataRecord = asRecord(root.data);
-	if (!dataRecord) {
-		return undefined;
-	}
-
-	return extractString(dataRecord, 'executionId') ?? extractString(dataRecord, 'id');
-}
-
-function extractRunPayloadError(payload: unknown): string | undefined {
-	const root = asRecord(payload);
-	if (!root) {
-		return undefined;
-	}
-
-	const directMessage = extractString(root, 'message');
-	if (directMessage) {
-		return directMessage;
-	}
-
-	const errorRecord = asRecord(root.error) ?? asRecord(asRecord(root.data)?.error);
-	if (!errorRecord) {
-		return undefined;
-	}
-
-	return (
-		extractString(errorRecord, 'message') ??
-		extractString(errorRecord, 'description') ??
-		extractString(errorRecord, 'name')
-	);
-}
-
-function extractString(record: JsonObject, key: string): string | undefined {
-	const value = record[key];
-	if (typeof value === 'string' && value.length > 0) {
-		return value;
-	}
-
-	if (typeof value === 'number') {
-		return String(value);
-	}
-
-	return undefined;
-}
-
-function asRecord(value: unknown): JsonObject | undefined {
-	if (typeof value !== 'object' || value === null || Array.isArray(value)) {
-		return undefined;
-	}
-
-	return value as JsonObject;
-}
-
-function extractArray(value: unknown): JsonArray | undefined {
-	if (Array.isArray(value)) {
-		return value;
-	}
-
-	return undefined;
-}
-
-function toRecord(value: unknown): JsonObject {
-	const record = asRecord(value);
-	if (!record) {
-		throw new Error(`Expected object value, got: ${JSON.stringify(value)}`);
-	}
-
-	return record;
-}
-
-function trimTrailingSlash(value: string): string {
-	return value.endsWith('/') ? value.slice(0, -1) : value;
-}
-
-function extractCookieHeader(setCookieHeader: string | string[] | undefined): string | undefined {
-	if (!setCookieHeader) {
-		return undefined;
-	}
-
-	const headerValues = Array.isArray(setCookieHeader) ? setCookieHeader : [setCookieHeader];
-	const cookies = headerValues
-		.map((headerValue) => headerValue.split(';', 1)[0])
-		.filter((cookie): cookie is string => Boolean(cookie));
-
-	if (cookies.length === 0) {
-		return undefined;
-	}
-
-	return cookies.join('; ');
 }
 
 function buildNodeExecutionError(nodeName: string, runError: JsonObject): Error {
