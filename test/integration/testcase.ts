@@ -1,10 +1,11 @@
 /* eslint-disable @n8n/community-nodes/no-restricted-imports */
 import { describe, it } from 'vitest';
+import { MittwaldAPIV2Client } from '@mittwald/api-client';
+
 import {
 	createScenario,
 	getIntegrationEnv,
 	hasIntegrationEnv,
-	MittwaldApiClient,
 	runMittwaldOperation,
 	runWorkflow,
 } from './helpers';
@@ -16,7 +17,7 @@ export interface TestcaseContext {
 	scenario: (name?: string) => ReturnType<typeof createScenario>;
 	runOperation: typeof runMittwaldOperation;
 	runWorkflow: typeof runWorkflow;
-	mittwaldApi: MittwaldApiClient;
+	mittwaldApi: MittwaldAPIV2Client;
 	env: ReturnType<typeof getIntegrationEnv>;
 }
 
@@ -33,7 +34,7 @@ export function testcase(
 		name,
 		async () => {
 			const env = getIntegrationEnv();
-			const mittwaldApi = new MittwaldApiClient(env.mittwaldApiToken);
+			const mittwaldApi = MittwaldAPIV2Client.newWithToken(env.mittwaldApiToken);
 			const teardowns: TeardownFn[] = [];
 
 			let testError: unknown;

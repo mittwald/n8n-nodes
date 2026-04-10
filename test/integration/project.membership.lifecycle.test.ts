@@ -1,14 +1,8 @@
 /* eslint-disable @n8n/community-nodes/no-restricted-imports */
-import axios from 'axios';
+import { MittwaldAPIV2Client } from '@mittwald/api-client';
 import { setTimeout as sleep } from 'node:timers/promises';
 import { expect } from 'vitest';
-import {
-	createMittwaldWorkflow,
-	MittwaldApiClient,
-	N8nApiClient,
-	nodeIdReference,
-	runId,
-} from './helpers';
+import { createMittwaldWorkflow, N8nApiClient, nodeIdReference, runId } from './helpers';
 import { integrationDescribe, readOptionalString, readRequiredString, testcase } from './testcase';
 const inviteCredentialType = 'mittwaldApi';
 
@@ -25,7 +19,7 @@ integrationDescribe('Project / Invites (integration)', () => {
 				throw new Error('Missing IT_INVITE_USER_TOKEN for invite tests.');
 			}
 
-			const inviteUserApi = new MittwaldApiClient(inviteUserToken);
+			const inviteUserApi = MittwaldAPIV2Client.newWithToken(inviteUserToken);
 			const n8nClient = await N8nApiClient.getInstance(context.env);
 			const inviteUserCredential = await n8nClient.createCredential({
 				name: runId('mittwald-it-invite-user'),
@@ -85,7 +79,7 @@ integrationDescribe('Project / Invites (integration)', () => {
 			});
 			const projectId = readRequiredString(createdProjectItems[0]?.json ?? {}, 'id');
 			context.teardown(async () => {
-				await context.mittwaldApi.deleteProject(projectId);
+				await context.mittwaldApi.project.deleteProject({ projectId });
 			});
 
 			const createdInviteItems = result.getNodeItems(createInviteStep.name, { allowEmpty: false });
@@ -159,7 +153,7 @@ integrationDescribe('Project / Invites (integration)', () => {
 });
 
 async function waitForProjectAccess(
-	apiClient: MittwaldApiClient,
+	apiClient: MittwaldAPIV2Client,
 	projectId: string,
 	timeoutMs = 20_000,
 	pollIntervalMs = 1500,
@@ -167,15 +161,15 @@ async function waitForProjectAccess(
 	const deadline = Date.now() + timeoutMs;
 
 	while (Date.now() <= deadline) {
-		try {
-			return await apiClient.getProject(projectId);
-		} catch (error) {
-			const statusCode = axios.isAxiosError(error) ? error.response?.status : undefined;
-			if (statusCode === undefined || ![403, 404].includes(statusCode)) {
-				throw error;
-			}
+		const response = await apiClient.project.getProject({ projectId });
+
+		if (response.status === 200) {
+			return response.data;
 		}
 
+		if (response.status !== 403) {
+			throw new Error(`Unexpected status code ${response.status} when checking project access`);
+		}
 		await sleep(pollIntervalMs);
 	}
 

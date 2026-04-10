@@ -64,7 +64,7 @@ integrationDescribe('Domain / Create (WordPress subdomain)', () => {
 
 			const projectId = result.step('Create Project').requireString('id');
 			context.teardown(async () => {
-				await context.mittwaldApi.deleteProject(projectId);
+				await context.mittwaldApi.project.deleteProject({ projectId });
 			});
 			const domainId = result.step('Create Domain').requireString('id');
 

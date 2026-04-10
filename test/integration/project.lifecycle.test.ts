@@ -2,6 +2,8 @@
 import { expect } from 'vitest';
 import { fromStep, runId } from './helpers';
 import { integrationDescribe, testcase } from './testcase';
+/* eslint-disable @n8n/community-nodes/no-restricted-imports */
+import { MittwaldAPIV2Client } from '@mittwald/api-client';
 
 integrationDescribe('Project / Lifecycle (integration)', () => {
 	testcase(
@@ -10,10 +12,17 @@ integrationDescribe('Project / Lifecycle (integration)', () => {
 			const description = `it-${runId('project-flow')}`;
 
 			context.teardown(async () => {
-				const projects = await context.mittwaldApi.listProjects();
+				const response = await context.mittwaldApi.project.listProjects();
+
+				if (response.status !== 200) {
+					throw new Error(`Failed to list projects during teardown: ${response.statusText}`);
+				}
+
+				const projects = response.data;
+
 				const project = projects.find((entry) => entry.description === description);
 				if (project) {
-					await context.mittwaldApi.deleteProject(project.id);
+					await context.mittwaldApi.project.deleteProject({ projectId: project.id });
 				}
 			});
 
@@ -68,21 +77,13 @@ integrationDescribe('Project / Lifecycle (integration)', () => {
 
 async function expectProjectToBeInaccessible(
 	context: {
-		mittwaldApi: {
-			getProject: (projectId: string) => Promise<unknown>;
-		};
+		mittwaldApi: MittwaldAPIV2Client;
 	},
 	projectId: string,
 ): Promise<void> {
-	try {
-		await context.mittwaldApi.getProject(projectId);
-	} catch (error) {
-		const statusCode = (error as { status?: unknown }).status;
-		if (statusCode === 403 || statusCode === 404) {
-			return;
-		}
-		throw error;
+	const response = await context.mittwaldApi.project.getProject({ projectId });
+	if (response.status === 403) {
+		return;
 	}
-
 	throw new Error(`Expected deleted project "${projectId}" to be inaccessible`);
 }

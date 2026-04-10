@@ -10,10 +10,17 @@ integrationDescribe('Project / SSH User (integration)', () => {
 		const password = `S3cure!${runId('pw')}`;
 
 		context.teardown(async () => {
-			const projects = await context.mittwaldApi.listProjects();
+			const response = await context.mittwaldApi.project.listProjects();
+
+			if (response.status !== 200) {
+				throw new Error(`Failed to list projects during teardown: ${response.statusText}`);
+			}
+
+			const projects = response.data;
+
 			const project = projects.find((entry) => entry.description === projectDescription);
 			if (project) {
-				await context.mittwaldApi.deleteProject(project.id);
+				await context.mittwaldApi.project.deleteProject({ projectId: project.id });
 			}
 		});
 

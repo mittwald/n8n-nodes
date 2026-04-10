@@ -64,6 +64,7 @@
 		]
 	},
 	"devDependencies": {
+		"@mittwald/api-client": "^4.343.0",
 		"@n8n/node-cli": "^0.20.0",
 		"@types/node": "^25.5.2",
 		"axios": "^1.14.0",

@@ -1,14 +1,12 @@
-import type {
-	MittwaldApiClient,
-	MittwaldApp,
-	MittwaldAppVersion,
-	MittwaldAppVersionDetails,
-} from './mittwaldApiClient';
 import { runId } from './runMittwaldOperation';
+import { MittwaldAPIV2, MittwaldAPIV2Client } from '@mittwald/api-client';
+type App = MittwaldAPIV2.Components.Schemas.AppApp;
+type AppVersion = MittwaldAPIV2.Components.Schemas.AppAppVersion;
+type VersionDetails = MittwaldAPIV2.Components.Schemas.AppAppVersion;
 
 export type WordPressInstallInput = {
-	app: MittwaldApp;
-	version: MittwaldAppVersion;
+	app: App;
+	version: AppVersion;
 	versionConfig: {
 		mappingMode: 'defineBelow';
 		value: Record<string, string | number | boolean>;
@@ -54,8 +52,13 @@ const compareVersions = (a: string, b: string): number => {
 	return 0;
 };
 
-const findWordPressApp = async (mittwaldApi: MittwaldApiClient): Promise<MittwaldApp> => {
-	const apps = await mittwaldApi.listApps();
+const findWordPressApp = async (mittwaldApi: MittwaldAPIV2Client): Promise<App> => {
+	const response = await mittwaldApi.app.listApps();
+
+	if (response.status !== 200) {
+		throw new Error(`Failed to fetch apps: ${response.status} ${response.statusText}`);
+	}
+	const apps = response.data;
 	const app = apps.find((entry) => entry.name.toLowerCase().includes('wordpress'));
 	if (!app) {
 		throw new Error('Could not find WordPress app in /apps response');
@@ -65,10 +68,19 @@ const findWordPressApp = async (mittwaldApi: MittwaldApiClient): Promise<Mittwal
 };
 
 const findLatestAppVersion = async (
-	mittwaldApi: MittwaldApiClient,
+	mittwaldApi: MittwaldAPIV2Client,
 	appId: string,
-): Promise<MittwaldAppVersion> => {
-	const versions = await mittwaldApi.listAppVersions(appId);
+): Promise<AppVersion> => {
+	const response = await mittwaldApi.app.listAppversions({ appId });
+
+	if (response.status !== 200) {
+		throw new Error(
+			`Failed to fetch app versions for app ${appId}: ${response.status} ${response.statusText}`,
+		);
+	}
+
+	const versions = response.data;
+
 	if (versions.length === 0) {
 		throw new Error('No app versions returned for WordPress');
 	}
@@ -85,7 +97,7 @@ const findLatestAppVersion = async (
 };
 
 const buildVersionConfig = (
-	versionDetails: MittwaldAppVersionDetails,
+	versionDetails: VersionDetails,
 	{
 		hostDomain,
 		siteTitle,
@@ -155,13 +167,21 @@ export const getLatestWordPressInstallInput = async ({
 	hostDomain,
 	siteTitle,
 }: {
-	mittwaldApi: MittwaldApiClient;
+	mittwaldApi: MittwaldAPIV2Client;
 	hostDomain: string;
 	siteTitle: string;
 }): Promise<WordPressInstallInput> => {
 	const app = await findWordPressApp(mittwaldApi);
 	const version = await findLatestAppVersion(mittwaldApi, app.id);
-	const versionDetails = await mittwaldApi.getAppVersionDetails(app.id, version.id);
+
+	const response = await mittwaldApi.app.getAppversion({ appId: app.id, appVersionId: version.id });
+
+	if (response.status !== 200) {
+		throw new Error(
+			`Failed to fetch app version details for app ${app.id} version ${version.id}: ${response.status} ${response.statusText}`,
+		);
+	}
+	const versionDetails = response.data;
 
 	return {
 		app,
