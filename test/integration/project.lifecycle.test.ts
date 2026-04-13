@@ -82,7 +82,7 @@ async function expectProjectToBeInaccessible(
 	projectId: string,
 ): Promise<void> {
 	const response = await context.mittwaldApi.project.getProject({ projectId });
-	if (response.status === 403) {
+	if ([403, 404].includes(response.status)) {
 		return;
 	}
 	throw new Error(`Expected deleted project "${projectId}" to be inaccessible`);

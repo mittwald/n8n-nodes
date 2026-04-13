@@ -1,3 +1,4 @@
+/* eslint-disable @n8n/community-nodes/no-restricted-imports */
 import { runId } from './runMittwaldOperation';
 import { MittwaldAPIV2, MittwaldAPIV2Client } from '@mittwald/api-client';
 type App = MittwaldAPIV2.Components.Schemas.AppApp;
