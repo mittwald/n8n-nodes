@@ -50,6 +50,7 @@ This node provides integration with the [mittwald API v2](https://developer.mitt
 - **Get a project**: Get details of a specific project
 - **List all SSH users**: Get a list of all SSH users in a project (parameter: Project)
 - **List all SFTP users**: Get a list of all SFTP users in a project (parameter: Project)
+- **List all invites**: Get a list of all project invitations (parameter: Project)
 - **List all projects**: Get a list of all projects
 - **Accept an invite to a project**: Accept a project invitation using an invitation token
 - **Create an invite to a project**: Create a project invitation

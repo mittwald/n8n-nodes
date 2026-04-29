@@ -1,5 +1,4 @@
 import { projectResource } from '../resource';
-import Z from 'zod';
 
 export default projectResource
 	.addOperation({
@@ -13,25 +12,13 @@ export default projectResource
 			type: 'string',
 			default: '',
 		},
-		invitationToken: {
-			displayName: 'Invitation Token',
-			type: 'string',
-			typeOptions: { password: true },
-			default: '',
-		},
 	})
 	.withExecuteFn(async (context) => {
 		const { properties, apiClient } = context;
-		const { projectInviteId, invitationToken } = properties;
+		const { projectInviteId } = properties;
 
 		return apiClient.request({
 			path: `/project-invites/${projectInviteId}/actions/accept`,
 			method: 'POST',
-			requestSchema: Z.object({
-				invitationToken: Z.string(),
-			}),
-			body: {
-				invitationToken,
-			},
 		});
 	});

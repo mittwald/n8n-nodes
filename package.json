@@ -22,6 +22,9 @@
 		"dev": "n8n-node dev",
 		"lint": "n8n-node lint",
 		"lint:fix": "n8n-node lint --fix",
+		"test:compile": "tsc --noEmit",
+		"test:integration": "vitest --config vitest.integration.config.ts --run",
+		"test:integration:watch": "vitest --config vitest.integration.config.ts",
 		"n8n:release": "n8n-node release",
 		"n8n:prepublishOnly": "n8n-node prerelease"
 	},
@@ -61,7 +64,11 @@
 		]
 	},
 	"devDependencies": {
+		"@mittwald/api-client": "^4.343.0",
 		"@n8n/node-cli": "^0.20.0",
+		"@types/node": "^25.5.2",
+		"axios": "^1.14.0",
+		"dotenv": "^17.4.1",
 		"eslint": "9.32.0",
 		"n8n-workflow": "^2.9.0",
 		"prettier": "3.6.2",
@@ -73,5 +80,10 @@
 	"peerDependencies": {
 		"n8n-workflow": "*"
 	},
-	"resolutions": {}
+	"resolutions": {},
+	"pnpm": {
+		"overrides": {
+			"change-case": "4.1.2"
+		}
+	}
 }
