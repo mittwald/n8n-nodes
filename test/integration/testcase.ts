@@ -1,0 +1,114 @@
+/* eslint-disable @n8n/community-nodes/no-restricted-imports */
+import { describe, it } from 'vitest';
+import { MittwaldAPIV2Client } from '@mittwald/api-client';
+
+import {
+	createScenario,
+	getIntegrationEnv,
+	hasIntegrationEnv,
+	runMittwaldOperation,
+	runWorkflow,
+} from './helpers';
+
+type TeardownFn = () => Promise<void> | void;
+
+export interface TestcaseContext {
+	teardown: (fn: TeardownFn) => void;
+	scenario: (name?: string) => ReturnType<typeof createScenario>;
+	runOperation: typeof runMittwaldOperation;
+	runWorkflow: typeof runWorkflow;
+	mittwaldApi: MittwaldAPIV2Client;
+	env: ReturnType<typeof getIntegrationEnv>;
+}
+
+export function integrationDescribe(name: string, fn: () => void): void {
+	(hasIntegrationEnv() ? describe : describe.skip)(name, fn);
+}
+
+export function testcase(
+	name: string,
+	fn: (context: TestcaseContext) => Promise<void>,
+	timeoutMs = 10_000,
+) {
+	it(
+		name,
+		async () => {
+			const env = getIntegrationEnv();
+			const mittwaldApi = MittwaldAPIV2Client.newWithToken(env.mittwaldApiToken);
+			const teardowns: TeardownFn[] = [];
+
+			let testError: unknown;
+			try {
+				await fn({
+					teardown: (teardownFn) => teardowns.push(teardownFn),
+					scenario: (name) =>
+						createScenario({
+							env,
+							runWorkflow,
+							name,
+						}),
+					runOperation: runMittwaldOperation,
+					runWorkflow,
+					mittwaldApi,
+					env,
+				});
+			} catch (error) {
+				testError = error;
+			}
+
+			const teardownErrors: Error[] = [];
+			for (const teardownFn of teardowns.reverse()) {
+				try {
+					await teardownFn();
+				} catch (error) {
+					teardownErrors.push(toError(error));
+				}
+			}
+
+			if (testError && teardownErrors.length > 0) {
+				throw new AggregateError(
+					[toError(testError), ...teardownErrors],
+					'Test execution failed and one or more teardown steps failed',
+				);
+			}
+
+			if (testError) {
+				throw testError;
+			}
+
+			if (teardownErrors.length === 1) {
+				throw teardownErrors[0];
+			}
+
+			if (teardownErrors.length > 1) {
+				throw new AggregateError(teardownErrors, 'One or more teardown steps failed');
+			}
+		},
+		timeoutMs,
+	);
+}
+
+function toError(value: unknown): Error {
+	if (value instanceof Error) {
+		return value;
+	}
+
+	return new Error(String(value));
+}
+
+export function readRequiredString(source: Record<string, unknown>, key: string): string {
+	const value = source[key];
+	if (typeof value === 'string' && value.length > 0) {
+		return value;
+	}
+
+	throw new Error(`Expected property "${key}" to be a non-empty string`);
+}
+
+export function readOptionalString(
+	source: Record<string, unknown>,
+	key: string,
+): string | undefined {
+	const value = source[key];
+	return typeof value === 'string' ? value : undefined;
+}
