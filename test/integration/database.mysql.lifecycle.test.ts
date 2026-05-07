@@ -62,6 +62,25 @@ integrationDescribe('Database / MySQL Lifecycle (integration)', () => {
 					parameters: { mysqlDatabaseId: fromStep('Create MySQL Database') },
 				})
 				.step({
+					name: 'Copy MySQL Database',
+					resource: 'Database',
+					operation: 'Copy MySQL Database',
+					parameters: {
+						mysqlDatabaseId: fromStep('Create MySQL Database'),
+						description: `${dbDescription}-copy`,
+						userPassword: password,
+						userAccessLevel: 'full',
+						userExternalAccess: false,
+						userDescription: `${dbDescription}-copy`,
+					},
+				})
+				.step({
+					name: 'List After Copy',
+					resource: 'Database',
+					operation: 'List MySQL Databases',
+					parameters: { project: fromStep('Create Project') },
+				})
+				.step({
 					name: 'Delete MySQL Database',
 					resource: 'Database',
 					operation: 'Delete MySQL Database',
@@ -70,11 +89,16 @@ integrationDescribe('Database / MySQL Lifecycle (integration)', () => {
 				.run();
 
 			const dbId = result.step('Create MySQL Database').requireString('id');
+			const copyId = result.step('Copy MySQL Database').requireString('id');
 
 			expect(result.step('List MySQL Databases').stringValues('id')).toContain(dbId);
 			expect(result.step('Get MySQL Database').requireString('id')).toBe(dbId);
+			expect(copyId).not.toBe(dbId);
+			expect(result.step('List After Copy').stringValues('id')).toEqual(
+				expect.arrayContaining([dbId, copyId]),
+			);
 		},
-		120_000,
+		180_000,
 	);
 
 	testcase('lists available MySQL versions', async ({ runOperation }) => {
