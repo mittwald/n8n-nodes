@@ -5,3 +5,4 @@ import './Conversation/operations';
 import './Contributor/operations';
 import './Domain/operations';
 import './Database/operations';
+import './Mail/operations';
