@@ -38,6 +38,10 @@ This node provides integration with the [mittwald API v2](https://developer.mitt
 ### Conversation
 
 - **Create a ticket**: Create a support ticket in a conversation category
+- **List**: Get all conversations the authenticated user has created or has access to
+- **Get**: Get details of a specific conversation
+- **List messages**: Get all messages of a conversation (parameter: Conversation)
+- **Create a message**: Send a new message in a conversation (parameters: Conversation, Message)
 
 ### Project
 
