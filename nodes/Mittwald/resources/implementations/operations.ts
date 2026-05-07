@@ -3,5 +3,6 @@ import './App/operations';
 import './Server/operations';
 import './Conversation/operations';
 import './Contributor/operations';
+import './Customer/operations';
 import './Domain/operations';
 import './Database/operations';
