@@ -3,6 +3,8 @@ import { expect } from 'vitest';
 import { fromStep, runId } from './helpers';
 import { integrationDescribe, testcase } from './testcase';
 
+declare const process: { env: Record<string, string | undefined> };
+
 integrationDescribe('Domain / DNS lifecycle (integration)', () => {
 	testcase(
 		'lists and gets a DNS zone within a freshly created project',
@@ -77,5 +79,62 @@ integrationDescribe('Domain / DNS lifecycle (integration)', () => {
 			expect(getResult.step('Get DNS Zone').requireString('id')).toBe(firstZoneId);
 		},
 		60_000,
+	);
+
+	testcase(
+		'creates, gets and deletes a DNS zone for a configured domain',
+		async (context) => {
+			const domainId = process.env.IT_DOMAIN_ID;
+			if (!domainId) {
+				return;
+			}
+
+			const zoneName = `dns-it-${runId('zone')}`;
+			// eslint-disable-next-line prefer-const
+			let createdZoneId: string | undefined;
+
+			context.teardown(async () => {
+				if (!createdZoneId) {
+					return;
+				}
+
+				try {
+					await context.mittwaldApi.domain.dnsDeleteDnsZone({ dnsZoneId: createdZoneId });
+				} catch {
+					// Best-effort cleanup; the test's own Delete DNS Zone step usually handles this.
+				}
+			});
+
+			const result = await context
+				.scenario('DNS zone CRUD')
+				.step({
+					name: 'Create DNS Zone',
+					resource: 'Domain',
+					operation: 'Create DNS Zone',
+					parameters: {
+						name: zoneName,
+						domainId,
+						parentZoneId: '',
+					},
+				})
+				.step({
+					name: 'Get DNS Zone',
+					resource: 'Domain',
+					operation: 'Get DNS Zone',
+					parameters: { dnsZoneId: fromStep('Create DNS Zone') },
+				})
+				.step({
+					name: 'Delete DNS Zone',
+					resource: 'Domain',
+					operation: 'Delete DNS Zone',
+					parameters: { dnsZoneId: fromStep('Create DNS Zone') },
+				})
+				.run();
+
+			createdZoneId = result.step('Create DNS Zone').requireString('id');
+
+			expect(result.step('Get DNS Zone').requireString('id')).toBe(createdZoneId);
+		},
+		90_000,
 	);
 });
