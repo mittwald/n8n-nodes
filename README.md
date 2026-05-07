@@ -39,6 +39,16 @@ This node provides integration with the [mittwald API v2](https://developer.mitt
 
 - **Create a ticket**: Create a support ticket in a conversation category
 
+### Cronjob
+
+- **Create a cronjob**: Create a new cronjob in a project
+- **List all cronjobs**: Get a list of all cronjobs in a project
+- **Get a cronjob**: Get details of a specific cronjob
+- **Delete a cronjob**: Delete an existing cronjob
+- **Trigger a cronjob**: Manually trigger an execution of a cronjob
+- **List cronjob executions**: Get a list of executions for a cronjob
+- **Get a cronjob execution**: Get details of a specific cronjob execution
+
 ### Project
 
 - **Create a project on a server**: Create a new project on a server
