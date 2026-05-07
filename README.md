@@ -35,6 +35,18 @@ This node provides integration with the [mittwald API v2](https://developer.mitt
 - **List outgoing invoices**: Get a list of outgoing invoices for an organisation
 - **List own extensions**: Get a list of extensions owned by an organisation
 
+### Container
+
+- **List stacks**: Get a list of stacks in a project (parameter: Project)
+- **Get a stack**: Get details of a specific stack (parameter: Stack ID)
+- **List services**: Get a list of services in a project (parameter: Project)
+- **List volumes**: Get a list of volumes in a project (parameter: Project)
+- **List stack volumes**: Get a list of volumes belonging to a stack (parameter: Stack ID)
+- **Start a service**: Start a stopped service (parameters: Stack ID, Service ID)
+- **Stop a service**: Stop a started service (parameters: Stack ID, Service ID)
+- **Restart a service**: Restart a started service (parameters: Stack ID, Service ID)
+- **Recreate a service**: Recreate a service (parameters: Stack ID, Service ID)
+
 ### Conversation
 
 - **Create a ticket**: Create a support ticket in a conversation category
