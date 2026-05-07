@@ -48,6 +48,8 @@ This node provides integration with the [mittwald API v2](https://developer.mitt
 - **Delete an SFTP user**: Delete an SFTP user from a project (parameter: SFTP User ID)
 - **Delete a project**: Delete an existing project
 - **Get a project**: Get details of a specific project
+- **Get storage statistics**: Get storage usage statistics for a project
+- **Update storage notification threshold**: Update the storage notification threshold of a project
 - **List all SSH users**: Get a list of all SSH users in a project (parameter: Project)
 - **List all SFTP users**: Get a list of all SFTP users in a project (parameter: Project)
 - **List all invites**: Get a list of all project invitations (parameter: Project)
@@ -67,7 +69,9 @@ This node provides integration with the [mittwald API v2](https://developer.mitt
 ### Server
 
 - **Get a server**: Get details of a specific server
+- **Get storage statistics**: Get storage usage statistics for a server
 - **List all servers**: Get a list of all servers
+- **Update storage notification threshold**: Update the storage notification threshold of a server
 
 ### Domain
 
