@@ -35,6 +35,13 @@ This node provides integration with the [mittwald API v2](https://developer.mitt
 - **List outgoing invoices**: Get a list of outgoing invoices for an organisation
 - **List own extensions**: Get a list of extensions owned by an organisation
 
+### Contract
+
+- **Terminate a contract**: Schedule the termination of a contract (parameters: Contract ID, optional Target Date, optional Reason)
+- **Terminate a contract item**: Schedule the termination of a contract item (parameters: Contract ID, Contract Item ID, optional Target Date, optional Reason)
+- **Get an invoice**: Get details of an invoice (parameter: Invoice ID)
+- **List invoices**: Get a list of invoices for a customer (parameter: Customer ID)
+
 ### Conversation
 
 - **Create a ticket**: Create a support ticket in a conversation category
