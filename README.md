@@ -46,6 +46,8 @@ This node provides integration with the [mittwald API v2](https://developer.mitt
 - **Create an SFTP user**: Create an SFTP user for a project (parameters: Project, Name, Password, Access Level, Directories, optional Expires At)
 - **Delete an SSH user**: Delete an SSH user from a project (parameter: SSH User ID)
 - **Delete an SFTP user**: Delete an SFTP user from a project (parameter: SFTP User ID)
+- **Get an SSH user**: Get details of a specific SSH user (parameter: SSH User ID)
+- **Get an SFTP user**: Get details of a specific SFTP user (parameter: SFTP User ID)
 - **Delete a project**: Delete an existing project
 - **Get a project**: Get details of a specific project
 - **Get storage statistics**: Get storage usage statistics for a project
