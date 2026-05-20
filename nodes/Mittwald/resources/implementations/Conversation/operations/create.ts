@@ -54,12 +54,6 @@ export default conversationResource
 			},
 		});
 
-		await apiClient.request({
-			path: `/conversations/${createdConversation.conversationId}`,
-			method: 'GET',
-			polling: { waitUntil: { untilSuccess: true } },
-		});
-
 		return await apiClient.request({
 			path: `/conversations/${createdConversation.conversationId}/messages`,
 			method: 'POST',
