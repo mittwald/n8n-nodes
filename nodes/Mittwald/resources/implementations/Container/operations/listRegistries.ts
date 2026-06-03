@@ -3,18 +3,21 @@ import { containerResource } from '../resource';
 
 export default containerResource
 	.addOperation({
-		name: 'List Stacks',
-		action: 'List stacks in a project',
-		description: 'Get a list of stacks belonging to a project',
+		name: 'List Registries',
+		action: 'List container registries in a project',
+		description: 'Get a list of container registries belonging to a project',
 	})
 	.withProperties({
-		project: projectProperty,
+		project: {
+			...projectProperty,
+			required: true,
+		},
 	})
 	.withExecuteFn(async ({ properties, apiClient }) => {
 		const { project } = properties;
 
 		return apiClient.request({
-			path: `/projects/${project}/stacks`,
+			path: `/projects/${project}/registries`,
 			method: 'GET',
 		});
 	});

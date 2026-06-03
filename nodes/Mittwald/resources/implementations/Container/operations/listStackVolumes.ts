@@ -1,3 +1,4 @@
+import stackProperty from '../../shared/stackProperty';
 import { containerResource } from '../resource';
 
 export default containerResource
@@ -7,17 +8,16 @@ export default containerResource
 		description: 'Get a list of volumes belonging to a stack',
 	})
 	.withProperties({
-		stackId: {
-			displayName: 'Stack ID',
-			type: 'string',
-			default: '',
+		stack: {
+			...stackProperty,
+			required: true,
 		},
 	})
 	.withExecuteFn(async ({ properties, apiClient }) => {
-		const { stackId } = properties;
+		const { stack } = properties;
 
 		return apiClient.request({
-			path: `/stacks/${stackId}/volumes`,
+			path: `/stacks/${stack}/volumes`,
 			method: 'GET',
 		});
 	});
