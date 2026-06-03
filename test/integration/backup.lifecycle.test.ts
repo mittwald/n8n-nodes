@@ -26,7 +26,7 @@ integrationDescribe('Backup / Lifecycle (integration)', () => {
 		'creates, lists, gets, and exports a project backup in one workflow',
 		async (context) => {
 			const description = `it-${runId('backup-flow')}`;
-			const expirationTime = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString();
+			const expirationTime = new Date(Date.now() + 8 * 24 * 60 * 60 * 1000).toISOString();
 			const backupApi = context.mittwaldApi as unknown as BackupApi;
 			const cleanup = {
 				projectId: undefined as string | undefined,
