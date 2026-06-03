@@ -59,19 +59,17 @@ integrationDescribe('Database / MySQL Lifecycle (integration)', () => {
 					name: 'Get MySQL Database',
 					resource: 'Database',
 					operation: 'Get MySQL Database',
-					parameters: { mysqlDatabaseId: fromStep('Create MySQL Database') },
+					parameters: { mysqlDatabaseId: fromStep('Create MySQL Database').value },
 				})
 				.step({
 					name: 'Copy MySQL Database',
 					resource: 'Database',
 					operation: 'Copy MySQL Database',
 					parameters: {
-						mysqlDatabaseId: fromStep('Create MySQL Database'),
+						mysqlDatabaseId: fromStep('Create MySQL Database').value,
 						description: `${dbDescription}-copy`,
 						userPassword: password,
-						userAccessLevel: 'full',
 						userExternalAccess: false,
-						userDescription: `${dbDescription}-copy`,
 					},
 				})
 				.step({
@@ -84,7 +82,7 @@ integrationDescribe('Database / MySQL Lifecycle (integration)', () => {
 					name: 'Delete MySQL Database',
 					resource: 'Database',
 					operation: 'Delete MySQL Database',
-					parameters: { mysqlDatabaseId: fromStep('Create MySQL Database') },
+					parameters: { mysqlDatabaseId: fromStep('Create MySQL Database').value },
 				})
 				.run();
 

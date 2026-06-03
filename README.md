@@ -69,7 +69,7 @@ This node provides integration with the [mittwald API v2](https://developer.mitt
 - **Create MySQL database**: Create a new MySQL database with an initial user in a project (parameters: Project, Name, Version, Character Set, Collation, User Password, User Access Level, optional User External Access, optional User Description)
 - **Get a MySQL database**: Get details of a specific MySQL database (parameter: MySQL Database ID)
 - **Delete MySQL database**: Delete an existing MySQL database (parameter: MySQL Database ID)
-- **Copy MySQL database**: Copy a MySQL database with its own initial user (parameters: source MySQL Database ID, Name, User Password, User Access Level, optional User External Access, optional User Description)
+- **Copy MySQL database**: Copy a MySQL database with its own initial user (parameters: source MySQL Database ID, Name, User Password, optional User External Access; the copied user is created with full access)
 - **List MySQL versions**: Get a list of available MySQL versions
 - **List Redis versions**: Get a list of available Redis versions
 

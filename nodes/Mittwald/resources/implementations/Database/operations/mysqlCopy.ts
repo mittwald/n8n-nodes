@@ -32,70 +32,37 @@ export default databaseResource
 			default: '',
 			description: 'Password for the user of the copied database',
 		},
-		userAccessLevel: {
-			displayName: 'User Access Level',
-			type: 'options',
-			default: 'full',
-			options: [
-				{
-					name: 'Full',
-					value: 'full',
-				},
-				{
-					name: 'Read-Only',
-					value: 'readonly',
-				},
-			],
-		},
 		userExternalAccess: {
 			displayName: 'User External Access',
 			type: 'boolean',
 			default: false,
 			description: 'Whether to allow external access for the user of the copied database',
 		},
-		userDescription: {
-			displayName: 'User Description',
-			type: 'string',
-			default: '',
-			description: 'Optional description for the user of the copied database',
-		},
 	})
 	.withExecuteFn(async ({ properties, apiClient }) => {
-		const {
-			mysqlDatabaseId,
-			description,
-			userPassword,
-			userAccessLevel,
-			userExternalAccess,
-			userDescription,
-		} = properties;
+		const { mysqlDatabaseId, description, userPassword, userExternalAccess } = properties;
 
 		const copy = await apiClient.request({
 			path: `/mysql-databases/${mysqlDatabaseId}/actions/copy`,
 			method: 'POST',
 			requestSchema: Z.object({
-				database: Z.object({
-					description: Z.string().min(1),
-				}),
+				description: Z.string().min(1),
 				user: Z.object({
 					password: Z.string().min(1),
-					accessLevel: Z.enum(['full', 'readonly']),
+					accessLevel: Z.literal('full'),
 					externalAccess: Z.boolean(),
-					description: Z.string().optional(),
 				}),
 			}),
 			responseSchema: Z.object({
-				id: Z.string().uuid(),
+				id: Z.string(),
+				userId: Z.string(),
 			}),
 			body: {
-				database: {
-					description,
-				},
+				description,
 				user: {
 					password: userPassword,
-					accessLevel: userAccessLevel,
+					accessLevel: 'full',
 					externalAccess: userExternalAccess,
-					description: userDescription || undefined,
 				},
 			},
 		});
