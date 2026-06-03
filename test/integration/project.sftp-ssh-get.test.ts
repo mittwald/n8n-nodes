@@ -55,7 +55,7 @@ integrationDescribe('Project / SSH and SFTP User Get (integration)', () => {
 				resource: 'Project',
 				operation: 'Get SSH User',
 				parameters: {
-					sshUserId: fromStep('Create SSH User'),
+					sshUserId: fromStep('Create SSH User').value,
 				},
 			})
 			.run();
@@ -117,7 +117,7 @@ integrationDescribe('Project / SSH and SFTP User Get (integration)', () => {
 				resource: 'Project',
 				operation: 'Get SFTP User',
 				parameters: {
-					sftpUserId: fromStep('Create SFTP User'),
+					sftpUserId: fromStep('Create SFTP User').value,
 				},
 			})
 			.run();
