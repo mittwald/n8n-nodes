@@ -1,10 +1,10 @@
-import { customerResource } from '../resource';
+import { organisationResource } from '../resource';
 
-export default customerResource
+export default organisationResource
 	.addOperation({
 		name: 'List',
-		action: 'List customers',
-		description: 'Get all customer profiles the authenticated user has access to',
+		action: 'List organisations',
+		description: 'Get all organisations the authenticated user has access to',
 	})
 	.withProperties({
 		role: {
@@ -13,14 +13,14 @@ export default customerResource
 			default: '',
 			required: false,
 			description:
-				'Filter customers by role. Use a comma-separated list for multiple roles, such as owner,member.',
+				'Filter organisations by role. Use a comma-separated list for multiple roles, such as owner,member.',
 		},
 		search: {
 			displayName: 'Search',
 			type: 'string',
 			default: '',
 			required: false,
-			description: 'Search customer number, customer name, or customer ID',
+			description: 'Search organisation number, organisation name, or organisation ID',
 		},
 	})
 	.withExecuteFn(async (context) => {

@@ -1,16 +1,16 @@
-import customerProperty from '../../shared/customerProperty';
-import { customerResource } from '../resource';
+import organisationProperty from '../../shared/organisationProperty';
+import { organisationResource } from '../resource';
 import Z from 'zod';
 
-export default customerResource
+export default organisationResource
 	.addOperation({
 		name: 'Create Invite',
-		action: 'Create a customer invite',
-		description: 'Invite a user to a customer organisation',
+		action: 'Create an organisation invite',
+		description: 'Invite a user to an organisation',
 	})
 	.withProperties({
-		customer: {
-			...customerProperty,
+		organisation: {
+			...organisationProperty,
 			required: true,
 		},
 		mailAddress: {
@@ -61,10 +61,10 @@ export default customerResource
 	})
 	.withExecuteFn(async (context) => {
 		const { properties, apiClient } = context;
-		const { customer, mailAddress, role, membershipExpiresAt, message } = properties;
+		const { organisation, mailAddress, role, membershipExpiresAt, message } = properties;
 
 		return apiClient.request({
-			path: `/customers/${customer}/invites`,
+			path: `/customers/${organisation}/invites`,
 			method: 'POST',
 			requestSchema: Z.object({
 				mailAddress: Z.string().email(),

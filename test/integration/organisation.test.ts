@@ -3,10 +3,10 @@ import { expect } from 'vitest';
 import { runId } from './helpers';
 import { integrationDescribe, readRequiredString, testcase } from './testcase';
 
-integrationDescribe('Customer (integration)', () => {
+integrationDescribe('Organisation (integration)', () => {
 	testcase('lists customers', async ({ runOperation }) => {
 		const result = await runOperation({
-			resource: 'Customer',
+			resource: 'Organisation',
 			operation: 'List',
 		});
 
@@ -25,7 +25,7 @@ integrationDescribe('Customer (integration)', () => {
 		});
 
 		const customers = await context.runOperation({
-			resource: 'Customer',
+			resource: 'Organisation',
 			operation: 'List',
 		});
 		const customerId = readRequiredString(customers.firstItem.json, 'customerId');
@@ -35,10 +35,10 @@ integrationDescribe('Customer (integration)', () => {
 			.scenario('Customer invite')
 			.step({
 				name: 'Create Invite',
-				resource: 'Customer',
+				resource: 'Organisation',
 				operation: 'Create Invite',
 				parameters: {
-					customer: {
+					organisation: {
 						mode: 'id',
 						value: customerId,
 					},

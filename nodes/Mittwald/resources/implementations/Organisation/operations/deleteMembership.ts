@@ -1,14 +1,14 @@
-import { customerResource } from '../resource';
+import { organisationResource } from '../resource';
 
-export default customerResource
+export default organisationResource
 	.addOperation({
 		name: 'Delete Membership',
-		action: 'Delete a customer membership',
-		description: 'Remove a member from a customer organisation',
+		action: 'Delete an organisation membership',
+		description: 'Remove a member from an organisation',
 	})
 	.withProperties({
 		customerMembershipId: {
-			displayName: 'Customer Membership ID',
+			displayName: 'Membership ID',
 			type: 'string',
 			required: true,
 			default: '',

@@ -35,11 +35,11 @@ This node provides integration with the [mittwald API v2](https://developer.mitt
 - **List outgoing invoices**: Get a list of outgoing invoices for an organisation
 - **List own extensions**: Get a list of extensions owned by an organisation
 
-### Customer
+### Organisation
 
-- **List customers**: Get all customer profiles the authenticated user has access to
-- **Create an invite**: Invite a user to a customer organisation (parameters: Customer, Email Address, Role, optional Message)
-- **Delete a membership**: Remove a member from a customer organisation (parameter: Customer Membership ID)
+- **List organisations**: Get all organisations the authenticated user has access to
+- **Create an invite**: Invite a user to an organisation (parameters: Organisation, Email Address, Role, optional Message)
+- **Delete a membership**: Remove a member from an organisation (parameter: Membership ID)
 
 ### Conversation
 
