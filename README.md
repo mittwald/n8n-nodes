@@ -36,9 +36,9 @@ This node provides integration with the [mittwald API v2](https://developer.mitt
 - **List app installations of a project**: Get a list of app installations belonging to a project (parameter: Project)
 - **Copy an app installation**: Request a copy of an app installation into another project (parameters: App Installation, target Project, Name, optional Installation Path)
 - **List system softwares**: Get a list of available system software packages
-- **Get a system software**: Get details of a specific system software (parameter: System Software ID)
-- **List system software versions**: Get a list of versions for a system software (parameter: System Software ID)
-- **Get a system software version**: Get details of a specific system software version (parameters: System Software ID, System Software Version ID)
+- **Get a system software**: Get details of a specific system software (parameter: searchable System Software selector)
+- **List system software versions**: Get a list of versions for a system software (parameter: searchable System Software selector)
+- **Get a system software version**: Get details of a specific system software version (parameters: searchable System Software selector, System Software Version ID)
 
 ### Contributor
 

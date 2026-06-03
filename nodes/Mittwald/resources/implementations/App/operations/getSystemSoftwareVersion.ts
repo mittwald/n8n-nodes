@@ -1,4 +1,5 @@
 import { appResource } from '../resource';
+import systemSoftwareLocatorProperty from '../../shared/systemSoftwareLocatorProperty';
 
 export default appResource
 	.addOperation({
@@ -8,9 +9,8 @@ export default appResource
 	})
 	.withProperties({
 		systemSoftwareId: {
-			displayName: 'System Software ID',
-			type: 'string',
-			default: '',
+			...systemSoftwareLocatorProperty,
+			required: true,
 		},
 		systemSoftwareVersionId: {
 			displayName: 'System Software Version ID',
