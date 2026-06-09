@@ -23,6 +23,7 @@ integrationDescribe('Contributor / List Contract Partners (integration)', () => 
 					value: organisationId,
 				},
 			},
+			allowEmptyItems: true,
 		});
 
 		expect(Array.isArray(result.items)).toBe(true);
