@@ -64,7 +64,7 @@ integrationDescribe('Cronjob / Lifecycle (integration)', () => {
 				resource: 'Cronjob',
 				operation: 'Get',
 				parameters: {
-					cronjobId: fromStep('Create Cronjob'),
+					cronjobId: fromStep('Create Cronjob').value,
 				},
 			})
 			.step({
@@ -72,7 +72,7 @@ integrationDescribe('Cronjob / Lifecycle (integration)', () => {
 				resource: 'Cronjob',
 				operation: 'Trigger',
 				parameters: {
-					cronjobId: fromStep('Create Cronjob'),
+					cronjobId: fromStep('Create Cronjob').value,
 				},
 			})
 			.step({
@@ -80,7 +80,7 @@ integrationDescribe('Cronjob / Lifecycle (integration)', () => {
 				resource: 'Cronjob',
 				operation: 'List Executions',
 				parameters: {
-					cronjobId: fromStep('Create Cronjob'),
+					cronjobId: fromStep('Create Cronjob').value,
 				},
 			})
 			.step({
@@ -88,8 +88,8 @@ integrationDescribe('Cronjob / Lifecycle (integration)', () => {
 				resource: 'Cronjob',
 				operation: 'Get Execution',
 				parameters: {
-					cronjobId: fromStep('Create Cronjob'),
-					executionId: fromStep('Trigger Cronjob'),
+					cronjobId: fromStep('Create Cronjob').value,
+					executionId: fromStep('Trigger Cronjob').value,
 				},
 			})
 			.step({
@@ -97,7 +97,7 @@ integrationDescribe('Cronjob / Lifecycle (integration)', () => {
 				resource: 'Cronjob',
 				operation: 'Delete',
 				parameters: {
-					cronjobId: fromStep('Create Cronjob'),
+					cronjobId: fromStep('Create Cronjob').value,
 				},
 			})
 			.run();
