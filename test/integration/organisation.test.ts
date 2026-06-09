@@ -29,7 +29,7 @@ integrationDescribe('Organisation (integration)', () => {
 			operation: 'List',
 		});
 		const customerId = readRequiredString(customers.firstItem.json, 'customerId');
-		const mailAddress = `${runId('customer-invite')}@example.invalid`;
+		const mailAddress = `${runId('customer-invite')}@example.com`;
 
 		const result = await context
 			.scenario('Customer invite')
