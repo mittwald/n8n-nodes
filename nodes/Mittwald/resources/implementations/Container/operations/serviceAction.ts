@@ -1,5 +1,6 @@
-import stackProperty from '../../shared/stackProperty';
+import projectProperty from '../../shared/projectProperty';
 import { containerResource } from '../resource';
+import { resolveStackId } from './stackResolver';
 
 export default containerResource
 	.addOperation({
@@ -8,8 +9,8 @@ export default containerResource
 		description: 'Start, stop, restart, recreate, or pull the image for a service',
 	})
 	.withProperties({
-		stack: {
-			...stackProperty,
+		project: {
+			...projectProperty,
 			required: true,
 		},
 		serviceId: {
@@ -48,10 +49,11 @@ export default containerResource
 		},
 	})
 	.withExecuteFn(async ({ properties, apiClient }) => {
-		const { stack, serviceId, action } = properties;
+		const { project, serviceId, action } = properties;
+		const stackId = await resolveStackId(apiClient, project);
 
 		return apiClient.request({
-			path: `/stacks/${stack}/services/${serviceId}/actions/${action}`,
+			path: `/stacks/${stackId}/services/${serviceId}/actions/${action}`,
 			method: 'POST',
 		});
 	});

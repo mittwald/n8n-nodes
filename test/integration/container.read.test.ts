@@ -5,7 +5,7 @@ import { integrationDescribe, testcase } from './testcase';
 
 integrationDescribe('Container / Read (integration)', () => {
 	testcase(
-		'lists stacks and services in a project',
+		'lists container resources in a project',
 		async (context) => {
 			const projectDescription = `it-${runId('container-project')}`;
 
@@ -35,13 +35,6 @@ integrationDescribe('Container / Read (integration)', () => {
 
 			const projectId = setup.step('Create Project').requireString('id');
 
-			const stacks = await context.runOperation({
-				resource: 'Container',
-				operation: 'List Stacks',
-				parameters: { project: { mode: 'id', value: projectId } },
-				allowEmptyItems: true,
-			});
-
 			const services = await context.runOperation({
 				resource: 'Container',
 				operation: 'List Services',
@@ -56,9 +49,16 @@ integrationDescribe('Container / Read (integration)', () => {
 				allowEmptyItems: true,
 			});
 
-			expect(Array.isArray(stacks.items)).toBe(true);
+			const registries = await context.runOperation({
+				resource: 'Container',
+				operation: 'List Registries',
+				parameters: { project: { mode: 'id', value: projectId } },
+				allowEmptyItems: true,
+			});
+
 			expect(Array.isArray(services.items)).toBe(true);
 			expect(Array.isArray(volumes.items)).toBe(true);
+			expect(Array.isArray(registries.items)).toBe(true);
 		},
 		60_000,
 	);

@@ -37,14 +37,13 @@ This node provides integration with the [mittwald API v2](https://developer.mitt
 
 ### Container
 
-- **Create service**: Create a service in a stack (parameters: Stack, Service Name, Image)
-- **Update service**: Update a service in a stack (parameters: Stack, Service Name)
-- **Delete service**: Delete a service from a stack (parameters: Stack, Service Name)
-- **Service action**: Run an action on a service (parameters: Stack, Service ID, Action)
-- **Get service logs**: Get logs of a service (parameters: Stack, Service ID, optional Tail)
+- **Create service**: Create a service in a project (parameters: Project, Service Name, Image)
+- **Update service**: Update a service in a project (parameters: Project, Service Name)
+- **Delete service**: Delete a service from a project (parameters: Project, Service Name)
+- **Service action**: Run an action on a service (parameters: Project, Service ID, Action)
+- **Get service logs**: Get logs of a service (parameters: Project, Service ID, optional Tail)
 - **List services**: Get a list of services in a project (parameter: Project)
 - **List volumes**: Get a list of volumes in a project (parameter: Project)
-- **List stack volumes**: Get a list of volumes belonging to a stack (parameter: Stack)
 - **List registries**: Get a list of container registries in a project (parameter: Project)
 - **Create registry**: Create a container registry (parameters: Project, Hostname / URI, Description)
 - **Update registry**: Update a container registry (parameters: Project, Registry)

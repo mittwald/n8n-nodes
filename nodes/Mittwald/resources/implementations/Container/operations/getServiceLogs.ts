@@ -1,15 +1,16 @@
-import stackProperty from '../../shared/stackProperty';
+import projectProperty from '../../shared/projectProperty';
 import { containerResource } from '../resource';
+import { resolveStackId } from './stackResolver';
 
 export default containerResource
 	.addOperation({
 		name: 'Get Service Logs',
 		action: 'Get logs of a service',
-		description: 'Get log output from a service in a container stack',
+		description: 'Get log output from a service in a container project',
 	})
 	.withProperties({
-		stack: {
-			...stackProperty,
+		project: {
+			...projectProperty,
 			required: true,
 		},
 		serviceId: {
@@ -27,10 +28,11 @@ export default containerResource
 		},
 	})
 	.withExecuteFn(async ({ properties, apiClient }) => {
-		const { stack, serviceId, tail } = properties;
+		const { project, serviceId, tail } = properties;
+		const stackId = await resolveStackId(apiClient, project);
 
 		return apiClient.request<string>({
-			path: `/stacks/${stack}/services/${serviceId}/logs`,
+			path: `/stacks/${stackId}/services/${serviceId}/logs`,
 			method: 'GET',
 			qs: tail > 0 ? { tail } : undefined,
 			returnFullResponse: true,

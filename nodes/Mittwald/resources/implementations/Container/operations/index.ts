@@ -5,7 +5,6 @@ import './serviceAction';
 import './getServiceLogs';
 import './listServices';
 import './listVolumes';
-import './listStackVolumes';
 import './listRegistries';
 import './createRegistry';
 import './updateRegistry';

@@ -1,20 +1,21 @@
-import stackProperty from '../../shared/stackProperty';
+import projectProperty from '../../shared/projectProperty';
 import { containerResource } from '../resource';
 import {
 	buildServiceRequest,
 	environmentProperty,
 	updateStackWithServiceRequestSchema,
 } from './serviceRequest';
+import { resolveStackId } from './stackResolver';
 
 export default containerResource
 	.addOperation({
 		name: 'Update Service',
-		action: 'Update a service in a stack',
-		description: 'Update selected fields of a service in a container stack',
+		action: 'Update a service in a project',
+		description: 'Update selected fields of a service in a container project',
 	})
 	.withProperties({
-		stack: {
-			...stackProperty,
+		project: {
+			...projectProperty,
 			required: true,
 		},
 		serviceName: {
@@ -68,7 +69,7 @@ export default containerResource
 	})
 	.withExecuteFn(async ({ properties, apiClient }) => {
 		const {
-			stack,
+			project,
 			serviceName,
 			image,
 			command,
@@ -78,6 +79,7 @@ export default containerResource
 			environment,
 			description,
 		} = properties;
+		const stackId = await resolveStackId(apiClient, project);
 		const serviceRequest = buildServiceRequest({
 			image,
 			command,
@@ -89,7 +91,7 @@ export default containerResource
 		});
 
 		return apiClient.request({
-			path: `/stacks/${stack}`,
+			path: `/stacks/${stackId}`,
 			method: 'PATCH',
 			requestSchema: updateStackWithServiceRequestSchema,
 			body: {
