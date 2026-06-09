@@ -1,18 +1,10 @@
 /* eslint-disable @n8n/community-nodes/no-restricted-imports */
 import { expect } from 'vitest';
-import { setTimeout as wait } from 'node:timers/promises';
 import { fromStep, runId } from './helpers';
 import { integrationDescribe, testcase } from './testcase';
 
 type BackupApi = {
 	backup: {
-		getProjectBackup: (input: { projectBackupId: string }) => Promise<{
-			status: number;
-			data?: {
-				id?: string;
-				status?: string;
-			};
-		}>;
 		deleteProjectBackup: (input: { projectBackupId: string }) => Promise<unknown>;
 		deleteProjectBackupExport: (input: { projectBackupId: string }) => Promise<unknown>;
 	};
@@ -77,8 +69,6 @@ integrationDescribe('Backup / Lifecycle (integration)', () => {
 			cleanup.projectId = projectId;
 			cleanup.backupId = backupId;
 
-			await waitForBackupToComplete(backupApi, backupId);
-
 			const result = await context
 				.scenario('Backup lifecycle')
 				.step({
@@ -117,18 +107,3 @@ integrationDescribe('Backup / Lifecycle (integration)', () => {
 		120_000,
 	);
 });
-
-async function waitForBackupToComplete(apiClient: BackupApi, backupId: string): Promise<void> {
-	const deadline = Date.now() + 90_000;
-
-	while (Date.now() < deadline) {
-		const response = await apiClient.backup.getProjectBackup({ projectBackupId: backupId });
-		if (response.status === 200 && response.data?.status === 'Completed') {
-			return;
-		}
-
-		await wait(5_000);
-	}
-
-	throw new Error(`Backup "${backupId}" did not complete within 90 seconds`);
-}
