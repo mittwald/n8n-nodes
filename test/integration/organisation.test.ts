@@ -1,10 +1,9 @@
 /* eslint-disable @n8n/community-nodes/no-restricted-imports */
 import { expect } from 'vitest';
-import { runId } from './helpers';
 import { integrationDescribe, readRequiredString, testcase } from './testcase';
 
 integrationDescribe('Organisation (integration)', () => {
-	testcase('lists customers', async ({ runOperation }) => {
+	testcase('lists organisations', async ({ runOperation }) => {
 		const result = await runOperation({
 			resource: 'Organisation',
 			operation: 'List',
@@ -14,6 +13,11 @@ integrationDescribe('Organisation (integration)', () => {
 	});
 
 	testcase('creates an invite and cleans it up', async (context) => {
+		const mailAddress = context.env.inviteTarget;
+		if (!mailAddress) {
+			throw new Error('Missing IT_INVITE_TARGET for invite tests.');
+		}
+
 		// eslint-disable-next-line prefer-const
 		let customerInviteId: string | undefined;
 		context.teardown(async () => {
@@ -24,15 +28,14 @@ integrationDescribe('Organisation (integration)', () => {
 			await context.mittwaldApi.customer.deleteCustomerInvite({ customerInviteId });
 		});
 
-		const customers = await context.runOperation({
+		const organisations = await context.runOperation({
 			resource: 'Organisation',
 			operation: 'List',
 		});
-		const customerId = readRequiredString(customers.firstItem.json, 'customerId');
-		const mailAddress = `${runId('customer-invite')}@example.com`;
+		const customerId = readRequiredString(organisations.firstItem.json, 'customerId');
 
 		const result = await context
-			.scenario('Customer invite')
+			.scenario('Organisation invite')
 			.step({
 				name: 'Create Invite',
 				resource: 'Organisation',
