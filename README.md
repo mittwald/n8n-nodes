@@ -86,7 +86,7 @@ This node provides integration with the [mittwald API v2](https://developer.mitt
 - **Schedule a deletion**: Schedule a domain for deletion at a target date (parameters: Domain ID, Deletion Date)
 - **Check transferability**: Check whether a domain can be transferred (parameter: Domain)
 - **Create an auth code**: Create an auth code for a domain transfer (parameter: Domain ID)
-- **Create a DNS zone**: Create a new DNS zone (parameters: Name, optional Domain ID, optional Parent Zone ID)
+- **Create a DNS zone**: Create a subordinate DNS zone under an existing parent zone (parameters: Name, Parent Zone ID)
 - **Get a DNS zone**: Get details of a specific DNS zone (parameter: DNS Zone ID)
 - **List DNS zones**: Get a list of DNS zones in a project (parameter: Project)
 - **Delete a DNS zone**: Delete a DNS zone (parameter: DNS Zone ID)

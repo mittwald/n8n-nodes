@@ -26,7 +26,7 @@ the mittwald API.
 
 - `IT_INVITE_TARGET` (mail address used by invite tests)
 - `IT_INVITE_USER_TOKEN` (API token of the invited user for invite acceptance tests)
-- `IT_DOMAIN_ID` (id of a domain owned by the test account; used by the DNS-zone create/get/delete test — that test skips silently when unset)
+- `IT_DNS_PARENT_ZONE_ID` (id of an existing DNS zone owned by the test account; used by the subordinate DNS-zone create/get/delete test — that test skips silently when unset)
 
 ## Running tests
 

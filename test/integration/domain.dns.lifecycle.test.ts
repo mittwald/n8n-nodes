@@ -82,14 +82,21 @@ integrationDescribe('Domain / DNS lifecycle (integration)', () => {
 	);
 
 	testcase(
-		'creates, gets and deletes a DNS zone for a configured domain',
+		'creates, gets and deletes a subordinate DNS zone',
 		async (context) => {
-			const domainId = process.env.IT_DOMAIN_ID;
-			if (!domainId) {
+			const parentZoneId = process.env.IT_DNS_PARENT_ZONE_ID;
+			if (!parentZoneId) {
 				return;
 			}
 
-			const zoneName = `dns-it-${runId('zone')}`;
+			const parentZone = await context.mittwaldApi.domain.dnsGetDnsZone({ dnsZoneId: parentZoneId });
+			if (parentZone.status !== 200) {
+				throw new Error(
+					`Failed to load parent DNS zone: expected status 200, got ${parentZone.status}`,
+				);
+			}
+			const zoneName = `it-${runId('zone')}.${parentZone.data.domain}`;
+
 			// eslint-disable-next-line prefer-const
 			let createdZoneId: string | undefined;
 
@@ -113,21 +120,20 @@ integrationDescribe('Domain / DNS lifecycle (integration)', () => {
 					operation: 'Create DNS Zone',
 					parameters: {
 						name: zoneName,
-						domainId,
-						parentZoneId: '',
+						parentZoneId,
 					},
 				})
 				.step({
 					name: 'Get DNS Zone',
 					resource: 'Domain',
 					operation: 'Get DNS Zone',
-					parameters: { dnsZoneId: fromStep('Create DNS Zone') },
+					parameters: { dnsZoneId: fromStep('Create DNS Zone').value },
 				})
 				.step({
 					name: 'Delete DNS Zone',
 					resource: 'Domain',
 					operation: 'Delete DNS Zone',
-					parameters: { dnsZoneId: fromStep('Create DNS Zone') },
+					parameters: { dnsZoneId: fromStep('Create DNS Zone').value },
 				})
 				.run();
 
