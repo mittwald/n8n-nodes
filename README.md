@@ -36,6 +36,12 @@ This node provides integration with the [mittwald API v2](https://developer.mitt
 - **List own extensions**: Get a list of extensions owned by an organisation
 - **List contract partners**: Get a list of contract partners associated with a contributor
 
+### Organisation
+
+- **List organisations**: Get all organisations the authenticated user has access to
+- **Create an invite**: Invite a user to an organisation (parameters: Organisation, Email Address, Role, optional Message)
+- **Delete a membership**: Remove a member from an organisation (parameter: Membership ID)
+
 ### Conversation
 
 - **Create a ticket**: Create a support ticket in a conversation category
