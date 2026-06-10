@@ -6,3 +6,4 @@ import './Contributor/operations';
 import './Organisation/operations';
 import './Domain/operations';
 import './Database/operations';
+import './Contract/operations';
