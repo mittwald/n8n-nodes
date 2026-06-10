@@ -34,6 +34,7 @@ This node provides integration with the [mittwald API v2](https://developer.mitt
 - **List incoming invoices**: Get a list of incoming invoices for an organisation
 - **List outgoing invoices**: Get a list of outgoing invoices for an organisation
 - **List own extensions**: Get a list of extensions owned by an organisation
+- **List contract partners**: Get a list of contract partners associated with a contributor
 
 ### Conversation
 
