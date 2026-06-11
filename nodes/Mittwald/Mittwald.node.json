@@ -2,7 +2,7 @@
 	"node": "n8n-nodes-mittwald",
 	"nodeVersion": "1.0",
 	"codexVersion": "1.0",
-	"categories": ["API", "Developer Tools"],
+	"categories": ["Development"],
 	"resources": {
 		"credentialDocumentation": [
 			{
