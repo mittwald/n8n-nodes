@@ -13,6 +13,7 @@ export const containerServiceRequestSchema = Z.object({
 
 export const createServiceRequestSchema = containerServiceRequestSchema.extend({
 	image: Z.string().min(1),
+	description: Z.string().min(1),
 });
 
 export const updateStackWithServiceRequestSchema = Z.object({

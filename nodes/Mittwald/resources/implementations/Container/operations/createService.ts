@@ -63,7 +63,7 @@ export default containerResource
 		description: {
 			displayName: 'Description',
 			type: 'string',
-			required: false,
+			required: true,
 			default: '',
 		},
 	})

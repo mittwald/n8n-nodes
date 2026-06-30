@@ -37,7 +37,7 @@ This node provides integration with the [mittwald API v2](https://developer.mitt
 
 ### Container
 
-- **Create service**: Create a service in a project (parameters: Project, Service Name, Image)
+- **Create service**: Create a service in a project (parameters: Project, Service Name, Image, Description)
 - **Update service**: Update a service in a project (parameters: Project, Service Name)
 - **Delete service**: Delete a service from a project (parameters: Project, Service Name)
 - **Service action**: Run an action on a service (parameters: Project, Service ID, Action)
