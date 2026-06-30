@@ -39,6 +39,7 @@ integrationDescribe('Container / Service lifecycle (integration)', () => {
 						project: fromStep('Create Project'),
 						serviceName: 'postgres',
 						image: 'postgres:16',
+						description: 'PostgreSQL service',
 					},
 				})
 				.step({
@@ -49,6 +50,7 @@ integrationDescribe('Container / Service lifecycle (integration)', () => {
 						project: fromStep('Create Project'),
 						serviceName: 'n8n',
 						image: 'docker.n8n.io/n8nio/n8n',
+						description: 'n8n service',
 					},
 				})
 				.step({
