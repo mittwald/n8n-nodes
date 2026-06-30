@@ -175,13 +175,13 @@ integrationDescribe('Mail / Lifecycle (integration)', () => {
 					name: 'Get Delivery Box',
 					resource: 'Mail',
 					operation: 'Get Delivery Box',
-					parameters: { deliveryBoxId: fromStep('Create Delivery Box') },
+					parameters: { deliveryBoxId: fromStep('Create Delivery Box').value },
 				})
 				.step({
 					name: 'Delete Delivery Box',
 					resource: 'Mail',
 					operation: 'Delete Delivery Box',
-					parameters: { deliveryBoxId: fromStep('Create Delivery Box') },
+					parameters: { deliveryBoxId: fromStep('Create Delivery Box').value },
 				})
 				.run();
 
