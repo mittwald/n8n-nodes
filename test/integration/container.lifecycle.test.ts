@@ -43,14 +43,14 @@ integrationDescribe('Container / Service lifecycle (integration)', () => {
 					},
 				})
 				.step({
-					name: 'Create n8n Service',
+					name: 'Create Redis Service',
 					resource: 'Container',
 					operation: 'Create Service',
 					parameters: {
 						project: fromStep('Create Project'),
-						serviceName: 'n8n',
-						image: 'docker.n8n.io/n8nio/n8n',
-						description: 'n8n service',
+						serviceName: 'redis',
+						image: 'redis:alpine',
+						description: 'Redis service',
 					},
 				})
 				.step({
@@ -71,12 +71,12 @@ integrationDescribe('Container / Service lifecycle (integration)', () => {
 					},
 				})
 				.step({
-					name: 'Delete n8n Service',
+					name: 'Delete Redis Service',
 					resource: 'Container',
 					operation: 'Delete Service',
 					parameters: {
 						project: fromStep('Create Project'),
-						serviceName: 'n8n',
+						serviceName: 'redis',
 					},
 				})
 				.step({
@@ -91,11 +91,11 @@ integrationDescribe('Container / Service lifecycle (integration)', () => {
 
 			const serviceNames = result.step('List Services').stringValues('serviceName');
 			expect(serviceNames).toContain('postgres');
-			expect(serviceNames).toContain('n8n');
+			expect(serviceNames).toContain('redis');
 
 			const remaining = result.step('List Services After Delete').stringValues('serviceName');
 			expect(remaining).not.toContain('postgres');
-			expect(remaining).not.toContain('n8n');
+			expect(remaining).not.toContain('redis');
 		},
 		180_000,
 	);
