@@ -27,7 +27,7 @@
 		"nodes/**/*",
 		"nodes/**/*.json",
 		"nodes/Mittwald/resources/**/*",
-		"package.json",
-		"test"
-	]
+		"package.json"
+	],
+	"exclude": ["test"]
 }

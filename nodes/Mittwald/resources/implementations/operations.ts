@@ -1,8 +1,13 @@
 import './Project/operations';
 import './App/operations';
+import './Backup/operations';
 import './Server/operations';
 import './Conversation/operations';
 import './Contributor/operations';
+import './Organisation/operations';
 import './Domain/operations';
 import './Database/operations';
+import './Contract/operations';
+import './Mail/operations';
+import './Container/operations';
 import './AIHosting/operations';
