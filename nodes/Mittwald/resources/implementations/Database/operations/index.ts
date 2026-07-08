@@ -1,4 +1,11 @@
+import './mysqlCopy';
+import './mysqlCreate';
+import './mysqlDelete';
+import './mysqlGet';
+import './mysqlList';
+import './mysqlVersions';
 import './redisCreate';
 import './redisDelete';
 import './redisGet';
 import './redisList';
+import './redisVersions';
