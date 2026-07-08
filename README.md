@@ -123,6 +123,23 @@ This node provides integration with the [mittwald API v2](https://developer.mitt
 - **Create and link subdomain**: Create a subdomain and link it to an app installation
 - **Check if domain is registrable**: Check whether a domain name is available for registration
 - **Set target installation for domain**: Set the target app installation for a domain
+- **List domains**: Get a list of all domains
+- **Get a domain**: Get details of a specific domain (parameter: Domain ID)
+- **Delete a domain**: Delete a domain (parameter: Domain ID)
+- **Update nameservers**: Update the nameservers of a domain (parameters: Domain ID, Nameservers)
+- **Update a contact**: Update one of the four domain contacts (parameters: Domain ID, Contact role, Contact body JSON)
+- **Schedule a deletion**: Schedule a domain for deletion at a target date (parameters: Domain ID, Deletion Date)
+- **Check transferability**: Check whether a domain can be transferred (parameter: Domain)
+- **Create an auth code**: Create an auth code for a domain transfer (parameter: Domain ID)
+- **Create a DNS zone**: Create a subordinate DNS zone under an existing parent zone (parameters: Name, Parent Zone ID)
+- **Get a DNS zone**: Get details of a specific DNS zone (parameter: DNS Zone ID)
+- **List DNS zones**: Get a list of DNS zones in a project (parameter: Project)
+- **Delete a DNS zone**: Delete a DNS zone (parameter: DNS Zone ID)
+- **Update a DNS record set**: Update a record set on a DNS zone (parameters: DNS Zone ID, Record Set type, Record Set body JSON)
+- **List ingresses**: Get a list of all ingresses
+- **Get an ingress**: Get details of a specific ingress (parameter: Ingress ID)
+- **Delete an ingress**: Delete an ingress (parameter: Ingress ID)
+- **Verify ingress ownership**: Trigger ownership verification for an ingress (parameter: Ingress ID)
 
 ## Credentials
 
