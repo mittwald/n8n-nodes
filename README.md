@@ -141,6 +141,20 @@ This node provides integration with the [mittwald API v2](https://developer.mitt
 - **Delete an ingress**: Delete an ingress (parameter: Ingress ID)
 - **Verify ingress ownership**: Trigger ownership verification for an ingress (parameter: Ingress ID)
 
+### Mail
+
+- **Create a mail address**: Create a new mail address in a project (parameters: Project, Address, optional Password, optional Quota, optional Forward Addresses, optional Catch-All, optional Spam Protection, optional Auto Responder)
+- **List mail addresses by project**: Get a list of mail addresses in a project (parameter: Project)
+- **List mail addresses**: Get a list of all mail addresses the user has access to
+- **Get a mail address**: Get details of a specific mail address (parameter: Mail Address ID)
+- **Delete a mail address**: Delete a mail address (parameter: Mail Address ID)
+- **Update a mail address**: Update the local part of a mail address (parameters: Mail Address ID, Address)
+- **Update mail address autoresponder**: Update the auto responder of a mail address (parameters: Mail Address ID, Active, optional Message, optional Starts At, optional Expires At)
+- **Create a delivery box**: Create a delivery box in a project (parameters: Project, Description, Password)
+- **List delivery boxes**: Get a list of delivery boxes in a project (parameter: Project)
+- **Get a delivery box**: Get details of a specific delivery box (parameter: Delivery Box ID)
+- **Delete a delivery box**: Delete a delivery box (parameter: Delivery Box ID)
+
 ## Credentials
 
 To use this node, you need to authenticate with the mittwald API using an API key.

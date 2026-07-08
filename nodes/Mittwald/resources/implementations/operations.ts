@@ -8,3 +8,4 @@ import './Organisation/operations';
 import './Domain/operations';
 import './Database/operations';
 import './Contract/operations';
+import './Mail/operations';
