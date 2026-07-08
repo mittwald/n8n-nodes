@@ -110,15 +110,28 @@ export class OperationProperty {
 	public getPropertyValue(node: IAllExecuteFunctions, itemIndex: number): unknown {
 		const type = this.config.type;
 
-		const value = node.getNodeParameter(this.name, itemIndex, this.config.default, {
-			extractValue: true,
-			ensureType:
-				type === 'resourceLocator' || type === 'dateTime' || type === 'options'
-					? 'string'
-					: type === 'resourceMapper'
-						? 'json'
-						: type,
-		});
+		let value: unknown;
+		try {
+			value = node.getNodeParameter(this.name, itemIndex, this.config.default, {
+				extractValue: true,
+				ensureType:
+					type === 'resourceLocator' || type === 'dateTime' || type === 'options'
+						? 'string'
+						: type === 'resourceMapper'
+							? 'json'
+							: type,
+			});
+		} catch (parameterError) {
+			// A property gated by displayOptions is not resolvable by n8n while it is
+			// hidden for the current input, and n8n throws instead of honouring the
+			// fallback. Resolve it to its configured default so conditional fields
+			// (e.g. Create Cronjob's shell/url destination) do not crash the node.
+			if ((this.config as Partial<INodeProperties>).displayOptions) {
+				return this.config.default;
+			}
+
+			throw parameterError;
+		}
 
 		if (this.config.type === 'resourceMapper') {
 			if (typeof value !== 'object' || value === null || 'value' in value === false) {
