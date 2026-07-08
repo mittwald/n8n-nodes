@@ -67,6 +67,20 @@ This node provides integration with the [mittwald API v2](https://developer.mitt
 - **Get an invoice**: Get details of an invoice (parameter: Invoice ID)
 - **List invoices**: Get a list of invoices for a customer (parameter: Customer ID)
 
+### Container
+
+- **Create service**: Create a service in a project (parameters: Project, Service Name, Image, Description)
+- **Update service**: Update a service in a project (parameters: Project, Service Name)
+- **Delete service**: Delete a service from a project (parameters: Project, Service Name)
+- **Service action**: Run an action on a service (parameters: Project, Service ID, Action)
+- **Get service logs**: Get logs of a service (parameters: Project, Service ID, optional Tail)
+- **List services**: Get a list of services in a project (parameter: Project)
+- **List volumes**: Get a list of volumes in a project (parameter: Project)
+- **List registries**: Get a list of container registries in a project (parameter: Project)
+- **Create registry**: Create a container registry (parameters: Project, Hostname / URI, Description)
+- **Update registry**: Update a container registry (parameters: Project, Registry)
+- **Delete registry**: Delete a container registry (parameters: Project, Registry)
+
 ### Conversation
 
 - **Create a ticket**: Create a support ticket in a conversation category

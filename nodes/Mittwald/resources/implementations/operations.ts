@@ -9,3 +9,4 @@ import './Domain/operations';
 import './Database/operations';
 import './Contract/operations';
 import './Mail/operations';
+import './Container/operations';
