@@ -1,0 +1,11 @@
+import './createMailAddress';
+import './listMailAddressesByProject';
+import './listMailAddresses';
+import './getMailAddress';
+import './deleteMailAddress';
+import './updateMailAddressAddress';
+import './updateMailAddressAutoresponder';
+import './createDeliveryBox';
+import './listDeliveryBoxes';
+import './getDeliveryBox';
+import './deleteDeliveryBox';
