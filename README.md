@@ -22,6 +22,15 @@ Follow the [installation guide](https://docs.n8n.io/integrations/community-nodes
 
 This node provides integration with the [mittwald API v2](https://developer.mittwald.de/). The following resources and operations are available:
 
+### AI Hosting
+
+- **Create a project key**: Create a new AI hosting API key scoped to a project (parameters: Project, Name, optional Create Web UI Container)
+- **Delete a project key**: Delete an AI hosting key from a project (parameters: Project, Key ID)
+- **Get project usage**: Get the AI hosting plan and usage details of a project (parameter: Project)
+- **Create a customer key**: Create a new AI hosting API key scoped to a customer (parameters: Customer ID, Name, optional Project ID, optional Create Web UI Container)
+- **Delete a customer key**: Delete an AI hosting key from a customer (parameters: Customer ID, Key ID)
+- **Get customer usage**: Get the AI hosting plan and usage details of a customer (parameter: Customer ID)
+
 ### App
 
 - **Install an app**: Install an app on a project
