@@ -29,6 +29,13 @@ This node provides integration with the [mittwald API v2](https://developer.mitt
 - **Uninstall an app**: Remove an app installation
 - **Update software versions**: Update the app or system software versions of an installation
 
+### Backup
+
+- **Create**: Create a manual backup of a project (parameters: Project, Description, Expiration Time)
+- **List**: Get a list of backups belonging to a project (parameter: Project)
+- **Get**: Get details of a specific backup (parameter: Backup ID)
+- **Create export**: Request an export download for a backup (parameters: Backup ID, Format)
+
 ### Contributor
 
 - **List incoming invoices**: Get a list of incoming invoices for an organisation
