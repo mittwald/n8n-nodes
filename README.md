@@ -28,6 +28,17 @@ This node provides integration with the [mittwald API v2](https://developer.mitt
 - **List all installed apps**: Get a list of all installed apps
 - **Uninstall an app**: Remove an app installation
 - **Update software versions**: Update the app or system software versions of an installation
+- **List all available apps**: Get a list of all available apps
+- **Get an app**: Get details of a specific app (parameter: App)
+- **List app versions**: Get a list of available versions for an app (parameter: App)
+- **Get an app version**: Get details of a specific app version (parameters: App, App Version)
+- **Get an app installation**: Get details of a specific app installation (parameter: App Installation)
+- **List app installations of a project**: Get a list of app installations belonging to a project (parameter: Project)
+- **Copy an app installation**: Request a copy of an app installation into another project (parameters: App Installation, target Project, Name, optional Installation Path)
+- **List system softwares**: Get a list of available system software packages
+- **Get a system software**: Get details of a specific system software (parameter: searchable System Software selector)
+- **List system software versions**: Get a list of versions for a system software (parameter: searchable System Software selector)
+- **Get a system software version**: Get details of a specific system software version (parameters: searchable System Software selector, System Software Version ID)
 
 ### Backup
 
