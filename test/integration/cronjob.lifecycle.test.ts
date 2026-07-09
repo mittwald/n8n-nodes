@@ -1,12 +1,19 @@
 /* eslint-disable @n8n/community-nodes/no-restricted-imports */
 import { expect } from 'vitest';
-import { fromStep, runId } from './helpers';
+import { fromStep, getLatestWordPressInstallInput, runId } from './helpers';
 import { integrationDescribe, testcase } from './testcase';
 
 integrationDescribe('Cronjob / Lifecycle (integration)', () => {
 	testcase('creates, lists, gets, triggers, and deletes a cronjob', async (context) => {
 		const projectDescription = `it-${runId('cronjob-project')}`;
 		const cronjobDescription = `it-${runId('cronjob')}`;
+		const installDescription = `it-${runId('cronjob-install')}`;
+		const installationPath = `/html/${runId('wp').slice(0, 8)}`;
+		const wordpress = await getLatestWordPressInstallInput({
+			mittwaldApi: context.mittwaldApi,
+			hostDomain: `${runId('wp')}.project.space`,
+			siteTitle: `WP ${runId('site')}`,
+		});
 
 		context.teardown(async () => {
 			const response = await context.mittwaldApi.project.listProjects();
@@ -38,11 +45,26 @@ integrationDescribe('Cronjob / Lifecycle (integration)', () => {
 				},
 			})
 			.step({
+				name: 'Install WordPress',
+				resource: 'App',
+				operation: 'Install',
+				parameters: {
+					project: fromStep('Create Project'),
+					app: { mode: 'id', value: wordpress.app.id },
+					version: { mode: 'id', value: wordpress.version.id },
+					description: installDescription,
+					installationPath,
+					versionConfig: wordpress.versionConfig,
+					waitUntilInstalled: true,
+				},
+			})
+			.step({
 				name: 'Create Cronjob',
 				resource: 'Cronjob',
 				operation: 'Create',
 				parameters: {
 					project: fromStep('Create Project'),
+					appInstallation: fromStep('Install WordPress'),
 					description: cronjobDescription,
 					interval: '0 0 * * *',
 					active: true,
@@ -110,5 +132,5 @@ integrationDescribe('Cronjob / Lifecycle (integration)', () => {
 		expect(result.step('Get Cronjob').requireString('description')).toBe(cronjobDescription);
 		expect(result.step('List Executions').stringValues('id')).toContain(executionId);
 		expect(result.step('Get Execution').requireString('id')).toBe(executionId);
-	});
+	}, 300_000);
 });

@@ -100,7 +100,7 @@ This node provides integration with the [mittwald API v2](https://developer.mitt
 
 ### Cronjob
 
-- **Create a cronjob**: Create a new cronjob in a project
+- **Create a cronjob**: Create a new cronjob in a project (parameters: Project, App Installation, Description, Interval, Active, Timeout, Email, Destination)
 - **List all cronjobs**: Get a list of all cronjobs in a project
 - **Get a cronjob**: Get details of a specific cronjob
 - **Delete a cronjob**: Delete an existing cronjob

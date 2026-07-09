@@ -1,3 +1,4 @@
+import appInstallationProperty from '../../shared/appInstallationProperty';
 import projectProperty from '../../shared/projectProperty';
 import { cronjobResource } from '../resource';
 import Z from 'zod';
@@ -21,6 +22,10 @@ export default cronjobResource
 	})
 	.withProperties({
 		project: projectProperty,
+		appInstallation: {
+			...appInstallationProperty,
+			required: true,
+		},
 		description: {
 			displayName: 'Description',
 			type: 'string',
@@ -121,6 +126,7 @@ export default cronjobResource
 			path,
 			parameters,
 			url,
+			appInstallation,
 		} = properties;
 
 		const destination =
@@ -144,6 +150,7 @@ export default cronjobResource
 				timeout: Z.number().int().min(1).max(86400),
 				email: Z.string().email().optional(),
 				destination: cronjobDestinationSchema,
+				appId: Z.string().min(1),
 			}),
 			responseSchema: Z.object({
 				id: Z.string().uuid(),
@@ -155,6 +162,7 @@ export default cronjobResource
 				timeout,
 				email: email ? email : undefined,
 				destination,
+				appId: appInstallation,
 			},
 		});
 	});
