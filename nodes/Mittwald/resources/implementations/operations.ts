@@ -11,3 +11,4 @@ import './Contract/operations';
 import './Mail/operations';
 import './Container/operations';
 import './AIHosting/operations';
+import './Cronjob/operations';

@@ -98,6 +98,16 @@ This node provides integration with the [mittwald API v2](https://developer.mitt
 - **List messages**: Get all messages of a conversation (parameter: Conversation)
 - **Create a message**: Send a new message in a conversation (parameters: Conversation, Message)
 
+### Cronjob
+
+- **Create a cronjob**: Create a new cronjob in a project (parameters: Project, App Installation, Description, Interval, Active, Timeout, Email, Destination)
+- **List all cronjobs**: Get a list of all cronjobs in a project
+- **Get a cronjob**: Get details of a specific cronjob
+- **Delete a cronjob**: Delete an existing cronjob
+- **Trigger a cronjob**: Manually trigger an execution of a cronjob
+- **List cronjob executions**: Get a list of executions for a cronjob
+- **Get a cronjob execution**: Get details of a specific cronjob execution
+
 ### Project
 
 - **Create a project on a server**: Create a new project on a server
