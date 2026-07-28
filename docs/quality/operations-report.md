@@ -4,8 +4,8 @@
 
 ## Test coverage
 
-113 of 125 operations are referenced by an integration test (90%).
-Side-effecting operations: 60 of 60 covered (100%).
+114 of 126 operations are referenced by an integration test (90%).
+Side-effecting operations: 61 of 61 covered (100%).
 
 | Resource | Operations | Covered | Uncovered writes |
 | --- | --- | --- | --- |
@@ -17,7 +17,7 @@ Side-effecting operations: 60 of 60 covered (100%).
 | Contributor | 4 | 1 (25%) | 0 |
 | Organisation | 3 | 3 (100%) | 0 |
 | Domain | 20 | 18 (90%) | 0 |
-| Database | 11 | 11 (100%) | 0 |
+| Database | 12 | 12 (100%) | 0 |
 | Contract | 4 | 4 (100%) | 0 |
 | Mail | 11 | 11 (100%) | 0 |
 | Container | 11 | 11 (100%) | 0 |
@@ -105,6 +105,7 @@ Side-effecting operations: 60 of 60 covered (100%).
 | Domain:Verify Ingress Ownership | write | domain.ingressOwnership.test.ts |
 | Database:Copy MySQL Database | write | database.mysql.lifecycle.test.ts |
 | Database:Create MySQL Database | write | database.mysql.lifecycle.test.ts |
+| Database:Create MySQL User | write | database.mysql.lifecycle.test.ts |
 | Database:Delete MySQL Database | write | database.mysql.lifecycle.test.ts |
 | Database:Get MySQL Database | read | database.mysql.lifecycle.test.ts |
 | Database:List MySQL Databases | read | database.mysql.lifecycle.test.ts |

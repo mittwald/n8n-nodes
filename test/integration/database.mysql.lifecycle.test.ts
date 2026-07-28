@@ -44,9 +44,7 @@ integrationDescribe('Database / MySQL Lifecycle (integration)', () => {
 						characterSet: 'utf8mb4',
 						collation: 'utf8mb4_unicode_ci',
 						userPassword: password,
-						userAccessLevel: 'full',
 						userExternalAccess: false,
-						userDescription: dbDescription,
 					},
 				})
 				.step({
@@ -60,6 +58,18 @@ integrationDescribe('Database / MySQL Lifecycle (integration)', () => {
 					resource: 'Database',
 					operation: 'Get MySQL Database',
 					parameters: { mysqlDatabaseId: fromStep('Create MySQL Database').value },
+				})
+				.step({
+					name: 'Create MySQL User',
+					resource: 'Database',
+					operation: 'Create MySQL User',
+					parameters: {
+						mysqlDatabaseId: fromStep('Create MySQL Database').value,
+						description: `${dbDescription}-readonly`,
+						password,
+						accessLevel: 'readonly',
+						externalAccess: false,
+					},
 				})
 				.step({
 					name: 'Copy MySQL Database',
@@ -91,6 +101,10 @@ integrationDescribe('Database / MySQL Lifecycle (integration)', () => {
 
 			expect(result.step('List MySQL Databases').stringValues('id')).toContain(dbId);
 			expect(result.step('Get MySQL Database').requireString('id')).toBe(dbId);
+			// The user created with the database is always `full`, so a read-only user
+			// can only be added afterwards.
+			expect(result.step('Create MySQL User').requireString('accessLevel')).toBe('readonly');
+			expect(result.step('Create MySQL User').requireString('databaseId')).toBe(dbId);
 			expect(copyId).not.toBe(dbId);
 			expect(result.step('List After Copy').stringValues('id')).toEqual(
 				expect.arrayContaining([dbId, copyId]),

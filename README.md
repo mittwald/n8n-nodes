@@ -36,7 +36,7 @@ This node provides integration with the [mittwald API v2](https://developer.mitt
 - **Install an app**: Install an app on a project
 - **List all installed apps**: Get a list of all installed apps
 - **Uninstall an app**: Remove an app installation
-- **Update software versions**: Update the app or system software versions of an installation. The upgrade runs in the background: the response reports the target under `appVersion.desired`, while `appVersion.current` only follows once it has completed. Leave the system software fields empty to update the app only.
+- **Update software versions**: Update the app or system software versions of an installation. The version selector only offers the versions the installation can actually be updated to. The upgrade runs in the background: the response reports the target under `appVersion.desired`, while `appVersion.current` only follows once it has completed. Leave the system software fields empty to update the app only.
 - **List all available apps**: Get a list of all available apps
 - **Get an app**: Get details of a specific app (parameter: App)
 - **List app versions**: Get a list of available versions for an app (parameter: App)
@@ -78,8 +78,8 @@ This node provides integration with the [mittwald API v2](https://developer.mitt
 
 ### Container
 
-- **Create service**: Create a service in a project (parameters: Project, Service Name, Image, Name)
-- **Update service**: Update a service in a project (parameters: Project, Service Name)
+- **Create service**: Create a service in a project (parameters: Project, Service Name, Image, Name); returns the created service, so its `id` can be passed to the service operations below
+- **Update service**: Update a service in a project (parameters: Project, Service Name); returns the updated service
 - **Delete service**: Delete a service from a project (parameters: Project, Service Name)
 - **Service action**: Run an action on a service (parameters: Project, Service ID, Action)
 - **Get service logs**: Get logs of a service (parameters: Project, Service ID, optional Tail)
@@ -137,7 +137,8 @@ This node provides integration with the [mittwald API v2](https://developer.mitt
 - **Delete Redis database**: Delete an existing Redis database
 - **Get a Redis database**: Get details of a specific Redis database
 - **List all MySQL databases**: Get a list of all MySQL databases in a project (parameter: Project)
-- **Create MySQL database**: Create a new MySQL database with an initial user in a project (parameters: Project, Name, Version, Character Set, Collation, User Password, User Access Level, optional User External Access, optional User Description)
+- **Create MySQL database**: Create a new MySQL database with an initial user in a project (parameters: Project, Name, Version, Character Set, Collation, User Password, optional User External Access; the initial user always gets full access, as required by the API)
+- **Create MySQL user**: Create an additional user for an existing MySQL database (parameters: MySQL Database ID, Name, Password, Access Level, optional External Access, optional Access IP Mask; use this for read-only access)
 - **Get a MySQL database**: Get details of a specific MySQL database (parameter: MySQL Database ID)
 - **Delete MySQL database**: Delete an existing MySQL database (parameter: MySQL Database ID)
 - **Copy MySQL database**: Copy a MySQL database with its own initial user (parameters: MySQL Database ID, Name, User Password, optional User External Access; the copied user is created with full access)

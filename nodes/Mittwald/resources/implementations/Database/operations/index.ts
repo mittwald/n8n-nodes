@@ -1,5 +1,6 @@
 import './mysqlCopy';
 import './mysqlCreate';
+import './mysqlCreateUser';
 import './mysqlDelete';
 import './mysqlGet';
 import './mysqlList';
