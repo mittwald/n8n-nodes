@@ -38,8 +38,7 @@ export class MittwaldApi implements ICredentialType {
 		},
 	};
 
-	// Uses the same base URL as the node itself, so a token for a non-production
-	// environment is not reported as invalid.
+	// Uses the same base URL as the node itself.
 	test: ICredentialTestRequest = {
 		request: {
 			baseURL: config.apiBaseUrl,

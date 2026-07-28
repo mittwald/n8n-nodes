@@ -3,7 +3,7 @@ import { MittwaldAPIV2Client } from '@mittwald/api-client';
 
 /**
  * The client prefixes every path with `/v2`, so it expects the bare origin
- * while the node's `MITTWALD_API_BASE_URL` carries the `/v2` suffix.
+ * while `MITTWALD_API_BASE_URL` is given with the `/v2` suffix.
  */
 const toClientBaseUrl = (baseUrl: string): string => baseUrl.replace(/\/v2\/?$/, '/');
 
