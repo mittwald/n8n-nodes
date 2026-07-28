@@ -3,7 +3,7 @@ import type { OperationPropertyConfig } from '../../base';
 import Z from 'zod';
 
 export default {
-	displayName: 'App version',
+	displayName: 'App Version',
 	type: 'resourceLocator',
 	default: '',
 	searchListMethodName: 'searchVersionProperty',

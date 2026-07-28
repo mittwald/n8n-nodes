@@ -27,6 +27,7 @@ export default containerResource
 		},
 		image: {
 			displayName: 'Image',
+			description: 'Container image to run, for example nginx:latest',
 			type: 'string',
 			required: true,
 			default: '',
@@ -62,6 +63,7 @@ export default containerResource
 		environment: environmentProperty,
 		description: {
 			displayName: 'Description',
+			description: 'Human-readable description of the service',
 			type: 'string',
 			required: true,
 			default: '',

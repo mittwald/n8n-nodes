@@ -28,18 +28,21 @@ export default cronjobResource
 		},
 		description: {
 			displayName: 'Description',
+			description: 'Human-readable description of the cronjob',
 			type: 'string',
 			required: true,
 			default: '',
 		},
 		interval: {
 			displayName: 'Interval (Cron Expression)',
+			description: 'Execution schedule as a cron expression, for example 0 3 * * *',
 			type: 'string',
 			required: true,
 			default: '* * * * *',
 		},
 		active: {
 			displayName: 'Active',
+			description: 'Whether the cronjob runs on its schedule',
 			type: 'boolean',
 			default: true,
 		},
@@ -51,11 +54,13 @@ export default cronjobResource
 		},
 		email: {
 			displayName: 'Email',
+			description: 'Optional address that receives a notification for every execution',
 			type: 'string',
 			default: '',
 		},
 		destinationType: {
 			displayName: 'Destination',
+			description: 'Whether the cronjob runs a shell command or calls an HTTP URL',
 			type: 'options',
 			default: 'shell',
 			options: [
@@ -71,6 +76,7 @@ export default cronjobResource
 		},
 		interpreter: {
 			displayName: 'Interpreter',
+			description: 'Absolute path to the interpreter that runs the script',
 			type: 'string',
 			required: true,
 			default: '/usr/bin/php',
@@ -82,6 +88,7 @@ export default cronjobResource
 		},
 		path: {
 			displayName: 'Path',
+			description: 'Path to the script to run, relative to the app installation',
 			type: 'string',
 			required: true,
 			default: '',
@@ -93,6 +100,7 @@ export default cronjobResource
 		},
 		parameters: {
 			displayName: 'Parameters',
+			description: 'Optional arguments passed to the script',
 			type: 'string',
 			default: '',
 			displayOptions: {
@@ -103,6 +111,7 @@ export default cronjobResource
 		},
 		url: {
 			displayName: 'URL',
+			description: 'URL to call when the cronjob runs',
 			type: 'string',
 			required: true,
 			default: '',

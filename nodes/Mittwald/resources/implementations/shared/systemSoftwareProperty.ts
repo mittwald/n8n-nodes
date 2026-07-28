@@ -3,7 +3,7 @@ import type { OperationPropertyConfig } from '../../base';
 import Z from 'zod';
 
 export default {
-	displayName: 'System software version configuration fields',
+	displayName: 'System Software Version Configuration Fields',
 	type: 'resourceMapper',
 	default: null,
 	dependsOn: ['appInstallation.value'],

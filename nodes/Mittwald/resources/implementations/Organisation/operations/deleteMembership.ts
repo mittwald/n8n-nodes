@@ -9,6 +9,7 @@ export default organisationResource
 	.withProperties({
 		customerMembershipId: {
 			displayName: 'Membership ID',
+			description: 'The unique identifier of the organisation membership',
 			type: 'string',
 			required: true,
 			default: '',

@@ -11,6 +11,7 @@ export default cronjobResource
 		project: projectProperty,
 		includeServiceCronjobs: {
 			displayName: 'Include Service Cronjobs',
+			description: 'Whether to also return cronjobs managed by container services',
 			type: 'boolean',
 			default: false,
 		},

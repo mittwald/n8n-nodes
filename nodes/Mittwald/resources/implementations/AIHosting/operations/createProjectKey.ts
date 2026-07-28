@@ -12,11 +12,13 @@ export default aiHostingResource
 		project: projectProperty,
 		keyName: {
 			displayName: 'Name',
+			description: 'Name of the AI hosting key; must be at least 5 characters long',
 			type: 'string',
 			default: '',
 		},
 		createWebuiContainer: {
 			displayName: 'Create Web UI Container',
+			description: 'Whether to also create a web UI container for this key',
 			type: 'boolean',
 			default: false,
 		},

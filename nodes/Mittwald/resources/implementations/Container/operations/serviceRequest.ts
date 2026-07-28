@@ -26,6 +26,7 @@ export const createStackWithServiceRequestSchema = Z.object({
 
 export const environmentProperty = {
 	displayName: 'Environment',
+	description: 'Environment variables passed to the container',
 	type: 'fixedCollection',
 	default: {},
 	required: false,

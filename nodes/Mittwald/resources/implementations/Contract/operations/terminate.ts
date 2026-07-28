@@ -8,9 +8,25 @@ export default contractResource
 		description: 'Schedule the termination of a contract',
 	})
 	.withProperties({
-		contractId: { displayName: 'Contract ID', type: 'string', default: '' },
-		targetDate: { displayName: 'Target Date', type: 'dateTime', default: '' },
-		reason: { displayName: 'Reason', type: 'string', default: '' },
+		contractId: {
+			displayName: 'Contract ID',
+			description: 'The unique identifier of the contract',
+			type: 'string',
+			default: '',
+		},
+		targetDate: {
+			displayName: 'Target Date',
+			description:
+				'Date on which the termination takes effect; leave empty for the earliest possible date',
+			type: 'dateTime',
+			default: '',
+		},
+		reason: {
+			displayName: 'Reason',
+			description: 'Optional reason for the termination',
+			type: 'string',
+			default: '',
+		},
 	})
 	.withExecuteFn(async ({ properties, apiClient }) => {
 		const { contractId, targetDate, reason } = properties;

@@ -15,23 +15,27 @@ export default projectResource
 		},
 		mailAddress: {
 			displayName: 'Mail Address',
+			description: 'Email address of the person to invite',
 			type: 'string',
 			required: true,
 			default: '',
 		},
 		expirationDate: {
 			displayName: 'Membership Expires At',
+			description: 'Optional date on which the membership expires',
 			type: 'dateTime',
 			default: '',
 			required: false,
 		},
 		message: {
 			displayName: 'Message',
+			description: 'Optional personal message included in the invitation email',
 			type: 'string',
 			default: '',
 		},
 		role: {
 			displayName: 'Role',
+			description: 'Role the invited person receives in the project',
 			type: 'options',
 			required: true,
 			default: 'external',

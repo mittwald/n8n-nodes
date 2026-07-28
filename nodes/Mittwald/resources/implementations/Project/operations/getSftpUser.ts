@@ -9,6 +9,7 @@ export default projectResource
 	.withProperties({
 		sftpUserId: {
 			displayName: 'SFTP User ID',
+			description: 'The unique identifier of the SFTP user',
 			type: 'string',
 			default: '',
 			required: true,

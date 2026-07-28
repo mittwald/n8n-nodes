@@ -11,7 +11,8 @@ domainResource
 	})
 	.withProperties({
 		fullName: {
-			displayName: 'Full domain name',
+			displayName: 'Full Domain Name',
+			description: 'Full domain name including the subdomain, for example shop.example.com',
 			type: 'string',
 			default: '',
 		},

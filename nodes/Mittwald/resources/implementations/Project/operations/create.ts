@@ -12,6 +12,7 @@ projectResource
 		server: serverProperty,
 		description: {
 			displayName: 'Name',
+			description: 'Name of the project as shown in the mittwald backend',
 			type: 'string',
 			default: '',
 		},

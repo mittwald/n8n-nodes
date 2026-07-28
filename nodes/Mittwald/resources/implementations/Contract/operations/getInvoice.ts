@@ -7,7 +7,12 @@ export default contractResource
 		description: 'Get details of an invoice',
 	})
 	.withProperties({
-		invoiceId: { displayName: 'Invoice ID', type: 'string', default: '' },
+		invoiceId: {
+			displayName: 'Invoice ID',
+			description: 'The unique identifier of the invoice',
+			type: 'string',
+			default: '',
+		},
 	})
 	.withExecuteFn(async ({ properties, apiClient }) => {
 		const { invoiceId } = properties;

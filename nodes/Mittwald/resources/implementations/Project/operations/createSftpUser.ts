@@ -12,6 +12,7 @@ export default projectResource
 		project: projectProperty,
 		description: {
 			displayName: 'Name',
+			description: 'Name of the SFTP user as shown in the mittwald backend',
 			type: 'string',
 			required: true,
 			default: '',
@@ -28,6 +29,7 @@ export default projectResource
 		},
 		accessLevel: {
 			displayName: 'Access Level',
+			description: 'Whether the user may only read or also write in the selected directories',
 			type: 'options',
 			required: true,
 			default: 'read',

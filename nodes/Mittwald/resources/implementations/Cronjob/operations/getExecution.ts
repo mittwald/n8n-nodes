@@ -9,11 +9,13 @@ export default cronjobResource
 	.withProperties({
 		cronjobId: {
 			displayName: 'Cronjob ID',
+			description: 'The unique identifier of the cronjob',
 			type: 'string',
 			default: '',
 		},
 		executionId: {
 			displayName: 'Execution ID',
+			description: 'The unique identifier of the cronjob execution',
 			type: 'string',
 			default: '',
 		},

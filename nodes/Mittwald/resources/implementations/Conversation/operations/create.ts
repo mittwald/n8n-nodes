@@ -12,11 +12,13 @@ export default conversationResource
 		conversationCategory: conversationCategoryProperty,
 		title: {
 			displayName: 'Title',
+			description: 'Subject of the support ticket',
 			type: 'string',
 			default: '',
 		},
 		message: {
 			displayName: 'Message',
+			description: 'First message sent with the ticket',
 			type: 'string',
 			default: '',
 			typeOptions: {

@@ -3,7 +3,7 @@ import { projectResource } from '../resource';
 
 export default projectResource
 	.addOperation({
-		name: 'List memberships',
+		name: 'List Memberships',
 		action: 'List all memberships',
 		description: 'Get a list of all project memberships',
 	})

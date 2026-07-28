@@ -14,12 +14,14 @@ export default domainResource
 	.withProperties({
 		domainId: {
 			displayName: 'Domain ID',
+			description: 'The unique identifier of the domain',
 			type: 'string',
 			default: '',
 			required: true,
 		},
 		contact: {
 			displayName: 'Contact Role',
+			description: 'Which of the four domain contacts to update',
 			type: 'options',
 			default: 'ownerc',
 			required: true,

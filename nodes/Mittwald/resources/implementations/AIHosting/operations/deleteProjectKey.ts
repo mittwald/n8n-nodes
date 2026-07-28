@@ -11,6 +11,7 @@ export default aiHostingResource
 		project: projectProperty,
 		keyId: {
 			displayName: 'Key ID',
+			description: 'The unique identifier of the AI hosting key',
 			type: 'string',
 			default: '',
 		},

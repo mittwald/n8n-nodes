@@ -11,6 +11,7 @@ export default domainResource
 	.withProperties({
 		domainId: {
 			displayName: 'Domain ID',
+			description: 'The unique identifier of the domain',
 			type: 'string',
 			default: '',
 			required: true,
@@ -20,7 +21,8 @@ export default domainResource
 			type: 'string',
 			default: '',
 			required: true,
-			description: 'Comma-separated list of nameserver host names (e.g. "ns1.example.com, ns2.example.com")',
+			description:
+				'Comma-separated list of nameserver host names (e.g. "ns1.example.com, ns2.example.com")',
 		},
 	})
 	.withExecuteFn(async (context) => {

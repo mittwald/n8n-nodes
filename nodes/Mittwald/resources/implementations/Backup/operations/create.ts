@@ -12,11 +12,13 @@ export default backupResource
 		project: projectProperty,
 		description: {
 			displayName: 'Description',
+			description: 'Optional description to identify the backup later',
 			type: 'string',
 			default: '',
 		},
 		expirationTime: {
 			displayName: 'Expiration Time',
+			description: 'Date and time at which the backup is deleted automatically',
 			type: 'dateTime',
 			required: true,
 			default: '',

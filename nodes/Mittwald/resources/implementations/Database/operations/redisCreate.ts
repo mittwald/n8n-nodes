@@ -13,6 +13,7 @@ export default databaseResource
 		project: projectProperty,
 		description: {
 			displayName: 'Name',
+			description: 'Description for the new Redis database',
 			type: 'string',
 			default: '',
 		},

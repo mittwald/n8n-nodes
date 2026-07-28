@@ -17,6 +17,7 @@ export default appResource
 		version: versionProperty,
 		description: {
 			displayName: 'Name',
+			description: 'Name of the app installation as shown in the mittwald backend',
 			type: 'string',
 			default: '',
 		},

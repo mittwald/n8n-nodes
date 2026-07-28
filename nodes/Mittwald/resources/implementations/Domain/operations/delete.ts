@@ -9,6 +9,7 @@ export default domainResource
 	.withProperties({
 		domainId: {
 			displayName: 'Domain ID',
+			description: 'The unique identifier of the domain',
 			type: 'string',
 			default: '',
 			required: true,

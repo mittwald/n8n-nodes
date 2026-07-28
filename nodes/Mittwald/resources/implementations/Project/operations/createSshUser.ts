@@ -12,6 +12,7 @@ export default projectResource
 		project: projectProperty,
 		description: {
 			displayName: 'Name',
+			description: 'Name of the SSH user as shown in the mittwald backend',
 			type: 'string',
 			required: true,
 			default: '',

@@ -12,6 +12,7 @@ export default conversationResource
 		conversation: conversationProperty,
 		message: {
 			displayName: 'Message',
+			description: 'Message body to append to the conversation',
 			type: 'string',
 			default: '',
 			typeOptions: {

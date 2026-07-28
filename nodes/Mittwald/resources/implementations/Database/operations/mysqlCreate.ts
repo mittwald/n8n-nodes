@@ -13,6 +13,7 @@ export default databaseResource
 		project: projectProperty,
 		description: {
 			displayName: 'Name',
+			description: 'Description for the new MySQL database',
 			type: 'string',
 			required: true,
 			default: '',

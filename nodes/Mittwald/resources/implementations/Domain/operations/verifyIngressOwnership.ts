@@ -9,6 +9,7 @@ export default domainResource
 	.withProperties({
 		ingressId: {
 			displayName: 'Ingress ID',
+			description: 'The unique identifier of the ingress',
 			type: 'string',
 			default: '',
 			required: true,

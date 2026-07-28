@@ -115,7 +115,7 @@ integrationDescribe('Project / Invites (integration)', () => {
 
 			const membershipsOperationResult = await context.runOperation({
 				resource: 'Project',
-				operation: 'List memberships',
+				operation: 'List Memberships',
 				parameters: {
 					project: {
 						mode: 'id',
