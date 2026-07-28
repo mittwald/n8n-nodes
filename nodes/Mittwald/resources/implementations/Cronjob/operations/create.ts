@@ -27,8 +27,8 @@ export default cronjobResource
 			required: true,
 		},
 		description: {
-			displayName: 'Description',
-			description: 'Human-readable description of the cronjob',
+			displayName: 'Name',
+			description: 'Human-readable name of the cronjob',
 			type: 'string',
 			required: true,
 			default: '',

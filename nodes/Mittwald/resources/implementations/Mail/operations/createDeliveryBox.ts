@@ -11,11 +11,11 @@ export default mailResource
 	.withProperties({
 		project: projectProperty,
 		description: {
-			displayName: 'Description',
+			displayName: 'Name',
 			type: 'string',
 			required: true,
 			default: '',
-			description: 'Human-readable description of the delivery box',
+			description: 'Human-readable name of the delivery box',
 		},
 		password: {
 			displayName: 'Password',

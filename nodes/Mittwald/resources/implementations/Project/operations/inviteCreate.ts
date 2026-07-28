@@ -14,7 +14,7 @@ export default projectResource
 			required: true,
 		},
 		mailAddress: {
-			displayName: 'Mail Address',
+			displayName: 'Email Address',
 			description: 'Email address of the person to invite',
 			type: 'string',
 			required: true,

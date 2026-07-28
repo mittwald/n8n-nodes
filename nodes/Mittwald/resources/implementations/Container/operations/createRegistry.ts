@@ -21,8 +21,8 @@ export default containerResource
 			default: '',
 		},
 		registryDescription: {
-			displayName: 'Description',
-			description: 'Human-readable description of the registry',
+			displayName: 'Name',
+			description: 'Human-readable name of the registry',
 			type: 'string',
 			required: true,
 			default: '',

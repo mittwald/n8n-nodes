@@ -11,8 +11,8 @@ export default backupResource
 	.withProperties({
 		project: projectProperty,
 		description: {
-			displayName: 'Description',
-			description: 'Optional description to identify the backup later',
+			displayName: 'Name',
+			description: 'Optional name to identify the backup later',
 			type: 'string',
 			default: '',
 		},

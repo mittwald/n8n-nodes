@@ -25,7 +25,7 @@ type ResourceMapperMethod = (this: ILoadOptionsFunctions) => Promise<ResourceMap
 
 export type OperationPropertyConfig =
 	| (BaseConfig & {
-			type: 'string' | 'number' | 'boolean' | 'dateTime' | 'options';
+			type: 'string' | 'number' | 'boolean' | 'dateTime' | 'options' | 'multiOptions';
 	  } & Omit<INodeProperties, 'type' | 'name'>)
 	| (BaseConfig & {
 			type: 'resourceLocator';
@@ -47,12 +47,14 @@ export type OperationPropertyValue<
 		? number
 		: T extends 'options'
 			? string
-			: T extends 'dateTime'
-				? string
-				: T extends 'boolean'
-					? boolean
-					: T extends 'resourceLocator'
-						? string
-						: T extends 'resourceMapper'
-							? Json
-							: never;
+			: T extends 'multiOptions'
+				? string[]
+				: T extends 'dateTime'
+					? string
+					: T extends 'boolean'
+						? boolean
+						: T extends 'resourceLocator'
+							? string
+							: T extends 'resourceMapper'
+								? Json
+								: never;

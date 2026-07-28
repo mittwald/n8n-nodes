@@ -62,8 +62,8 @@ export default containerResource
 		},
 		environment: environmentProperty,
 		description: {
-			displayName: 'Description',
-			description: 'Human-readable description of the service',
+			displayName: 'Name',
+			description: 'Human-readable name of the service',
 			type: 'string',
 			required: false,
 			default: '',
