@@ -54,9 +54,10 @@ export default appResource
 				path: `/app-installations/${appInstallation}`,
 				responseSchema: Z.object({
 					id: Z.string(),
+				// `current` is absent while the very first install is still running.
 					appVersion: Z.object({
-						current: Z.string(),
-						desired: Z.string().optional(),
+						current: Z.string().optional(),
+						desired: Z.string(),
 					}),
 					systemSoftware: Z.array(
 						Z.object({
