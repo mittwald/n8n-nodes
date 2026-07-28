@@ -40,7 +40,8 @@ domainResource
 					returnFullResponse: true,
 				});
 			} catch (e) {
-				if (e.httpCode === 403) {
+				// n8n reports the status as a string, so compare numerically.
+				if (Number(e.httpCode) === 403) {
 					throw new Error(
 						'Domain does not exist. Please order the domain first before creating a subdomain. Ordering is not yet supported',
 					);

@@ -37,8 +37,8 @@ export default containerResource
 			default: '',
 		},
 		registryDescription: {
-			displayName: 'Description',
-			description: 'Human-readable description of the registry',
+			displayName: 'Name',
+			description: 'Human-readable name of the registry',
 			type: 'string',
 			required: false,
 			default: '',
@@ -77,7 +77,7 @@ export default containerResource
 
 		return apiClient.request({
 			path: `/registries/${registry}`,
-			method: 'PUT',
+			method: 'PATCH',
 			requestSchema: Z.object({
 				uri: Z.string().min(1).optional(),
 				description: Z.string().min(1).optional(),
