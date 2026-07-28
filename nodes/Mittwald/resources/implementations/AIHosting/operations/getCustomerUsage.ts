@@ -9,8 +9,10 @@ export default aiHostingResource
 	.withProperties({
 		customerId: {
 			displayName: 'Customer ID',
+			description: 'The unique identifier of the customer',
 			type: 'string',
 			default: '',
+			required: true,
 		},
 	})
 	.withExecuteFn(async ({ properties, apiClient }) => {

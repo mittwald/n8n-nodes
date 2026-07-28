@@ -117,9 +117,11 @@ export class OperationProperty {
 				ensureType:
 					type === 'resourceLocator' || type === 'dateTime' || type === 'options'
 						? 'string'
-						: type === 'resourceMapper'
-							? 'json'
-							: type,
+						: type === 'multiOptions'
+							? 'array'
+							: type === 'resourceMapper'
+								? 'json'
+								: type,
 			});
 		} catch (parameterError) {
 			// A property gated by displayOptions is not resolvable by n8n while it is

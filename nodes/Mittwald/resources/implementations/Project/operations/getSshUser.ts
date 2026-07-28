@@ -9,6 +9,7 @@ export default projectResource
 	.withProperties({
 		sshUserId: {
 			displayName: 'SSH User ID',
+			description: 'The unique identifier of the SSH user',
 			type: 'string',
 			default: '',
 			required: true,

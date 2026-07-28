@@ -9,6 +9,7 @@ export default domainResource
 	.withProperties({
 		dnsZoneId: {
 			displayName: 'DNS Zone ID',
+			description: 'The unique identifier of the DNS zone',
 			type: 'string',
 			default: '',
 			required: true,

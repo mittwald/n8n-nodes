@@ -135,7 +135,7 @@ Integration tests live under `test/integration/` and run via:
 pnpm run test:integration
 ```
 
-The suite targets a real n8n instance plus the live mittwald API. Tests auto-skip when the required environment variables are missing — see [`test/integration/README.md`](test/integration/README.md) and `.env.example` for the full list. There is currently no unit test runner; `pnpm run test:compile` only runs `tsc --noEmit`.
+The suite targets a real n8n instance plus the live mittwald API. Tests auto-skip when the required environment variables are missing — see [`test/integration/README.md`](test/integration/README.md) and `.env.example` for the full list. There is no unit test runner; `pnpm run test:compile` only runs `tsc --noEmit`.
 
 ### Conventions
 
@@ -146,6 +146,7 @@ The suite targets a real n8n instance plus the live mittwald API. Tests auto-ski
 - The `resource` and `operation` strings in tests are the n8n internal Title-Case identifiers from the operation file (e.g. `Get Storage Statistics`, not `getStorageStatistics`).
 - `runOperation()` is a fine escape hatch for single-shot read-only checks (`server.get.test.ts`); `scenario()` is preferred for anything multi-step.
 - Read the existing tests in `test/integration/` for the exact conventions before adding new ones — `project.lifecycle.test.ts` is the canonical scenario-style template.
+
 
 ## Keeping documentation in sync
 

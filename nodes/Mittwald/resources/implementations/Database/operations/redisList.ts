@@ -8,7 +8,10 @@ export default databaseResource
 		description: 'Get a list of all Redis databases in a project',
 	})
 	.withProperties({
-		project: projectProperty,
+		project: {
+			...projectProperty,
+			required: true,
+		},
 	})
 	.withExecuteFn(async (context) => {
 		const { properties, apiClient } = context;

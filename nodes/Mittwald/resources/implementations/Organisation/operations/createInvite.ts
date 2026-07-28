@@ -15,12 +15,14 @@ export default organisationResource
 		},
 		mailAddress: {
 			displayName: 'Email Address',
+			description: 'Email address of the person to invite',
 			type: 'string',
 			required: true,
 			default: '',
 		},
 		role: {
 			displayName: 'Role',
+			description: 'Role the invited person receives in the organisation',
 			type: 'options',
 			required: true,
 			default: 'member',
@@ -45,12 +47,14 @@ export default organisationResource
 		},
 		membershipExpiresAt: {
 			displayName: 'Membership Expires At',
+			description: 'Optional date on which the membership expires',
 			type: 'dateTime',
 			default: '',
 			required: false,
 		},
 		message: {
 			displayName: 'Message',
+			description: 'Optional personal message included in the invitation email',
 			type: 'string',
 			default: '',
 			required: false,

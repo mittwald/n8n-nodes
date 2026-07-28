@@ -9,14 +9,19 @@ export default backupResource
 		description: 'Create a manual backup of a project',
 	})
 	.withProperties({
-		project: projectProperty,
+		project: {
+			...projectProperty,
+			required: true,
+		},
 		description: {
-			displayName: 'Description',
+			displayName: 'Name',
+			description: 'Optional name to identify the backup later',
 			type: 'string',
 			default: '',
 		},
 		expirationTime: {
 			displayName: 'Expiration Time',
+			description: 'Date and time at which the backup is deleted automatically',
 			type: 'dateTime',
 			required: true,
 			default: '',

@@ -10,7 +10,10 @@ domainResource
 		description: 'Set the target app installation for a domain',
 	})
 	.withProperties({
-		ingress: ingressesProperty,
+		ingress: {
+			...ingressesProperty,
+			required: true,
+		},
 		targetInstallation: appInstallationProperty,
 	})
 	.withExecuteFn(async (context) => {

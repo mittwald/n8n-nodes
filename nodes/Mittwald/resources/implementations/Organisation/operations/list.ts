@@ -8,12 +8,29 @@ export default organisationResource
 	})
 	.withProperties({
 		role: {
-			displayName: 'Role Filter',
-			type: 'string',
-			default: '',
+			displayName: 'Role',
+			type: 'multiOptions',
+			default: [],
 			required: false,
-			description:
-				'Filter organisations by role. Use a comma-separated list for multiple roles, such as owner,member.',
+			options: [
+				{
+					name: 'Owner',
+					value: 'owner',
+				},
+				{
+					name: 'Member',
+					value: 'member',
+				},
+				{
+					name: 'Accountant',
+					value: 'accountant',
+				},
+				{
+					name: 'Not Set',
+					value: 'notset',
+				},
+			],
+			description: 'Only return organisations in which the user holds one of these roles',
 		},
 		search: {
 			displayName: 'Search',
@@ -31,7 +48,7 @@ export default organisationResource
 			path: '/customers',
 			method: 'GET',
 			qs: {
-				role: role || undefined,
+				role: role.length > 0 ? role.join(',') : undefined,
 				search: search || undefined,
 			},
 		});

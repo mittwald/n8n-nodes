@@ -8,7 +8,10 @@ export default projectResource
 		description: 'Get a list of all SFTP users in a project',
 	})
 	.withProperties({
-		project: projectProperty,
+		project: {
+			...projectProperty,
+			required: true,
+		},
 	})
 	.withExecuteFn(async ({ properties, apiClient }) => {
 		const { project } = properties;

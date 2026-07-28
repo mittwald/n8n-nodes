@@ -8,7 +8,10 @@ export default appResource
 		description: 'Get a list of app installations belonging to a project',
 	})
 	.withProperties({
-		project: projectProperty,
+		project: {
+			...projectProperty,
+			required: true,
+		},
 	})
 	.withExecuteFn(async (context) => {
 		const { properties, apiClient } = context;

@@ -1,4 +1,5 @@
 export * from './env';
+export * from './mittwaldApi';
 export * from './n8nClient';
 export * from './runMittwaldOperation';
 export * from './runWorkflow';

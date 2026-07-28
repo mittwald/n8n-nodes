@@ -9,8 +9,10 @@ export default backupResource
 	.withProperties({
 		backupId: {
 			displayName: 'Backup ID',
+			description: 'The unique identifier of the backup',
 			type: 'string',
 			default: '',
+			required: true,
 		},
 	})
 	.withExecuteFn(async ({ properties, apiClient }) => {

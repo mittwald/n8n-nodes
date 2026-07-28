@@ -9,13 +9,16 @@ export default mailResource
 		description: 'Create a new delivery box in a project',
 	})
 	.withProperties({
-		project: projectProperty,
+		project: {
+			...projectProperty,
+			required: true,
+		},
 		description: {
-			displayName: 'Description',
+			displayName: 'Name',
 			type: 'string',
 			required: true,
 			default: '',
-			description: 'Human-readable description of the delivery box',
+			description: 'Human-readable name of the delivery box',
 		},
 		password: {
 			displayName: 'Password',

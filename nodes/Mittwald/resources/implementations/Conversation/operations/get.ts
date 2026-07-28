@@ -8,7 +8,10 @@ export default conversationResource
 		description: 'Get details of a specific conversation',
 	})
 	.withProperties({
-		conversation: conversationProperty,
+		conversation: {
+			...conversationProperty,
+			required: true,
+		},
 	})
 	.withExecuteFn(async ({ properties, apiClient }) => {
 		const { conversation } = properties;

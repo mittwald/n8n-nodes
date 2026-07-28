@@ -8,9 +8,11 @@ export default databaseResource
 	})
 	.withProperties({
 		redisDatabaseId: {
-			displayName: 'Redis database ID',
+			displayName: 'Redis Database ID',
+			description: 'The unique identifier of the Redis database',
 			type: 'string',
 			default: '',
+			required: true,
 		},
 	})
 	.withExecuteFn(async (context) => {

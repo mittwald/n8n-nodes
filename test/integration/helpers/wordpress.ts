@@ -68,9 +68,10 @@ const findWordPressApp = async (mittwaldApi: MittwaldAPIV2Client): Promise<App> 
 	return app;
 };
 
-const findLatestAppVersion = async (
+const findAppVersion = async (
 	mittwaldApi: MittwaldAPIV2Client,
 	appId: string,
+	offsetFromLatest: number,
 ): Promise<AppVersion> => {
 	const response = await mittwaldApi.app.listAppversions({ appId });
 
@@ -89,12 +90,14 @@ const findLatestAppVersion = async (
 	const sortedVersions = [...versions].sort((a, b) =>
 		compareVersions(a.externalVersion, b.externalVersion),
 	);
-	const latestVersion = sortedVersions[sortedVersions.length - 1];
-	if (!latestVersion) {
-		throw new Error('Could not determine the latest WordPress version');
+	const selectedVersion = sortedVersions[sortedVersions.length - 1 - offsetFromLatest];
+	if (!selectedVersion) {
+		throw new Error(
+			`Could not determine WordPress version at offset ${offsetFromLatest} from the latest`,
+		);
 	}
 
-	return latestVersion;
+	return selectedVersion;
 };
 
 const buildVersionConfig = (
@@ -167,13 +170,16 @@ export const getLatestWordPressInstallInput = async ({
 	mittwaldApi,
 	hostDomain,
 	siteTitle,
+	versionOffsetFromLatest = 0,
 }: {
 	mittwaldApi: MittwaldAPIV2Client;
 	hostDomain: string;
 	siteTitle: string;
+	/** 0 installs the newest version, 1 the one before it, and so on. */
+	versionOffsetFromLatest?: number;
 }): Promise<WordPressInstallInput> => {
 	const app = await findWordPressApp(mittwaldApi);
-	const version = await findLatestAppVersion(mittwaldApi, app.id);
+	const version = await findAppVersion(mittwaldApi, app.id, versionOffsetFromLatest);
 
 	const response = await mittwaldApi.app.getAppversion({ appId: app.id, appVersionId: version.id });
 

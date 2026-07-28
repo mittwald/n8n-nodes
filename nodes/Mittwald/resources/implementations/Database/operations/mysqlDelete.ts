@@ -9,8 +9,10 @@ export default databaseResource
 	.withProperties({
 		mysqlDatabaseId: {
 			displayName: 'MySQL Database ID',
+			description: 'The unique identifier of the MySQL database',
 			type: 'string',
 			default: '',
+			required: true,
 		},
 	})
 	.withExecuteFn(async (context) => {

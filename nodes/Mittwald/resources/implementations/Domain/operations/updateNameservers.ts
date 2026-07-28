@@ -6,11 +6,12 @@ export default domainResource
 		name: 'Update Nameservers',
 		action: 'Update nameservers for a domain',
 		description:
-			'Update the nameservers of a domain. Provide nameserver host names as a comma-separated list (at least two are required).',
+			'Update the nameservers of a domain. Provide nameserver host names as a comma-separated list (at least two are required). The registry runs a pre-delegation check: nameservers that do not already answer for this domain are rejected with HTTP 400 and reason PREDELEGATION, so set the records up before switching.',
 	})
 	.withProperties({
 		domainId: {
 			displayName: 'Domain ID',
+			description: 'The unique identifier of the domain',
 			type: 'string',
 			default: '',
 			required: true,
@@ -20,7 +21,8 @@ export default domainResource
 			type: 'string',
 			default: '',
 			required: true,
-			description: 'Comma-separated list of nameserver host names (e.g. "ns1.example.com, ns2.example.com")',
+			description:
+				'Comma-separated list of nameserver host names (e.g. "ns1.example.com, ns2.example.com")',
 		},
 	})
 	.withExecuteFn(async (context) => {

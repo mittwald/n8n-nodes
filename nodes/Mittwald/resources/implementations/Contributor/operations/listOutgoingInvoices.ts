@@ -8,7 +8,10 @@ export default contributorResource
 		description: 'Get a list of outgoing invoices for an organisation',
 	})
 	.withProperties({
-		organisation: organisationProperty,
+		organisation: {
+			...organisationProperty,
+			required: true,
+		},
 	})
 	.withExecuteFn(async (context) => {
 		const { properties, apiClient } = context;

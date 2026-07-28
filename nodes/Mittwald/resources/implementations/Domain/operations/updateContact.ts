@@ -9,26 +9,23 @@ export default domainResource
 		name: 'Update Contact',
 		action: 'Update a domain contact',
 		description:
-			'Update one of the four domain contacts (owner, admin, technical, zone). The contact body is a JSON-encoded array of HandleField objects; refer to the mittwald API documentation for the exact shape.',
+			'Update the owner contact of a domain. The API only supports the owner role; admin, technical and zone contacts cannot be changed through this endpoint. The contact body is a JSON-encoded array of HandleField objects; refer to the mittwald API documentation for the exact shape.',
 	})
 	.withProperties({
 		domainId: {
 			displayName: 'Domain ID',
+			description: 'The unique identifier of the domain',
 			type: 'string',
 			default: '',
 			required: true,
 		},
 		contact: {
 			displayName: 'Contact Role',
+			description: 'Which domain contact to update; the API only supports the owner role',
 			type: 'options',
-			default: 'ownerc',
+			default: 'owner',
 			required: true,
-			options: [
-				{ name: 'Owner', value: 'ownerc' },
-				{ name: 'Admin', value: 'adminc' },
-				{ name: 'Technical', value: 'techc' },
-				{ name: 'Zone', value: 'zonec' },
-			],
+			options: [{ name: 'Owner', value: 'owner' }],
 		},
 		contactBody: {
 			displayName: 'Contact Body (JSON)',

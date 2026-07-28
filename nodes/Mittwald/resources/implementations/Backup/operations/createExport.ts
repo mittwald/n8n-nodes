@@ -10,11 +10,14 @@ export default backupResource
 	.withProperties({
 		backupId: {
 			displayName: 'Backup ID',
+			description: 'The unique identifier of the backup to export',
 			type: 'string',
 			default: '',
+			required: true,
 		},
 		format: {
 			displayName: 'Format',
+			description: 'Archive format of the exported backup',
 			type: 'options',
 			default: 'tar',
 			options: [

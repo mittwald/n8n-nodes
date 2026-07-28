@@ -10,21 +10,26 @@ export default aiHostingResource
 	.withProperties({
 		customerId: {
 			displayName: 'Customer ID',
+			description: 'The unique identifier of the customer',
 			type: 'string',
 			default: '',
+			required: true,
 		},
 		keyName: {
 			displayName: 'Name',
+			description: 'Name of the AI hosting key; must be at least 5 characters long',
 			type: 'string',
 			default: '',
 		},
 		projectId: {
 			displayName: 'Project ID',
+			description: 'Optional project to scope the key to; leave empty for a customer-wide key',
 			type: 'string',
 			default: '',
 		},
 		createWebuiContainer: {
 			displayName: 'Create Web UI Container',
+			description: 'Whether to also create a web UI container for this key',
 			type: 'boolean',
 			default: false,
 		},

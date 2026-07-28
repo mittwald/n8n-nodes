@@ -6,6 +6,7 @@ import {
 	updateStackWithServiceRequestSchema,
 } from './serviceRequest';
 import { resolveStackId } from './stackResolver';
+import { selectService, stackWithServicesResponseSchema } from './serviceResponse';
 
 export default containerResource
 	.addOperation({
@@ -27,6 +28,7 @@ export default containerResource
 		},
 		image: {
 			displayName: 'Image',
+			description: 'Container image to run, for example nginx:latest',
 			type: 'string',
 			required: false,
 			default: '',
@@ -61,7 +63,8 @@ export default containerResource
 		},
 		environment: environmentProperty,
 		description: {
-			displayName: 'Description',
+			displayName: 'Name',
+			description: 'Human-readable name of the service',
 			type: 'string',
 			required: false,
 			default: '',
@@ -90,14 +93,17 @@ export default containerResource
 			description,
 		});
 
-		return apiClient.request({
+		const stack = await apiClient.request({
 			path: `/stacks/${stackId}`,
 			method: 'PATCH',
 			requestSchema: updateStackWithServiceRequestSchema,
+			responseSchema: stackWithServicesResponseSchema,
 			body: {
 				services: {
 					[serviceName]: serviceRequest,
 				},
 			},
 		});
+
+		return selectService(stack, serviceName);
 	});

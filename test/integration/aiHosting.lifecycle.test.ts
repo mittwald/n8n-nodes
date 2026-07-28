@@ -97,6 +97,6 @@ integrationDescribe('AI Hosting / Lifecycle (integration)', () => {
 				keys: expect.any(Object),
 			});
 		},
-		10_000,
+		60_000,
 	);
 });

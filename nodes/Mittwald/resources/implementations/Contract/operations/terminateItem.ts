@@ -5,13 +5,37 @@ export default contractResource
 	.addOperation({
 		name: 'Terminate Item',
 		action: 'Schedule the termination of a contract item',
-		description: 'Schedule the termination of a contract item',
+		description:
+			'Schedule the termination of a contract item. Positions backed by their own resource — a domain, for example — cannot be terminated here and answer with HTTP 412; delete that resource instead.',
 	})
 	.withProperties({
-		contractId: { displayName: 'Contract ID', type: 'string', default: '' },
-		contractItemId: { displayName: 'Contract Item ID', type: 'string', default: '' },
-		targetDate: { displayName: 'Target Date', type: 'dateTime', default: '' },
-		reason: { displayName: 'Reason', type: 'string', default: '' },
+		contractId: {
+			displayName: 'Contract ID',
+			description: 'The unique identifier of the contract',
+			type: 'string',
+			default: '',
+			required: true,
+		},
+		contractItemId: {
+			displayName: 'Contract Item ID',
+			description: 'The unique identifier of the contract item',
+			type: 'string',
+			default: '',
+			required: true,
+		},
+		targetDate: {
+			displayName: 'Target Date',
+			description:
+				'Date on which the termination takes effect; leave empty for the earliest possible date',
+			type: 'dateTime',
+			default: '',
+		},
+		reason: {
+			displayName: 'Reason',
+			description: 'Optional reason for the termination',
+			type: 'string',
+			default: '',
+		},
 	})
 	.withExecuteFn(async ({ properties, apiClient }) => {
 		const { contractId, contractItemId, targetDate, reason } = properties;

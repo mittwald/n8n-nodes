@@ -15,12 +15,14 @@ export default containerResource
 		},
 		serviceId: {
 			displayName: 'Service ID',
+			description: 'The unique identifier of the service',
 			type: 'string',
 			required: true,
 			default: '',
 		},
 		action: {
 			displayName: 'Action',
+			description: 'Action to run on the service',
 			type: 'options',
 			required: true,
 			default: 'start',

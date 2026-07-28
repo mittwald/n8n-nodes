@@ -31,24 +31,28 @@ export default containerResource
 		},
 		uri: {
 			displayName: 'Hostname / URI',
+			description: 'Hostname of the container registry, for example ghcr.io',
 			type: 'string',
 			required: false,
 			default: '',
 		},
 		registryDescription: {
-			displayName: 'Description',
+			displayName: 'Name',
+			description: 'Human-readable name of the registry',
 			type: 'string',
 			required: false,
 			default: '',
 		},
 		username: {
 			displayName: 'Username',
+			description: 'Username for the registry; leave both credential fields empty to keep the current credentials',
 			type: 'string',
 			required: false,
 			default: '',
 		},
 		password: {
 			displayName: 'Password',
+			description: 'Password for the registry; leave both credential fields empty to keep the current credentials',
 			type: 'string',
 			typeOptions: {
 				password: true,
@@ -73,16 +77,14 @@ export default containerResource
 
 		return apiClient.request({
 			path: `/registries/${registry}`,
-			method: 'PUT',
+			method: 'PATCH',
 			requestSchema: Z.object({
 				uri: Z.string().min(1).optional(),
 				description: Z.string().min(1).optional(),
-				credentials: Z
-					.object({
-						username: Z.string().min(1),
-						password: Z.string().min(1),
-					})
-					.optional(),
+				credentials: Z.object({
+					username: Z.string().min(1),
+					password: Z.string().min(1),
+				}).optional(),
 			}),
 			body,
 		});

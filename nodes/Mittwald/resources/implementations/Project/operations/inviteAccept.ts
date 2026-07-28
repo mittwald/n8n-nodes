@@ -9,8 +9,10 @@ export default projectResource
 	.withProperties({
 		projectInviteId: {
 			displayName: 'Project Invite ID',
+			description: 'The unique identifier of the project invite',
 			type: 'string',
 			default: '',
+			required: true,
 		},
 	})
 	.withExecuteFn(async (context) => {

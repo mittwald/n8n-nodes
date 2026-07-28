@@ -2,13 +2,12 @@
 import { expect } from 'vitest';
 import { integrationDescribe, readOptionalString, testcase } from './testcase';
 
-declare const process: { env: Record<string, string | undefined> };
-
 integrationDescribe('Contract / Invoice read operations (integration)', () => {
 	testcase('lists customer invoices and fetches the first invoice when available', async ({
 		runOperation,
+		env,
 	}) => {
-		const testCustomerId = process.env.IT_CUSTOMER_ID;
+		const testCustomerId = env.customerId;
 		if (!testCustomerId) {
 			return;
 		}

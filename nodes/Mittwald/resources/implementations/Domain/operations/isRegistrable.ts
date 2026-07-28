@@ -9,7 +9,8 @@ domainResource
 	})
 	.withProperties({
 		fullName: {
-			displayName: 'Full domain name',
+			displayName: 'Full Domain Name',
+			description: 'Full domain name to check, for example example.com',
 			type: 'string',
 			default: '',
 		},

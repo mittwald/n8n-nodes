@@ -14,8 +14,10 @@ export default appResource
 		},
 		systemSoftwareVersionId: {
 			displayName: 'System Software Version ID',
+			description: 'The unique identifier of the system software version',
 			type: 'string',
 			default: '',
+			required: true,
 		},
 	})
 	.withExecuteFn(async (context) => {

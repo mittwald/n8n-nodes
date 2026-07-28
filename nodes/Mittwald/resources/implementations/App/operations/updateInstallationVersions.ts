@@ -8,10 +8,14 @@ export default appResource
 	.addOperation({
 		name: 'Update Installation Versions',
 		action: 'Update software versions',
-		description: 'Update the app or system software versions of an installation',
+		description:
+			'Update the app or system software versions of an installation. The upgrade runs in the background: the response reports the target under appVersion.desired, while appVersion.current only follows once it has completed.',
 	})
 	.withProperties({
-		appInstallation: appInstallationProperty,
+		appInstallation: {
+			...appInstallationProperty,
+			required: true,
+		},
 		version: installationVersionProperty,
 		systemSoftware: systemSoftwareProperty,
 	})
@@ -53,9 +57,10 @@ export default appResource
 				path: `/app-installations/${appInstallation}`,
 				responseSchema: Z.object({
 					id: Z.string(),
+				// `current` is absent while the very first install is still running.
 					appVersion: Z.object({
-						current: Z.string(),
-						desired: Z.string().optional(),
+						current: Z.string().optional(),
+						desired: Z.string(),
 					}),
 					systemSoftware: Z.array(
 						Z.object({

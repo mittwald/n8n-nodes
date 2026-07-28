@@ -9,7 +9,7 @@ export default databaseResource
 	})
 	.withProperties({
 		mysqlDatabaseId: {
-			displayName: 'Source MySQL Database ID',
+			displayName: 'MySQL Database ID',
 			type: 'string',
 			required: true,
 			default: '',
@@ -20,7 +20,7 @@ export default databaseResource
 			type: 'string',
 			required: true,
 			default: '',
-			description: 'Description for the new MySQL database',
+			description: 'Name for the new MySQL database',
 		},
 		userPassword: {
 			displayName: 'User Password',

@@ -71,7 +71,7 @@ integrationDescribe('Project / Lifecycle (integration)', () => {
 
 			await expectProjectToBeInaccessible(context, projectId);
 		},
-		10_000,
+		60_000,
 	);
 });
 

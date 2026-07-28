@@ -4,11 +4,14 @@ import { projectResource } from '../resource';
 export default projectResource
 	.addOperation({
 		name: 'Get Storage Statistics',
-		action: 'Get storage statistics',
+		action: 'Get project storage statistics',
 		description: 'Get storage usage statistics for a project',
 	})
 	.withProperties({
-		project: projectProperty,
+		project: {
+			...projectProperty,
+			required: true,
+		},
 	})
 	.withExecuteFn(async ({ properties, apiClient }) => {
 		const { project } = properties;

@@ -3,8 +3,6 @@ import { expect } from 'vitest';
 import { fromStep, runId } from './helpers';
 import { integrationDescribe, testcase } from './testcase';
 
-declare const process: { env: Record<string, string | undefined> };
-
 integrationDescribe('Domain / DNS lifecycle (integration)', () => {
 	testcase(
 		'lists and gets a DNS zone within a freshly created project',
@@ -82,10 +80,11 @@ integrationDescribe('Domain / DNS lifecycle (integration)', () => {
 	);
 
 	testcase(
-		'creates, gets and deletes a subordinate DNS zone',
+		'creates a subordinate DNS zone, updates a record set, and deletes the zone',
 		async (context) => {
-			const parentZoneId = process.env.IT_DNS_PARENT_ZONE_ID;
+			const parentZoneId = context.env.dnsParentZoneId;
 			if (!parentZoneId) {
+				// Needs a DNS zone on the test account; skip when unconfigured.
 				return;
 			}
 
@@ -96,6 +95,7 @@ integrationDescribe('Domain / DNS lifecycle (integration)', () => {
 				);
 			}
 			const zoneName = `it-${runId('zone')}.${parentZone.data.domain}`;
+			const txtValue = `it-${runId('txt')}`;
 
 			// eslint-disable-next-line prefer-const
 			let createdZoneId: string | undefined;
@@ -130,6 +130,27 @@ integrationDescribe('Domain / DNS lifecycle (integration)', () => {
 					parameters: { dnsZoneId: fromStep('Create DNS Zone').value },
 				})
 				.step({
+					name: 'Update DNS Record Set',
+					resource: 'Domain',
+					operation: 'Update DNS Record Set',
+					parameters: {
+						dnsZoneId: fromStep('Create DNS Zone').value,
+						recordSet: 'txt',
+						// `settings` is mandatory; sending `entries` alone is rejected as a
+						// oneOf validation error.
+						recordSetBody: JSON.stringify({
+							settings: { ttl: { auto: true } },
+							entries: [txtValue],
+						}),
+					},
+				})
+				.step({
+					name: 'Get DNS Zone After Update',
+					resource: 'Domain',
+					operation: 'Get DNS Zone',
+					parameters: { dnsZoneId: fromStep('Create DNS Zone').value },
+				})
+				.step({
 					name: 'Delete DNS Zone',
 					resource: 'Domain',
 					operation: 'Delete DNS Zone',
@@ -140,6 +161,13 @@ integrationDescribe('Domain / DNS lifecycle (integration)', () => {
 			createdZoneId = result.step('Create DNS Zone').requireString('id');
 
 			expect(result.step('Get DNS Zone').requireString('id')).toBe(createdZoneId);
+
+			const updatedZone = result.step('Get DNS Zone After Update').first();
+			const recordSet = updatedZone?.json.recordSet;
+			if (typeof recordSet !== 'object' || recordSet === null || 'txt' in recordSet === false) {
+				throw new Error('Expected the updated DNS zone to expose a txt record set');
+			}
+			expect(recordSet.txt).toMatchObject({ entries: [txtValue] });
 		},
 		90_000,
 	);

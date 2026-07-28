@@ -24,8 +24,9 @@ export default mailResource
 		message: {
 			displayName: 'Message',
 			type: 'string',
+			required: true,
 			default: '',
-			description: 'Message body to send as auto-reply. Leave empty to keep unset.',
+			description: 'Message body to send as auto-reply',
 		},
 		startsAt: {
 			displayName: 'Starts At',
@@ -43,31 +44,31 @@ export default mailResource
 	.withExecuteFn(async ({ properties, apiClient }) => {
 		const { mailAddressId, active, message, startsAt, expiresAt } = properties;
 
-		const body: Record<string, unknown> = {
+		// The API takes the settings wrapped in an `autoResponder` object.
+		const autoResponder: Record<string, unknown> = {
 			active,
+			message,
 		};
 
-		if (message.length > 0) {
-			body.message = message;
-		}
-
 		if (startsAt.length > 0) {
-			body.startsAt = startsAt;
+			autoResponder.startsAt = startsAt;
 		}
 
 		if (expiresAt.length > 0) {
-			body.expiresAt = expiresAt;
+			autoResponder.expiresAt = expiresAt;
 		}
 
 		return apiClient.request({
 			path: `/mail-addresses/${mailAddressId}/autoresponder`,
 			method: 'PATCH',
 			requestSchema: Z.object({
-				active: Z.boolean(),
-				message: Z.string().optional(),
-				startsAt: Z.string().optional(),
-				expiresAt: Z.string().optional(),
+				autoResponder: Z.object({
+					active: Z.boolean(),
+					message: Z.string(),
+					startsAt: Z.string().optional(),
+					expiresAt: Z.string().optional(),
+				}),
 			}),
-			body,
+			body: { autoResponder },
 		});
 	});

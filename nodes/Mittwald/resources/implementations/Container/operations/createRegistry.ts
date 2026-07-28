@@ -15,24 +15,28 @@ export default containerResource
 		},
 		uri: {
 			displayName: 'Hostname / URI',
+			description: 'Hostname of the container registry, for example ghcr.io',
 			type: 'string',
 			required: true,
 			default: '',
 		},
 		registryDescription: {
-			displayName: 'Description',
+			displayName: 'Name',
+			description: 'Human-readable name of the registry',
 			type: 'string',
 			required: true,
 			default: '',
 		},
 		username: {
 			displayName: 'Username',
+			description: 'Username for the registry; leave empty for an anonymous registry',
 			type: 'string',
 			required: false,
 			default: '',
 		},
 		password: {
 			displayName: 'Password',
+			description: 'Password for the registry; leave empty for an anonymous registry',
 			type: 'string',
 			typeOptions: {
 				password: true,
@@ -57,12 +61,10 @@ export default containerResource
 			requestSchema: Z.object({
 				uri: Z.string().min(1),
 				description: Z.string().min(1),
-				credentials: Z
-					.object({
-						username: Z.string().min(1),
-						password: Z.string().min(1),
-					})
-					.optional(),
+				credentials: Z.object({
+					username: Z.string().min(1),
+					password: Z.string().min(1),
+				}).optional(),
 			}),
 			body: {
 				uri,

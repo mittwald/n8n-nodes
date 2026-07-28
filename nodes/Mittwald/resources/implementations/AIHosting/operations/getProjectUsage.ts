@@ -8,7 +8,10 @@ export default aiHostingResource
 		description: 'Get the AI hosting plan and usage details of a project',
 	})
 	.withProperties({
-		project: projectProperty,
+		project: {
+			...projectProperty,
+			required: true,
+		},
 	})
 	.withExecuteFn(async ({ properties, apiClient }) => {
 		const { project } = properties;

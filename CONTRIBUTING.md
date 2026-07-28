@@ -37,6 +37,7 @@ chore: bump dependencies
 - Keep pull requests focused and small
 - Clearly describe **what** and **why** you changed something
 - Make sure your commits follow the semantic commit convention
+- Run `pnpm run lint` and `pnpm run build` before opening the pull request
 
 By contributing, you agree that your contributions will be licensed under the same license as this project.
 

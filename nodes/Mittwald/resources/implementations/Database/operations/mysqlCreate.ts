@@ -10,14 +10,21 @@ export default databaseResource
 		description: 'Create a new MySQL database with an initial user in a project',
 	})
 	.withProperties({
-		project: projectProperty,
+		project: {
+			...projectProperty,
+			required: true,
+		},
 		description: {
 			displayName: 'Name',
+			description: 'Description for the new MySQL database',
 			type: 'string',
 			required: true,
 			default: '',
 		},
-		version: mysqlVersionProperty,
+		version: {
+			...mysqlVersionProperty,
+			required: true,
+		},
 		characterSet: {
 			displayName: 'Character Set',
 			type: 'string',
@@ -40,33 +47,11 @@ export default databaseResource
 			default: '',
 			description: 'Password for the initial MySQL user',
 		},
-		userAccessLevel: {
-			displayName: 'User Access Level',
-			type: 'options',
-			default: 'full',
-			options: [
-				{
-					name: 'Full',
-					value: 'full',
-				},
-				{
-					name: 'Read-Only',
-					value: 'readonly',
-				},
-			],
-			description: 'Access level granted to the initial user',
-		},
 		userExternalAccess: {
 			displayName: 'User External Access',
 			type: 'boolean',
 			default: false,
 			description: 'Whether to allow external access for the initial user',
-		},
-		userDescription: {
-			displayName: 'User Description',
-			type: 'string',
-			default: '',
-			description: 'Optional description for the initial user',
 		},
 	})
 	.withExecuteFn(async ({ properties, apiClient }) => {
@@ -77,9 +62,7 @@ export default databaseResource
 			characterSet,
 			collation,
 			userPassword,
-			userAccessLevel,
 			userExternalAccess,
-			userDescription,
 		} = properties;
 
 		const mysqlDatabase = await apiClient.request({
@@ -96,9 +79,10 @@ export default databaseResource
 				}),
 				user: Z.object({
 					password: Z.string().min(1),
-					accessLevel: Z.enum(['full', 'readonly']),
+					// The API only accepts `full` for the user created together with the
+					// database; a read-only user has to be added to the database afterwards.
+					accessLevel: Z.literal('full'),
 					externalAccess: Z.boolean(),
-					description: Z.string().optional(),
 				}),
 			}),
 			responseSchema: Z.object({
@@ -115,9 +99,8 @@ export default databaseResource
 				},
 				user: {
 					password: userPassword,
-					accessLevel: userAccessLevel,
+					accessLevel: 'full',
 					externalAccess: userExternalAccess,
-					description: userDescription || undefined,
 				},
 			},
 		});

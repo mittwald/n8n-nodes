@@ -10,6 +10,8 @@ integrationDescribe('Mail / Lifecycle (integration)', () => {
 			const projectDescription = `it-${runId('mail-project')}`;
 			const localPart = `it-${runId('mail')}`;
 			const renamedLocalPart = `${localPart}-renamed`;
+			const forwardLocalPart = `${localPart}-forward`;
+			const forwardTarget = `${localPart}-target@example.com`;
 
 			context.teardown(async () => {
 				const response = await context.mittwaldApi.project.listProjects();
@@ -52,6 +54,7 @@ integrationDescribe('Mail / Lifecycle (integration)', () => {
 			const domain = domainsResponse.data[0].domain;
 			const address = `${localPart}@${domain}`;
 			const renamedAddress = `${renamedLocalPart}@${domain}`;
+			const forwardAddress = `${forwardLocalPart}@${domain}`;
 
 			const result = await context
 				.scenario('Mail address lifecycle')
@@ -63,12 +66,10 @@ integrationDescribe('Mail / Lifecycle (integration)', () => {
 						project: { mode: 'id', value: projectId },
 						address,
 						password: `S3cure!${runId('pw')}`,
-						quotaInBytes: 0,
+						quotaInBytes: 2147483648,
 						forwardAddresses: '',
 						catchAll: false,
 						enableSpamProtection: true,
-						autoResponderActive: false,
-						autoResponderMessage: '',
 					},
 				})
 				.step({
@@ -110,6 +111,34 @@ integrationDescribe('Mail / Lifecycle (integration)', () => {
 					operation: 'Get Mail Address',
 					parameters: { mailAddressId: fromStep('Create Mail Address') },
 				})
+				// Without a password the API takes the forwarding-only variant, which
+				// has a different request body than a mailbox.
+				.step({
+					name: 'Create Forward Address',
+					resource: 'Mail',
+					operation: 'Create Mail Address',
+					parameters: {
+						project: { mode: 'id', value: projectId },
+						address: forwardAddress,
+						password: '',
+						quotaInBytes: 0,
+						forwardAddresses: forwardTarget,
+						catchAll: false,
+						enableSpamProtection: true,
+					},
+				})
+				.step({
+					name: 'Get Forward Address',
+					resource: 'Mail',
+					operation: 'Get Mail Address',
+					parameters: { mailAddressId: fromStep('Create Forward Address') },
+				})
+				.step({
+					name: 'Delete Forward Address',
+					resource: 'Mail',
+					operation: 'Delete Mail Address',
+					parameters: { mailAddressId: fromStep('Create Forward Address') },
+				})
 				.step({
 					name: 'Delete Mail Address',
 					resource: 'Mail',
@@ -123,6 +152,10 @@ integrationDescribe('Mail / Lifecycle (integration)', () => {
 			expect(result.step('List Mail Addresses By Project').stringValues('id')).toContain(addressId);
 			expect(result.step('Get Mail Address').requireString('id')).toBe(addressId);
 			expect(result.step('Get Renamed Mail Address').requireString('address')).toBe(renamedAddress);
+			expect(result.step('Get Forward Address').requireString('address')).toBe(forwardAddress);
+			expect(result.step('Get Forward Address').first()?.json.forwardAddresses).toContain(
+				forwardTarget,
+			);
 		},
 		120_000,
 	);

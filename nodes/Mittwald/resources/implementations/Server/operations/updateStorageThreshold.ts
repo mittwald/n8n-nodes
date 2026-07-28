@@ -5,11 +5,14 @@ import Z from 'zod';
 export default serverResource
 	.addOperation({
 		name: 'Update Storage Notification Threshold',
-		action: 'Update storage notification threshold',
+		action: 'Update server storage notification threshold',
 		description: 'Update the storage notification threshold of a server',
 	})
 	.withProperties({
-		server: serverProperty,
+		server: {
+			...serverProperty,
+			required: true,
+		},
 		notificationThresholdInBytes: {
 			displayName: 'Notification Threshold in Bytes',
 			type: 'number',

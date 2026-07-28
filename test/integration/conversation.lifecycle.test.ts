@@ -95,7 +95,7 @@ integrationDescribe('Conversation / Lifecycle (integration)', () => {
 			);
 			expect(result.step('Get Conversation').requireString('title')).toBe(title);
 		},
-		10_000,
+		60_000,
 	);
 });
 

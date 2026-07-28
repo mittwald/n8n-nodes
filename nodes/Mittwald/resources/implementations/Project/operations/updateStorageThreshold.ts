@@ -5,11 +5,14 @@ import Z from 'zod';
 export default projectResource
 	.addOperation({
 		name: 'Update Storage Notification Threshold',
-		action: 'Update storage notification threshold',
+		action: 'Update project storage notification threshold',
 		description: 'Update the storage notification threshold of a project',
 	})
 	.withProperties({
-		project: projectProperty,
+		project: {
+			...projectProperty,
+			required: true,
+		},
 		notificationThresholdInBytes: {
 			displayName: 'Notification Threshold in Bytes',
 			type: 'number',
