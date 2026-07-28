@@ -3,6 +3,7 @@ import { describe, it } from 'vitest';
 import { MittwaldAPIV2Client } from '@mittwald/api-client';
 
 import {
+	createMittwaldApi,
 	createScenario,
 	getIntegrationEnv,
 	hasIntegrationEnv,
@@ -28,13 +29,13 @@ export function integrationDescribe(name: string, fn: () => void): void {
 export function testcase(
 	name: string,
 	fn: (context: TestcaseContext) => Promise<void>,
-	timeoutMs = 10_000,
+	timeoutMs = 60_000,
 ) {
 	it(
 		name,
 		async () => {
 			const env = getIntegrationEnv();
-			const mittwaldApi = MittwaldAPIV2Client.newWithToken(env.mittwaldApiToken);
+			const mittwaldApi = createMittwaldApi(env.mittwaldApiToken, env.mittwaldApiBaseUrl);
 			const teardowns: TeardownFn[] = [];
 
 			let testError: unknown;

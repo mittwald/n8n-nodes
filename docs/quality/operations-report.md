@@ -4,31 +4,31 @@
 
 ## Test coverage
 
-81 of 125 operations are referenced by an integration test (65%).
-Side-effecting operations: 35 of 60 covered (58%).
+113 of 125 operations are referenced by an integration test (90%).
+Side-effecting operations: 60 of 60 covered (100%).
 
 | Resource | Operations | Covered | Uncovered writes |
 | --- | --- | --- | --- |
 | Project | 20 | 20 (100%) | 0 |
-| App | 15 | 4 (27%) | 3 |
+| App | 15 | 9 (60%) | 0 |
 | Backup | 4 | 4 (100%) | 0 |
-| Server | 4 | 3 (75%) | 1 |
+| Server | 4 | 4 (100%) | 0 |
 | Support | 5 | 4 (80%) | 0 |
 | Contributor | 4 | 1 (25%) | 0 |
-| Organisation | 3 | 2 (67%) | 1 |
-| Domain | 20 | 8 (40%) | 9 |
-| Database | 11 | 7 (64%) | 2 |
-| Contract | 4 | 2 (50%) | 2 |
+| Organisation | 3 | 3 (100%) | 0 |
+| Domain | 20 | 18 (90%) | 0 |
+| Database | 11 | 11 (100%) | 0 |
+| Contract | 4 | 4 (100%) | 0 |
 | Mail | 11 | 11 (100%) | 0 |
-| Container | 11 | 5 (45%) | 5 |
-| AI Hosting | 6 | 3 (50%) | 2 |
+| Container | 11 | 11 (100%) | 0 |
+| AI Hosting | 6 | 6 (100%) | 0 |
 | Cronjob | 7 | 7 (100%) | 0 |
 
 ### Operation detail
 
 | Operation | Kind | Tests |
 | --- | --- | --- |
-| Project:Create | write | aiHosting.lifecycle.test.ts, backup.lifecycle.test.ts, container.lifecycle.test.ts, container.read.test.ts, cronjob.lifecycle.test.ts, database.mysql.lifecycle.test.ts, domain.create.wordpress.test.ts, domain.dns.lifecycle.test.ts, mail.lifecycle.test.ts, project.lifecycle.test.ts, project.membership.lifecycle.test.ts, project.sftp-ssh-get.test.ts, project.sftp-user.test.ts, project.ssh-user.test.ts, project.storage.lifecycle.test.ts |
+| Project:Create | write | aiHosting.lifecycle.test.ts, app.lifecycle.test.ts, app.updateVersions.test.ts, backup.lifecycle.test.ts, container.lifecycle.test.ts, container.read.test.ts, container.registry.lifecycle.test.ts, container.service.update.test.ts, cronjob.lifecycle.test.ts, database.mysql.lifecycle.test.ts, database.redis.lifecycle.test.ts, domain.create.wordpress.test.ts, domain.dns.lifecycle.test.ts, domain.ingress.lifecycle.test.ts, mail.lifecycle.test.ts, project.lifecycle.test.ts, project.membership.lifecycle.test.ts, project.sftp-ssh-get.test.ts, project.sftp-user.test.ts, project.ssh-user.test.ts, project.storage.lifecycle.test.ts |
 | Project:Create SFTP User | write | project.sftp-ssh-get.test.ts, project.sftp-user.test.ts |
 | Project:Create SSH User | write | project.sftp-ssh-get.test.ts, project.ssh-user.test.ts |
 | Project:Delete SFTP User | write | project.sftp-user.test.ts |
@@ -48,29 +48,29 @@ Side-effecting operations: 35 of 60 covered (58%).
 | Project:Accept Invite | write | project.membership.lifecycle.test.ts |
 | Project:Create Invite | write | project.membership.lifecycle.test.ts |
 | Project:Update Storage Notification Threshold | write | project.storage.lifecycle.test.ts |
-| App:Install | write | cronjob.lifecycle.test.ts, domain.create.wordpress.test.ts |
-| App:Uninstall | write | **none** |
+| App:Install | write | app.lifecycle.test.ts, app.updateVersions.test.ts, cronjob.lifecycle.test.ts, domain.create.wordpress.test.ts, domain.ingress.lifecycle.test.ts |
+| App:Uninstall | write | app.lifecycle.test.ts |
 | App:List | read | **none** |
-| App:Update Installation Versions | write | **none** |
+| App:Update Installation Versions | write | app.updateVersions.test.ts |
 | App:Get App | read | app.read.test.ts |
 | App:List Apps | read | app.read.test.ts |
-| App:Get Installation | read | **none** |
-| App:List Installations By Project | read | **none** |
+| App:Get Installation | read | app.lifecycle.test.ts |
+| App:List Installations By Project | read | app.lifecycle.test.ts |
 | App:Get Version | read | **none** |
 | App:List Versions | read | **none** |
 | App:Get System Software | read | **none** |
 | App:List System Softwares | read | app.read.test.ts |
 | App:Get System Software Version | read | **none** |
 | App:List System Software Versions | read | **none** |
-| App:Request Installation Copy | write | **none** |
+| App:Request Installation Copy | write | app.lifecycle.test.ts |
 | Backup:Create | write | backup.lifecycle.test.ts |
 | Backup:Create Export | write | backup.lifecycle.test.ts |
 | Backup:Get | read | backup.lifecycle.test.ts |
 | Backup:List | read | backup.lifecycle.test.ts |
 | Server:Get | read | server.get.test.ts |
-| Server:Get Storage Statistics | read | server.storage-statistics.test.ts |
+| Server:Get Storage Statistics | read | server.storage-statistics.test.ts, server.storage-threshold.test.ts |
 | Server:List | read | server.list.test.ts |
-| Server:Update Storage Notification Threshold | write | **none** |
+| Server:Update Storage Notification Threshold | write | server.storage-threshold.test.ts |
 | Support:Create | write | conversation.lifecycle.test.ts |
 | Support:Create Message | write | conversation.lifecycle.test.ts |
 | Support:Get | read | conversation.lifecycle.test.ts |
@@ -81,41 +81,41 @@ Side-effecting operations: 35 of 60 covered (58%).
 | Contributor:List Outgoing Invoices | read | **none** |
 | Contributor:List Own Extensions | read | **none** |
 | Organisation:Create Invite | write | organisation.test.ts |
-| Organisation:Delete Membership | write | **none** |
+| Organisation:Delete Membership | write | organisation.membership.test.ts |
 | Organisation:List | read | organisation.test.ts |
-| Domain:Create | write | domain.create.wordpress.test.ts |
+| Domain:Create | write | domain.create.wordpress.test.ts, domain.ingress.lifecycle.test.ts |
 | Domain:Check If Registrable | read | **none** |
-| Domain:Set Target | write | **none** |
+| Domain:Set Target | write | domain.ingress.lifecycle.test.ts |
 | Domain:List | read | domain.read.test.ts |
 | Domain:Get | read | domain.read.test.ts |
-| Domain:Delete | write | **none** |
-| Domain:Update Nameservers | write | **none** |
-| Domain:Update Contact | write | **none** |
-| Domain:Create Scheduled Deletion | write | **none** |
+| Domain:Delete | write | domain.delete.test.ts |
+| Domain:Update Nameservers | write | domain.registry.test.ts |
+| Domain:Update Contact | write | domain.registry.test.ts |
+| Domain:Create Scheduled Deletion | write | domain.scheduledDeletion.test.ts |
 | Domain:Check Transferability | read | **none** |
-| Domain:Create Auth Code | write | **none** |
+| Domain:Create Auth Code | write | domain.registry.test.ts |
 | Domain:Create DNS Zone | write | domain.dns.lifecycle.test.ts |
 | Domain:Get DNS Zone | read | domain.dns.lifecycle.test.ts |
 | Domain:List DNS Zones | read | domain.dns.lifecycle.test.ts |
 | Domain:Delete DNS Zone | write | domain.dns.lifecycle.test.ts |
-| Domain:Update DNS Record Set | write | **none** |
-| Domain:List Ingresses | read | domain.read.test.ts |
-| Domain:Get Ingress | read | **none** |
-| Domain:Delete Ingress | write | **none** |
-| Domain:Verify Ingress Ownership | write | **none** |
+| Domain:Update DNS Record Set | write | domain.dns.lifecycle.test.ts |
+| Domain:List Ingresses | read | domain.ingress.lifecycle.test.ts, domain.read.test.ts |
+| Domain:Get Ingress | read | domain.ingress.lifecycle.test.ts |
+| Domain:Delete Ingress | write | domain.ingress.lifecycle.test.ts |
+| Domain:Verify Ingress Ownership | write | domain.ingressOwnership.test.ts |
 | Database:Copy MySQL Database | write | database.mysql.lifecycle.test.ts |
 | Database:Create MySQL Database | write | database.mysql.lifecycle.test.ts |
 | Database:Delete MySQL Database | write | database.mysql.lifecycle.test.ts |
 | Database:Get MySQL Database | read | database.mysql.lifecycle.test.ts |
 | Database:List MySQL Databases | read | database.mysql.lifecycle.test.ts |
 | Database:List MySQL Versions | read | database.mysql.lifecycle.test.ts |
-| Database:Create Redis Database | write | **none** |
-| Database:Delete Redis Database | write | **none** |
-| Database:Get Redis Database | read | **none** |
-| Database:List Redis Databases | read | **none** |
+| Database:Create Redis Database | write | database.redis.lifecycle.test.ts |
+| Database:Delete Redis Database | write | database.redis.lifecycle.test.ts |
+| Database:Get Redis Database | read | database.redis.lifecycle.test.ts |
+| Database:List Redis Databases | read | database.redis.lifecycle.test.ts |
 | Database:List Redis Versions | read | database.mysql.lifecycle.test.ts |
-| Contract:Terminate | write | **none** |
-| Contract:Terminate Item | write | **none** |
+| Contract:Terminate | write | contract.termination.test.ts |
+| Contract:Terminate Item | write | contract.termination.test.ts |
 | Contract:Get Invoice | read | contract.read.test.ts |
 | Contract:List Invoices | read | contract.read.test.ts |
 | Mail:Create Mail Address | write | mail.lifecycle.test.ts |
@@ -129,22 +129,22 @@ Side-effecting operations: 35 of 60 covered (58%).
 | Mail:List Delivery Boxes | read | mail.lifecycle.test.ts |
 | Mail:Get Delivery Box | read | mail.lifecycle.test.ts |
 | Mail:Delete Delivery Box | write | mail.lifecycle.test.ts |
-| Container:Create Service | write | container.lifecycle.test.ts |
-| Container:Update Service | write | **none** |
-| Container:Delete Service | write | container.lifecycle.test.ts |
-| Container:Service Action | write | **none** |
-| Container:Get Service Logs | read | **none** |
-| Container:List Services | read | container.lifecycle.test.ts, container.read.test.ts |
+| Container:Create Service | write | container.lifecycle.test.ts, container.service.update.test.ts |
+| Container:Update Service | write | container.service.update.test.ts |
+| Container:Delete Service | write | container.lifecycle.test.ts, container.service.update.test.ts |
+| Container:Service Action | write | container.service.update.test.ts |
+| Container:Get Service Logs | read | container.service.update.test.ts |
+| Container:List Services | read | container.lifecycle.test.ts, container.read.test.ts, container.service.update.test.ts |
 | Container:List Volumes | read | container.read.test.ts |
-| Container:List Registries | read | container.read.test.ts |
-| Container:Create Registry | write | **none** |
-| Container:Update Registry | write | **none** |
-| Container:Delete Registry | write | **none** |
-| AI Hosting:Create Customer Key | write | **none** |
+| Container:List Registries | read | container.read.test.ts, container.registry.lifecycle.test.ts |
+| Container:Create Registry | write | container.registry.lifecycle.test.ts |
+| Container:Update Registry | write | container.registry.lifecycle.test.ts |
+| Container:Delete Registry | write | container.registry.lifecycle.test.ts |
+| AI Hosting:Create Customer Key | write | aiHosting.customerKey.test.ts |
 | AI Hosting:Create Project Key | write | aiHosting.lifecycle.test.ts |
-| AI Hosting:Delete Customer Key | write | **none** |
+| AI Hosting:Delete Customer Key | write | aiHosting.customerKey.test.ts |
 | AI Hosting:Delete Project Key | write | aiHosting.lifecycle.test.ts |
-| AI Hosting:Get Customer Usage | read | **none** |
+| AI Hosting:Get Customer Usage | read | aiHosting.customerKey.test.ts |
 | AI Hosting:Get Project Usage | read | aiHosting.lifecycle.test.ts |
 | Cronjob:Create | write | cronjob.lifecycle.test.ts |
 | Cronjob:Delete | write | cronjob.lifecycle.test.ts |
@@ -158,23 +158,13 @@ Side-effecting operations: 35 of 60 covered (58%).
 
 | Rule | Severity | Findings | New |
 | --- | --- | --- | --- |
-| operation-action-duplicate | warning | 2 | 0 |
-| property-display-name-inconsistent | warning | 5 | 0 |
+| property-display-name-inconsistent | warning | 1 | 0 |
 | property-type-inconsistent | warning | 1 | 0 |
-
-### operation-action-duplicate
-
-- `Get storage statistics` — Action "Get storage statistics" is used by Project:Get Storage Statistics, Server:Get Storage Statistics — indistinguishable in n8n's action list
-- `Update storage notification threshold` — Action "Update storage notification threshold" is used by Project:Update Storage Notification Threshold, Server:Update Storage Notification Threshold — indistinguishable in n8n's action list
 
 ### property-display-name-inconsistent
 
-- `description` — Property "description" is labelled differently across operations: "Name" (Project:Create, Project:Create SFTP User, Project:Create SSH User, App:Install, App:Request Installation Copy, Database:Copy MySQL Database, Database:Create MySQL Database, Database:Create Redis Database) vs. "Description" (Backup:Create, Mail:Create Delivery Box, Container:Create Service, Container:Update Service, Cronjob:Create)
-- `mailAddress` — Property "mailAddress" is labelled differently across operations: "Mail Address" (Project:Create Invite) vs. "Email Address" (Organisation:Create Invite)
-- `mysqlDatabaseId` — Property "mysqlDatabaseId" is labelled differently across operations: "Source MySQL Database ID" (Database:Copy MySQL Database) vs. "MySQL Database ID" (Database:Delete MySQL Database, Database:Get MySQL Database)
-- `role` — Property "role" is labelled differently across operations: "Role" (Project:Create Invite, Organisation:Create Invite) vs. "Role Filter" (Organisation:List)
 - `version` — Property "version" is labelled differently across operations: "App Version" (App:Install, App:Get Version) vs. "Version" (App:Update Installation Versions) vs. "MySQL Version" (Database:Create MySQL Database) vs. "Redis Version" (Database:Create Redis Database)
 
 ### property-type-inconsistent
 
-- `role` — Property "role" uses different types across operations: options (Project:Create Invite, Organisation:Create Invite) vs. string (Organisation:List)
+- `role` — Property "role" uses different types across operations: options (Project:Create Invite, Organisation:Create Invite) vs. multiOptions (Organisation:List)

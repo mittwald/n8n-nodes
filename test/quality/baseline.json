@@ -1,39 +1,7 @@
 {
 	"lint": [
-		"operation-action-duplicate|Get storage statistics",
-		"operation-action-duplicate|Update storage notification threshold",
-		"property-display-name-inconsistent|description",
-		"property-display-name-inconsistent|mailAddress",
-		"property-display-name-inconsistent|mysqlDatabaseId",
-		"property-display-name-inconsistent|role",
 		"property-display-name-inconsistent|version",
 		"property-type-inconsistent|role"
 	],
-	"untestedWriteOperations": [
-		"AI Hosting:Create Customer Key",
-		"AI Hosting:Delete Customer Key",
-		"App:Request Installation Copy",
-		"App:Uninstall",
-		"App:Update Installation Versions",
-		"Container:Create Registry",
-		"Container:Delete Registry",
-		"Container:Service Action",
-		"Container:Update Registry",
-		"Container:Update Service",
-		"Contract:Terminate",
-		"Contract:Terminate Item",
-		"Database:Create Redis Database",
-		"Database:Delete Redis Database",
-		"Domain:Create Auth Code",
-		"Domain:Create Scheduled Deletion",
-		"Domain:Delete",
-		"Domain:Delete Ingress",
-		"Domain:Set Target",
-		"Domain:Update Contact",
-		"Domain:Update DNS Record Set",
-		"Domain:Update Nameservers",
-		"Domain:Verify Ingress Ownership",
-		"Organisation:Delete Membership",
-		"Server:Update Storage Notification Threshold"
-	]
+	"untestedWriteOperations": []
 }
