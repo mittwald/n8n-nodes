@@ -3,7 +3,7 @@ import { expect } from 'vitest';
 import { fromStep, runId } from './helpers';
 import { integrationDescribe, testcase } from './testcase';
 
-integrationDescribe('Project / SFTP User (integration)', () => {
+integrationDescribe('SSH/SFTP User / SFTP (integration)', () => {
 	testcase('creates and deletes an SFTP user', async (context) => {
 		const projectDescription = `it-${runId('sftp-project')}`;
 		const userDescription = `it-${runId('sftp-user')}`;
@@ -40,7 +40,7 @@ integrationDescribe('Project / SFTP User (integration)', () => {
 			})
 			.step({
 				name: 'Create SFTP User',
-				resource: 'Project',
+				resource: 'SSH/SFTP User',
 				operation: 'Create SFTP User',
 				parameters: {
 					project: fromStep('Create Project'),
@@ -52,7 +52,7 @@ integrationDescribe('Project / SFTP User (integration)', () => {
 			})
 			.step({
 				name: 'Create SFTP User With Full Access',
-				resource: 'Project',
+				resource: 'SSH/SFTP User',
 				operation: 'Create SFTP User',
 				parameters: {
 					project: fromStep('Create Project'),
@@ -64,7 +64,7 @@ integrationDescribe('Project / SFTP User (integration)', () => {
 			})
 			.step({
 				name: 'List SFTP Users',
-				resource: 'Project',
+				resource: 'SSH/SFTP User',
 				operation: 'List SFTP Users',
 				parameters: {
 					project: fromStep('Create Project'),
@@ -72,18 +72,18 @@ integrationDescribe('Project / SFTP User (integration)', () => {
 			})
 			.step({
 				name: 'Delete SFTP User',
-				resource: 'Project',
+				resource: 'SSH/SFTP User',
 				operation: 'Delete SFTP User',
 				parameters: {
-					sftpUserId: fromStep('Create SFTP User'),
+					sftpUserId: fromStep('Create SFTP User').value,
 				},
 			})
 			.step({
 				name: 'Delete SFTP User With Full Access',
-				resource: 'Project',
+				resource: 'SSH/SFTP User',
 				operation: 'Delete SFTP User',
 				parameters: {
-					sftpUserId: fromStep('Create SFTP User With Full Access'),
+					sftpUserId: fromStep('Create SFTP User With Full Access').value,
 				},
 			})
 			.run();

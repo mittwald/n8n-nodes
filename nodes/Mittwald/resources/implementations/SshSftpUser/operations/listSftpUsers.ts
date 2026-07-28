@@ -1,11 +1,11 @@
 import projectProperty from '../../shared/projectProperty';
-import { projectResource } from '../resource';
+import { sshSftpUserResource } from '../resource';
 
-export default projectResource
+export default sshSftpUserResource
 	.addOperation({
-		name: 'List SSH Users',
-		action: 'List all SSH users',
-		description: 'Get a list of all SSH users in a project',
+		name: 'List SFTP Users',
+		action: 'List all SFTP users',
+		description: 'Get a list of all SFTP users in a project',
 	})
 	.withProperties({
 		project: {
@@ -17,7 +17,7 @@ export default projectResource
 		const { project } = properties;
 
 		return apiClient.request({
-			path: `/projects/${project}/ssh-users`,
+			path: `/projects/${project}/sftp-users`,
 			method: 'GET',
 		});
 	});

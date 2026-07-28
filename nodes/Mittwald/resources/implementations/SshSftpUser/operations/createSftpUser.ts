@@ -1,8 +1,8 @@
 import projectProperty from '../../shared/projectProperty';
-import { projectResource } from '../resource';
+import { sshSftpUserResource } from '../resource';
 import Z from 'zod';
 
-export default projectResource
+export default sshSftpUserResource
 	.addOperation({
 		name: 'Create SFTP User',
 		action: 'Create an SFTP user',
