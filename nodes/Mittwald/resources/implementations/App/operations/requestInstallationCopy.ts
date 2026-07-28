@@ -36,12 +36,14 @@ export default appResource
 			method: 'POST',
 			requestSchema: Z.object({
 				description: Z.string(),
-				targetProjectId: Z.string(),
+				// Optional in the API: left out, the copy stays in the source project.
+				// Sending an empty string instead would be an invalid project ID.
+				targetProjectId: Z.string().min(1).optional(),
 				installationPath: Z.string().optional(),
 			}),
 			body: {
 				description,
-				targetProjectId: project,
+				targetProjectId: project || undefined,
 				installationPath: installationPath || undefined,
 			},
 		});
