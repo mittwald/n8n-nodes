@@ -15,7 +15,6 @@ This is **n8n-nodes-mittwald**, an n8n community node package that provides inte
 - `pnpm run lint:fix` — Lint with auto-fix
 - `pnpm run test:compile` — TypeScript compilation check (`tsc --noEmit`)
 - `pnpm run test:integration` — Run the integration test suite against a real n8n instance and the live mittwald API (auto-skips when env vars are missing; see [Testing](#testing))
-- `pnpm run test:quality` — Check operation naming/UX consistency and integration-test coverage; needs no credentials and regenerates [`docs/quality/operations-report.md`](docs/quality/operations-report.md)
 
 ## Code Style
 
@@ -136,7 +135,7 @@ Integration tests live under `test/integration/` and run via:
 pnpm run test:integration
 ```
 
-The suite targets a real n8n instance plus the live mittwald API. Tests auto-skip when the required environment variables are missing — see [`test/integration/README.md`](test/integration/README.md) and `.env.example` for the full list. Besides this and the quality suite below, there is no unit test runner; `pnpm run test:compile` only runs `tsc --noEmit`.
+The suite targets a real n8n instance plus the live mittwald API. Tests auto-skip when the required environment variables are missing — see [`test/integration/README.md`](test/integration/README.md) and `.env.example` for the full list. There is no unit test runner; `pnpm run test:compile` only runs `tsc --noEmit`.
 
 ### Conventions
 
@@ -148,20 +147,6 @@ The suite targets a real n8n instance plus the live mittwald API. Tests auto-ski
 - `runOperation()` is a fine escape hatch for single-shot read-only checks (`server.get.test.ts`); `scenario()` is preferred for anything multi-step.
 - Read the existing tests in `test/integration/` for the exact conventions before adding new ones — `project.lifecycle.test.ts` is the canonical scenario-style template.
 
-### Quality suite
-
-`test/quality/` runs offline against the generated n8n node description. It has two jobs:
-
-1. **UX consistency** — enforces the naming rules from [Documentation guidelines](#documentation-guidelines): Title Case operation names and `displayName`s, capitalised acronyms (`ID`, `DNS`, `SFTP`, …), plain-language `action` strings, present `description`s, and cross-operation consistency (a property named `version` should not be labelled four different ways).
-2. **Coverage** — cross-references every operation against the `resource`/`operation` pairs used in `test/integration/`, and flags side-effecting operations without a test.
-
-Both are gated by `test/quality/baseline.json`, which lists the findings that exist today. New violations fail the suite; fixed ones fail it too, so the baseline only shrinks. After deliberately changing the accepted set:
-
-```bash
-QUALITY_BASELINE=update pnpm run test:quality
-```
-
-Every run rewrites `docs/quality/operations-report.md` — commit it alongside the change so the current state is reviewable in the diff.
 
 ## Keeping documentation in sync
 

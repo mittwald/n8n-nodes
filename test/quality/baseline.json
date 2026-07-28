@@ -1,7 +1,0 @@
-{
-	"lint": [
-		"property-display-name-inconsistent|version",
-		"property-type-inconsistent|role"
-	],
-	"untestedWriteOperations": []
-}
