@@ -4,6 +4,8 @@ import Z from 'zod';
 
 export default {
 	displayName: 'System Software Version Configuration Fields',
+	description:
+		'Target versions for the system software of this installation. Leave empty to keep the current versions and update the app only.',
 	type: 'resourceMapper',
 	default: null,
 	dependsOn: ['appInstallation.value'],

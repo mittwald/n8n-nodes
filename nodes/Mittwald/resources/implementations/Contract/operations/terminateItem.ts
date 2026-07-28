@@ -5,7 +5,8 @@ export default contractResource
 	.addOperation({
 		name: 'Terminate Item',
 		action: 'Schedule the termination of a contract item',
-		description: 'Schedule the termination of a contract item',
+		description:
+			'Schedule the termination of a contract item. Positions backed by their own resource — a domain, for example — cannot be terminated here and answer with HTTP 412; delete that resource instead.',
 	})
 	.withProperties({
 		contractId: {

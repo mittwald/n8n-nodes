@@ -6,7 +6,7 @@ export default domainResource
 		name: 'Update Nameservers',
 		action: 'Update nameservers for a domain',
 		description:
-			'Update the nameservers of a domain. Provide nameserver host names as a comma-separated list (at least two are required).',
+			'Update the nameservers of a domain. Provide nameserver host names as a comma-separated list (at least two are required). The registry runs a pre-delegation check: nameservers that do not already answer for this domain are rejected with HTTP 400 and reason PREDELEGATION, so set the records up before switching.',
 	})
 	.withProperties({
 		domainId: {

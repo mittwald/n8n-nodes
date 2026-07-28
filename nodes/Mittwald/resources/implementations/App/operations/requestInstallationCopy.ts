@@ -7,7 +7,8 @@ export default appResource
 	.addOperation({
 		name: 'Request Installation Copy',
 		action: 'Copy an app installation',
-		description: 'Request a copy of an app installation into another project',
+		description:
+			'Request a copy of an app installation into another project. The copy is created in the background and only shows up in the target project once it has finished.',
 	})
 	.withProperties({
 		appInstallation: appInstallationProperty,
