@@ -10,7 +10,10 @@ export default databaseResource
 		description: 'Create a new MySQL database with an initial user in a project',
 	})
 	.withProperties({
-		project: projectProperty,
+		project: {
+			...projectProperty,
+			required: true,
+		},
 		description: {
 			displayName: 'Name',
 			description: 'Description for the new MySQL database',
@@ -18,7 +21,10 @@ export default databaseResource
 			required: true,
 			default: '',
 		},
-		version: mysqlVersionProperty,
+		version: {
+			...mysqlVersionProperty,
+			required: true,
+		},
 		characterSet: {
 			displayName: 'Character Set',
 			type: 'string',

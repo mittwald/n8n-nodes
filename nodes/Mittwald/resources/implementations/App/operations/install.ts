@@ -16,8 +16,13 @@ export default appResource
 			...projectProperty,
 			required: true,
 		},
+		// Only feeds the version dropdown; an app version ID can also be entered
+		// directly, so the API never sees this value.
 		app: appProperty,
-		version: versionProperty,
+		version: {
+			...versionProperty,
+			required: true,
+		},
 		description: {
 			displayName: 'Name',
 			description: 'Name of the app installation as shown in the mittwald backend',

@@ -20,7 +20,10 @@ export default databaseResource
 			type: 'string',
 			default: '',
 		},
-		version: redisVersionProperty,
+		version: {
+			...redisVersionProperty,
+			required: true,
+		},
 	})
 	.withExecuteFn(async (context) => {
 		const { properties, apiClient } = context;

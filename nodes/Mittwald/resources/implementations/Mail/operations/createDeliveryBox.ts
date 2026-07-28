@@ -9,7 +9,10 @@ export default mailResource
 		description: 'Create a new delivery box in a project',
 	})
 	.withProperties({
-		project: projectProperty,
+		project: {
+			...projectProperty,
+			required: true,
+		},
 		description: {
 			displayName: 'Name',
 			type: 'string',

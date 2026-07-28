@@ -9,7 +9,10 @@ export default projectResource
 		description: 'Update the storage notification threshold of a project',
 	})
 	.withProperties({
-		project: projectProperty,
+		project: {
+			...projectProperty,
+			required: true,
+		},
 		notificationThresholdInBytes: {
 			displayName: 'Notification Threshold in Bytes',
 			type: 'number',

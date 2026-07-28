@@ -9,7 +9,10 @@ export default projectResource
 		description: 'Create an SSH user for a project',
 	})
 	.withProperties({
-		project: projectProperty,
+		project: {
+			...projectProperty,
+			required: true,
+		},
 		description: {
 			displayName: 'Name',
 			description: 'Name of the SSH user as shown in the mittwald backend',

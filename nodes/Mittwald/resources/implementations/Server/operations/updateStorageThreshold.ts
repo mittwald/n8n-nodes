@@ -9,7 +9,10 @@ export default serverResource
 		description: 'Update the storage notification threshold of a server',
 	})
 	.withProperties({
-		server: serverProperty,
+		server: {
+			...serverProperty,
+			required: true,
+		},
 		notificationThresholdInBytes: {
 			displayName: 'Notification Threshold in Bytes',
 			type: 'number',

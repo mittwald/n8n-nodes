@@ -21,7 +21,10 @@ export default cronjobResource
 		description: 'Create a new cronjob in a project',
 	})
 	.withProperties({
-		project: projectProperty,
+		project: {
+			...projectProperty,
+			required: true,
+		},
 		appInstallation: {
 			...appInstallationProperty,
 			required: true,

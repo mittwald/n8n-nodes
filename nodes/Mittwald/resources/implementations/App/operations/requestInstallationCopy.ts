@@ -11,7 +11,10 @@ export default appResource
 			'Request a copy of an app installation into another project. The copy is created in the background and only shows up in the target project once it has finished.',
 	})
 	.withProperties({
-		appInstallation: appInstallationProperty,
+		appInstallation: {
+			...appInstallationProperty,
+			required: true,
+		},
 		project: projectProperty,
 		description: {
 			displayName: 'Name',
