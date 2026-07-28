@@ -127,6 +127,34 @@ When `Mittwald.node.ts` imports `'./resources/implementations/operations'`, all 
 - Exception: you MAY skip Zod validation **only** for the **response body schema** of the **final HTTP request in the successful execution path** of an operation's `execute()` function, when nothing more is done with the response than returning it as a result from the execute function.
 - Add an integration test for any new operation that performs writes or other side effects. For read-only operations, add a test when there is a meaningful assertion to make (e.g. shape of the response or presence of a known resource).
 
+## Patterns and pitfalls
+
+Recurring traps that have already cost us a round of fixes. Check every new operation against this list before opening a PR.
+
+### Pull shared values from `shared/config.ts`
+
+API base URL, user agent and pagination page size live in `nodes/Mittwald/shared/config.ts`. Everything that needs them reads them from there — `ApiClient` (base URL, user agent), `api/pagination.ts` (page size), `credentials/MittwaldApi.credentials.ts` (both, for the credential test). Never inline a literal: a hardcoded base URL in the credential test silently diverges from the one the node actually calls.
+
+### No environment variables, no file access at runtime
+
+Verified community nodes may not read `process.env` or the filesystem. That rules out env-based overrides (e.g. pointing the node at a staging API) and reading the package version out of `package.json` at runtime — which is why `config.userAgent` deliberately carries no version. Deployment-level configuration therefore has to be a compile-time constant in `shared/config.ts`, a node property, or a credential field.
+
+### Mark API-required inputs as `required`
+
+If the API rejects the request without a field, the property config needs `required: true`. n8n then flags it in the UI instead of letting the user submit a request that fails server-side. Check the mittwald API docs for the operation and mirror its required set — it was missing across 62 operations in one sweep and another ten turned up right after, so it is worth an explicit pass.
+
+### Validate `options` / `multiOptions` values against the API docs
+
+Every entry in an `options` array has to be a value the API actually accepts, and the `default` has to be one the API accepts too. Offering an invalid choice turns a dropdown into a guaranteed error — this happened with domain contact roles (only `owner` is supported) and DNS record set types. A `multiOptions` property yields a `string[]`; serialize it explicitly for the request (e.g. `role.length > 0 ? role.join(',') : undefined`).
+
+### Match the API's HTTP method and cover every parameter
+
+Look up the actual method (`PATCH` vs `PUT` — the container registry update used the wrong one) and expose every parameter the endpoint supports, body and query alike. `Delete Domain` shipped without the `transit` and `deleteIngresses` query parameters and quietly lost that functionality. Compare against the endpoint definition, not against a sibling operation that looks similar.
+
+### Normalise `httpCode` before comparing it
+
+n8n error objects carry `httpCode` as `string | null`, so `error.httpCode === 404` is always false and the intended error handling silently never runs. Convert first — `Number(error.httpCode) === 403`, as in `Domain/operations/create.ts` and `Domain/operations/verifyIngressOwnership.ts`.
+
 ## Testing
 
 Integration tests live under `test/integration/` and run via:
