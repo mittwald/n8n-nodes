@@ -3,4 +3,6 @@ dist
 .idea
 .vscode
 .env
+.env.*
+*.swp
 .DS_Store
