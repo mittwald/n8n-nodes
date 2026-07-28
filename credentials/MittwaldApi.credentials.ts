@@ -5,6 +5,7 @@ import {
 	ICredentialType,
 	INodeProperties,
 } from 'n8n-workflow';
+import { config } from '../nodes/Mittwald/shared/config';
 
 export class MittwaldApi implements ICredentialType {
 	// eslint-disable-next-line n8n-nodes-base/cred-class-field-display-name-miscased
@@ -37,10 +38,12 @@ export class MittwaldApi implements ICredentialType {
 		},
 	};
 
+	// Uses the same base URL as the node itself, so a token for a non-production
+	// environment is not reported as invalid.
 	test: ICredentialTestRequest = {
 		request: {
-			baseURL: 'https://api.mittwald.de',
-			url: '/v2/users/self/credentials/email',
+			baseURL: config.apiBaseUrl,
+			url: '/users/self/credentials/email',
 			method: 'GET',
 		},
 	};

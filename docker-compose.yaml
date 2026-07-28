@@ -15,6 +15,9 @@ services:
       - N8N_OWNER_PASSWORD=testpassword
       - N8N_OWNER_FIRST_NAME=Test
       - N8N_OWNER_LAST_NAME=User
+      # Optional: point the node at a non-production mittwald environment.
+      # Empty or unset keeps the production API.
+      - MITTWALD_API_BASE_URL=${MITTWALD_API_BASE_URL:-}
     volumes:
       - n8n_data:/home/node/.n8n
       - ./dist:/home/node/.n8n/custom
