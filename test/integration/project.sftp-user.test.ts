@@ -51,6 +51,18 @@ integrationDescribe('Project / SFTP User (integration)', () => {
 				},
 			})
 			.step({
+				name: 'Create SFTP User With Full Access',
+				resource: 'Project',
+				operation: 'Create SFTP User',
+				parameters: {
+					project: fromStep('Create Project'),
+					description: `${userDescription}-all`,
+					password,
+					accessLevel: 'read',
+					allDirectories: true,
+				},
+			})
+			.step({
 				name: 'List SFTP Users',
 				resource: 'Project',
 				operation: 'List SFTP Users',
@@ -66,11 +78,31 @@ integrationDescribe('Project / SFTP User (integration)', () => {
 					sftpUserId: fromStep('Create SFTP User'),
 				},
 			})
+			.step({
+				name: 'Delete SFTP User With Full Access',
+				resource: 'Project',
+				operation: 'Delete SFTP User',
+				parameters: {
+					sftpUserId: fromStep('Create SFTP User With Full Access'),
+				},
+			})
 			.run();
 
 		const projectId = result.step('Create Project').requireString('id');
 		const sftpUserId = result.step('Create SFTP User').requireString('id');
+		const fullAccessUserId = result.step('Create SFTP User With Full Access').requireString('id');
 		expect(result.step('Create SFTP User').requireString('projectId')).toBe(projectId);
+
 		expect(result.step('List SFTP Users').stringValues('id')).toContain(sftpUserId);
+		expect(result.step('List SFTP Users').stringValues('id')).toContain(fullAccessUserId);
+
+		// "Access to All Directories" has to reach the API as the project root. Read back from the
+		// list instead of Get SFTP User: right after creation the API still answers a lookup by id
+		// with "access denied; verdict: abstain".
+		const fullAccessUser = result
+			.step('List SFTP Users')
+			.items()
+			.find((item) => item.json.id === fullAccessUserId);
+		expect(fullAccessUser?.json.directories).toEqual(['/']);
 	});
 });

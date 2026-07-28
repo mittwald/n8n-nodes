@@ -47,12 +47,25 @@ export default projectResource
 				},
 			],
 		},
+		allDirectories: {
+			displayName: 'Access to All Directories',
+			type: 'boolean',
+			required: false,
+			default: false,
+			description:
+				'Whether the user may access every directory of the project. Turn this off to name the directories individually.',
+		},
 		directories: {
 			displayName: 'Directories',
 			type: 'string',
 			required: true,
 			default: '',
 			description: 'One or more directories, separated by commas or new lines',
+			displayOptions: {
+				show: {
+					allDirectories: [false],
+				},
+			},
 		},
 		expiresAt: {
 			displayName: 'Expires At',
@@ -63,11 +76,15 @@ export default projectResource
 		},
 	})
 	.withExecuteFn(async ({ properties, apiClient }) => {
-		const { project, description, password, accessLevel, directories, expiresAt } = properties;
-		const parsedDirectories = directories
-			.split(/\n|,/)
-			.map((directory) => directory.trim())
-			.filter((directory) => directory.length > 0);
+		const { project, description, password, accessLevel, allDirectories, directories, expiresAt } =
+			properties;
+		// The project root is what mStudio stores for "access to all directories".
+		const parsedDirectories = allDirectories
+			? ['/']
+			: directories
+					.split(/\n|,/)
+					.map((directory) => directory.trim())
+					.filter((directory) => directory.length > 0);
 
 		if (parsedDirectories.length === 0) {
 			throw new Error('At least one directory is required');
