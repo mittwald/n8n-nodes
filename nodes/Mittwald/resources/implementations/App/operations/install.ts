@@ -12,7 +12,10 @@ export default appResource
 		description: 'Install an app on a project',
 	})
 	.withProperties({
-		project: projectProperty,
+		project: {
+			...projectProperty,
+			required: true,
+		},
 		app: appProperty,
 		version: versionProperty,
 		description: {
@@ -28,6 +31,26 @@ export default appResource
 			type: 'string',
 			default: '',
 		},
+		updatePolicy: {
+			displayName: 'Update Policy',
+			description: 'How the installation should pick up new app versions',
+			type: 'options',
+			default: 'patchLevel',
+			options: [
+				{
+					name: 'Patch Level',
+					value: 'patchLevel',
+				},
+				{
+					name: 'All',
+					value: 'all',
+				},
+				{
+					name: 'None',
+					value: 'none',
+				},
+			],
+		},
 		versionConfig: versionConfigProperty,
 		waitUntilInstalled: {
 			displayName: 'Wait Until Installed',
@@ -38,7 +61,8 @@ export default appResource
 	})
 	.withExecuteFn(async (context) => {
 		const { properties, apiClient } = context;
-		const { project, version, versionConfig, installationPath, description } = properties;
+		const { project, version, versionConfig, installationPath, description, updatePolicy } =
+			properties;
 
 		if (!versionConfig) {
 			throw new Error('missing versionConfig');
@@ -51,7 +75,9 @@ export default appResource
 				appVersionId: Z.string(),
 				installationPath: Z.string(),
 				description: Z.string(),
-				userInputs: Z.array(Z.object({ name: Z.string(), value: Z.any() })),
+				updatePolicy: Z.enum(['none', 'patchLevel', 'all']),
+				// The API stores user inputs as strings.
+				userInputs: Z.array(Z.object({ name: Z.string(), value: Z.string() })),
 			}),
 			responseSchema: Z.object({
 				id: Z.string(),
@@ -60,9 +86,10 @@ export default appResource
 				appVersionId: version,
 				installationPath,
 				description,
+				updatePolicy,
 				userInputs: Object.entries(versionConfig).map(([key, value]) => ({
 					name: key,
-					value,
+					value: String(value),
 				})),
 			},
 		});

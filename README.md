@@ -33,7 +33,7 @@ This node provides integration with the [mittwald API v2](https://developer.mitt
 
 ### App
 
-- **Install an app**: Install an app on a project
+- **Install an app**: Install an app on a project (parameters: Project, App, App Version, Name, optional Installation Path, Update Policy, Version Config)
 - **List all installed apps**: Get a list of all installed apps
 - **Uninstall an app**: Remove an app installation
 - **Update software versions**: Update the app or system software versions of an installation. The version selector only offers the versions the installation can actually be updated to. The upgrade runs in the background: the response reports the target under `appVersion.desired`, while `appVersion.current` only follows once it has completed. Leave the system software fields empty to update the app only.
@@ -177,13 +177,13 @@ This node provides integration with the [mittwald API v2](https://developer.mitt
 
 ### Mail
 
-- **Create a mail address**: Create a new mail address in a project (parameters: Project, Address, optional Password, optional Quota, optional Forward Addresses, optional Catch-All, optional Spam Protection, optional Auto Responder)
+- **Create a mail address**: Create a new mail address in a project (parameters: Project, Address, Password, Quota in Bytes, optional Forward Addresses, optional Catch-All, optional Spam Protection). With a password the address gets a mailbox; without one it only forwards, and then at least one forward address is required. Use *Update mail address autoresponder* for the auto-reply.
 - **List mail addresses by project**: Get a list of mail addresses in a project (parameter: Project)
 - **List mail addresses**: Get a list of all mail addresses the user has access to
 - **Get a mail address**: Get details of a specific mail address (parameter: Mail Address ID)
 - **Delete a mail address**: Delete a mail address (parameter: Mail Address ID)
 - **Update a mail address**: Update the local part of a mail address (parameters: Mail Address ID, Address)
-- **Update mail address autoresponder**: Update the auto responder of a mail address (parameters: Mail Address ID, Active, optional Message, optional Starts At, optional Expires At)
+- **Update mail address autoresponder**: Update the auto responder of a mail address (parameters: Mail Address ID, Active, Message, optional Starts At, optional Expires At)
 - **Create a delivery box**: Create a delivery box in a project (parameters: Project, Name, Password)
 - **List delivery boxes**: Get a list of delivery boxes in a project (parameter: Project)
 - **Get a delivery box**: Get details of a specific delivery box (parameter: Delivery Box ID)

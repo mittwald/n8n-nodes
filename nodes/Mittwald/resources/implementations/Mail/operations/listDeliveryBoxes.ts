@@ -8,7 +8,10 @@ export default mailResource
 		description: 'Get a list of delivery boxes in a project',
 	})
 	.withProperties({
-		project: projectProperty,
+		project: {
+			...projectProperty,
+			required: true,
+		},
 	})
 	.withExecuteFn(async ({ properties, apiClient }) => {
 		const { project } = properties;
