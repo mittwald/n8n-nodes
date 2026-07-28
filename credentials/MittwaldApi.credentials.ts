@@ -45,6 +45,9 @@ export class MittwaldApi implements ICredentialType {
 			baseURL: config.apiBaseUrl,
 			url: '/users/self/credentials/email',
 			method: 'GET',
+			headers: {
+				'User-Agent': config.userAgent,
+			},
 		},
 	};
 }

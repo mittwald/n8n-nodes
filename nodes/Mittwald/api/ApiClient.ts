@@ -59,6 +59,9 @@ export class ApiClient {
 		const executeRequest = () =>
 			helpers.httpRequestWithAuthentication.call(this.node, 'mittwaldApi', {
 				...restRequestConfig,
+				headers: {
+					'User-Agent': config.userAgent,
+				},
 				url: path,
 				returnFullResponse: true,
 				errorResponse: true,
