@@ -3,7 +3,7 @@ import { expect } from 'vitest';
 import { fromStep, runId } from './helpers';
 import { integrationDescribe, testcase } from './testcase';
 
-integrationDescribe('Project / SSH User (integration)', () => {
+integrationDescribe('SSH/SFTP User / SSH (integration)', () => {
 	testcase('creates and deletes an SSH user', async (context) => {
 		const projectDescription = `it-${runId('ssh-project')}`;
 		const userDescription = `it-${runId('ssh-user')}`;
@@ -40,7 +40,7 @@ integrationDescribe('Project / SSH User (integration)', () => {
 			})
 			.step({
 				name: 'Create SSH User',
-				resource: 'Project',
+				resource: 'SSH/SFTP User',
 				operation: 'Create SSH User',
 				parameters: {
 					project: fromStep('Create Project'),
@@ -50,7 +50,7 @@ integrationDescribe('Project / SSH User (integration)', () => {
 			})
 			.step({
 				name: 'List SSH Users',
-				resource: 'Project',
+				resource: 'SSH/SFTP User',
 				operation: 'List SSH Users',
 				parameters: {
 					project: fromStep('Create Project'),
@@ -58,10 +58,10 @@ integrationDescribe('Project / SSH User (integration)', () => {
 			})
 			.step({
 				name: 'Delete SSH User',
-				resource: 'Project',
+				resource: 'SSH/SFTP User',
 				operation: 'Delete SSH User',
 				parameters: {
-					sshUserId: fromStep('Create SSH User'),
+					sshUserId: fromStep('Create SSH User').value,
 				},
 			})
 			.run();

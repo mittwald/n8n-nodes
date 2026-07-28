@@ -1,16 +1,8 @@
 import './create';
-import './createSftpUser';
-import './createSshUser';
-import './deleteSftpUser';
-import './deleteSshUser';
 import './delete';
 import './get';
-import './getSftpUser';
-import './getSshUser';
 import './getStorageStatistics';
 import './listMemberships';
-import './listSftpUsers';
-import './listSshUsers';
 import './list';
 import './listInvites';
 import './membershipDelete';
