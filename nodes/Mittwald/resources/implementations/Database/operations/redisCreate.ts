@@ -10,7 +10,10 @@ export default databaseResource
 		description: 'Create a new Redis database in a project',
 	})
 	.withProperties({
-		project: projectProperty,
+		project: {
+			...projectProperty,
+			required: true,
+		},
 		description: {
 			displayName: 'Name',
 			description: 'Description for the new Redis database',

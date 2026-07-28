@@ -12,6 +12,7 @@ export default contractResource
 			description: 'The unique identifier of the invoice',
 			type: 'string',
 			default: '',
+			required: true,
 		},
 	})
 	.withExecuteFn(async ({ properties, apiClient }) => {

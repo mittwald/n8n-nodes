@@ -13,6 +13,7 @@ export default contractResource
 			description: 'The unique identifier of the contract',
 			type: 'string',
 			default: '',
+			required: true,
 		},
 		targetDate: {
 			displayName: 'Target Date',

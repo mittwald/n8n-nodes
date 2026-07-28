@@ -9,7 +9,10 @@ export default backupResource
 		description: 'Create a manual backup of a project',
 	})
 	.withProperties({
-		project: projectProperty,
+		project: {
+			...projectProperty,
+			required: true,
+		},
 		description: {
 			displayName: 'Name',
 			description: 'Optional name to identify the backup later',

@@ -8,7 +8,10 @@ export default contractResource
 		description: 'Get a list of invoices for an organisation',
 	})
 	.withProperties({
-		organisation: organisationProperty,
+		organisation: {
+			...organisationProperty,
+			required: true,
+		},
 	})
 	.withExecuteFn(async ({ properties, apiClient }) => {
 		const { organisation } = properties;

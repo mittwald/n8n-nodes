@@ -8,7 +8,10 @@ export default appResource
 		description: 'Get details of a specific app',
 	})
 	.withProperties({
-		app: appProperty,
+		app: {
+			...appProperty,
+			required: true,
+		},
 	})
 	.withExecuteFn(async (context) => {
 		const { properties, apiClient } = context;

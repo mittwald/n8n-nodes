@@ -8,7 +8,10 @@ export default projectResource
 		description: 'Get a list of all project invitations',
 	})
 	.withProperties({
-		project: projectProperty,
+		project: {
+			...projectProperty,
+			required: true,
+		},
 	})
 	.withExecuteFn(async (context) => {
 		const { project } = context.properties;

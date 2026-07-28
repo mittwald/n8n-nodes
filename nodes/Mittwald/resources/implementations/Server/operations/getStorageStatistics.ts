@@ -8,7 +8,10 @@ export default serverResource
 		description: 'Get storage usage statistics for a server',
 	})
 	.withProperties({
-		server: serverProperty,
+		server: {
+			...serverProperty,
+			required: true,
+		},
 	})
 	.withExecuteFn(async ({ properties, apiClient }) => {
 		const { server } = properties;

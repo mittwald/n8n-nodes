@@ -12,7 +12,10 @@ export default appResource
 			'Update the app or system software versions of an installation. The upgrade runs in the background: the response reports the target under appVersion.desired, while appVersion.current only follows once it has completed.',
 	})
 	.withProperties({
-		appInstallation: appInstallationProperty,
+		appInstallation: {
+			...appInstallationProperty,
+			required: true,
+		},
 		version: installationVersionProperty,
 		systemSoftware: systemSoftwareProperty,
 	})

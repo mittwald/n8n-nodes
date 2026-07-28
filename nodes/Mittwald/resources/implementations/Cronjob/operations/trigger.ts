@@ -12,6 +12,7 @@ export default cronjobResource
 			description: 'The unique identifier of the cronjob',
 			type: 'string',
 			default: '',
+			required: true,
 		},
 	})
 	.withExecuteFn(async ({ properties, apiClient }) => {

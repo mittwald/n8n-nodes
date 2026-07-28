@@ -8,7 +8,10 @@ export default appResource
 		description: 'Remove an app installation',
 	})
 	.withProperties({
-		appInstallation: appInstallationProperty,
+		appInstallation: {
+			...appInstallationProperty,
+			required: true,
+		},
 	})
 	.withExecuteFn(async (context) => {
 		const { properties, apiClient } = context;

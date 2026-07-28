@@ -8,12 +8,16 @@ export default aiHostingResource
 		description: 'Delete an AI hosting API key scoped to a project',
 	})
 	.withProperties({
-		project: projectProperty,
+		project: {
+			...projectProperty,
+			required: true,
+		},
 		keyId: {
 			displayName: 'Key ID',
 			description: 'The unique identifier of the AI hosting key',
 			type: 'string',
 			default: '',
+			required: true,
 		},
 	})
 	.withExecuteFn(async ({ properties, apiClient }) => {

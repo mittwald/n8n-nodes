@@ -9,7 +9,10 @@ export default conversationResource
 		description: 'Send a new message in a conversation',
 	})
 	.withProperties({
-		conversation: conversationProperty,
+		conversation: {
+			...conversationProperty,
+			required: true,
+		},
 		message: {
 			displayName: 'Message',
 			description: 'Message body to append to the conversation',

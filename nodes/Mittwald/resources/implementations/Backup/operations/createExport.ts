@@ -13,6 +13,7 @@ export default backupResource
 			description: 'The unique identifier of the backup to export',
 			type: 'string',
 			default: '',
+			required: true,
 		},
 		format: {
 			displayName: 'Format',

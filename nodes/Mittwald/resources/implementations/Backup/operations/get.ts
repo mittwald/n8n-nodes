@@ -12,6 +12,7 @@ export default backupResource
 			description: 'The unique identifier of the backup',
 			type: 'string',
 			default: '',
+			required: true,
 		},
 	})
 	.withExecuteFn(async ({ properties, apiClient }) => {

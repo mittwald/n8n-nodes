@@ -12,12 +12,14 @@ export default aiHostingResource
 			description: 'The unique identifier of the customer',
 			type: 'string',
 			default: '',
+			required: true,
 		},
 		keyId: {
 			displayName: 'Key ID',
 			description: 'The unique identifier of the AI hosting key',
 			type: 'string',
 			default: '',
+			required: true,
 		},
 	})
 	.withExecuteFn(async ({ properties, apiClient }) => {

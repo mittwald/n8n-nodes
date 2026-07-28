@@ -9,7 +9,10 @@ projectResource
 		description: 'Create a new project on a server',
 	})
 	.withProperties({
-		server: serverProperty,
+		server: {
+			...serverProperty,
+			required: true,
+		},
 		description: {
 			displayName: 'Name',
 			description: 'Name of the project as shown in the mittwald backend',

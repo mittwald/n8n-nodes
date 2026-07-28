@@ -9,8 +9,14 @@ export default appResource
 		description: 'Get details of a specific app version',
 	})
 	.withProperties({
-		app: appProperty,
-		version: appVersionProperty,
+		app: {
+			...appProperty,
+			required: true,
+		},
+		version: {
+			...appVersionProperty,
+			required: true,
+		},
 	})
 	.withExecuteFn(async (context) => {
 		const { properties, apiClient } = context;

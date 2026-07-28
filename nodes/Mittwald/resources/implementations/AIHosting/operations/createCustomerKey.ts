@@ -13,6 +13,7 @@ export default aiHostingResource
 			description: 'The unique identifier of the customer',
 			type: 'string',
 			default: '',
+			required: true,
 		},
 		keyName: {
 			displayName: 'Name',

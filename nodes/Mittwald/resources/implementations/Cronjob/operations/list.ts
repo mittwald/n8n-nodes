@@ -8,7 +8,10 @@ export default cronjobResource
 		description: 'Get a list of all cronjobs in a project',
 	})
 	.withProperties({
-		project: projectProperty,
+		project: {
+			...projectProperty,
+			required: true,
+		},
 		includeServiceCronjobs: {
 			displayName: 'Include Service Cronjobs',
 			description: 'Whether to also return cronjobs managed by container services',

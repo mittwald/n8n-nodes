@@ -9,7 +9,10 @@ export default aiHostingResource
 		description: 'Create a new AI hosting API key scoped to a project',
 	})
 	.withProperties({
-		project: projectProperty,
+		project: {
+			...projectProperty,
+			required: true,
+		},
 		keyName: {
 			displayName: 'Name',
 			description: 'Name of the AI hosting key; must be at least 5 characters long',

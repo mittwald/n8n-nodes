@@ -14,12 +14,14 @@ export default contractResource
 			description: 'The unique identifier of the contract',
 			type: 'string',
 			default: '',
+			required: true,
 		},
 		contractItemId: {
 			displayName: 'Contract Item ID',
 			description: 'The unique identifier of the contract item',
 			type: 'string',
 			default: '',
+			required: true,
 		},
 		targetDate: {
 			displayName: 'Target Date',

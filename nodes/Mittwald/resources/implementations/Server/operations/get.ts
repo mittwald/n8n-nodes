@@ -8,7 +8,10 @@ export default serverResource
 		description: 'Get details of a specific server',
 	})
 	.withProperties({
-		server: serverProperty,
+		server: {
+			...serverProperty,
+			required: true,
+		},
 	})
 	.withExecuteFn(async (context) => {
 		const { properties, apiClient } = context;

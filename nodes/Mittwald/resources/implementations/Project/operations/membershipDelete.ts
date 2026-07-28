@@ -12,6 +12,7 @@ export default projectResource
 			description: 'The unique identifier of the project membership',
 			type: 'string',
 			default: '',
+			required: true,
 		},
 	})
 	.withExecuteFn(async (context) => {
