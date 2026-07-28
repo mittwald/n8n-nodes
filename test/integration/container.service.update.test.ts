@@ -9,8 +9,6 @@ integrationDescribe('Container / Service update and actions (integration)', () =
 		async (context) => {
 			const projectDescription = `it-${runId('service-update')}`;
 			const serviceName = 'nginx';
-			// The service ID comes from the list step, not from Create Service: that
-			// operation returns the stack, so its `id` is a stack ID (issue #96).
 
 			context.teardown(async () => {
 				const response = await context.mittwaldApi.project.listProjects();
@@ -68,7 +66,7 @@ integrationDescribe('Container / Service update and actions (integration)', () =
 					operation: 'Service Action',
 					parameters: {
 						project: fromStep('Create Project'),
-						serviceId: fromStep('List Services After Update').value,
+						serviceId: fromStep('Create Service').value,
 						action: 'stop',
 					},
 				})
@@ -78,7 +76,7 @@ integrationDescribe('Container / Service update and actions (integration)', () =
 					operation: 'Service Action',
 					parameters: {
 						project: fromStep('Create Project'),
-						serviceId: fromStep('List Services After Update').value,
+						serviceId: fromStep('Create Service').value,
 						action: 'start',
 					},
 				})
@@ -88,7 +86,7 @@ integrationDescribe('Container / Service update and actions (integration)', () =
 					operation: 'Get Service Logs',
 					parameters: {
 						project: fromStep('Create Project'),
-						serviceId: fromStep('List Services After Update').value,
+						serviceId: fromStep('Create Service').value,
 						tail: 20,
 					},
 				})
@@ -110,6 +108,12 @@ integrationDescribe('Container / Service update and actions (integration)', () =
 
 			expect(updated, `service "${serviceName}" is missing after the update`).toBeDefined();
 			expect(updated?.json.description).toBe('Service after update');
+			// Both operations answer with the touched service, so their `id` can be
+			// chained into every operation taking a service ID.
+			expect(result.step('Create Service').requireString('id')).toBe(updated?.json.id);
+			expect(result.step('Update Service').requireString('description')).toBe(
+				'Service after update',
+			);
 			expect(result.step('Stop Service').first()).toBeDefined();
 			expect(result.step('Start Service').first()).toBeDefined();
 			expect(result.step('Get Service Logs').first()).toBeDefined();

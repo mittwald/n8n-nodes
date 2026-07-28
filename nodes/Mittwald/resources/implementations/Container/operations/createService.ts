@@ -6,6 +6,7 @@ import {
 	environmentProperty,
 } from './serviceRequest';
 import { resolveStackId } from './stackResolver';
+import { selectService, stackWithServicesResponseSchema } from './serviceResponse';
 
 export default containerResource
 	.addOperation({
@@ -92,14 +93,17 @@ export default containerResource
 			description,
 		});
 
-		return apiClient.request({
+		const stack = await apiClient.request({
 			path: `/stacks/${stackId}`,
 			method: 'PATCH',
 			requestSchema: createStackWithServiceRequestSchema,
+			responseSchema: stackWithServicesResponseSchema,
 			body: {
 				services: {
 					[serviceName]: serviceRequest,
 				},
 			},
 		});
+
+		return selectService(stack, serviceName);
 	});
