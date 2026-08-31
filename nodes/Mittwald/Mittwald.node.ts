@@ -1,13 +1,29 @@
 import { Resource } from './resources/base';
 import './resources/implementations/operations';
 import {
+	IDataObject,
 	IExecuteFunctions,
+	INode,
 	INodeExecutionData,
 	INodeType,
 	INodeTypeDescription,
 	NodeConnectionTypes,
 	NodeOperationError,
 } from 'n8n-workflow';
+
+// An error that already carries n8n context (NodeApiError & co.) keeps its
+// details for the UI; anything else is wrapped so no raw error surfaces.
+function toNodeError(
+	node: INode,
+	error: Error & { context?: IDataObject },
+	itemIndex: number,
+): Error {
+	if (error.context) {
+		error.context.itemIndex = itemIndex;
+		return error;
+	}
+	return new NodeOperationError(node, error, { itemIndex });
+}
 
 export class Mittwald implements INodeType {
 	description: INodeTypeDescription = {
@@ -77,13 +93,7 @@ export class Mittwald implements INodeType {
 						pairedItem: itemIndex,
 					});
 				} else {
-					if (error.context) {
-						error.context.itemIndex = itemIndex;
-						throw error;
-					}
-					throw new NodeOperationError(this.getNode(), error, {
-						itemIndex,
-					});
+					throw toNodeError(this.getNode(), error, itemIndex);
 				}
 			}
 		}

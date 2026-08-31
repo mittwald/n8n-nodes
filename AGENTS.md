@@ -126,6 +126,7 @@ When `Mittwald.node.ts` imports `'./resources/implementations/operations'`, all 
 - Ensure all API interactions use the `ApiClient` with proper Zod validation.
 - Exception: you MAY skip Zod validation **only** for the **response body schema** of the **final HTTP request in the successful execution path** of an operation's `execute()` function, when nothing more is done with the response than returning it as a result from the execute function.
 - Add an integration test for any new operation that performs writes or other side effects. For read-only operations, add a test when there is a meaningful assertion to make (e.g. shape of the response or presence of a known resource).
+- Inside a `catch` block, never throw a plain `Error` and never re-throw the caught error as-is. Wrap HTTP errors in `NodeApiError` and user-facing/validation errors in `NodeOperationError`, using `node.getNode()` from the operation execution context. The n8n community-package scanner enforces this (`@n8n/community-nodes/require-node-api-error`) and rejects releases that violate it.
 
 ## Testing
 
