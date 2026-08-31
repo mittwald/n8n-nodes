@@ -1,5 +1,6 @@
 import type { OperationPropertyConfig, OperationPropertyValue } from '../OperationProperty';
 import type { ApiClient } from '../../../api';
+import type { IAllExecuteFunctions } from 'n8n-workflow';
 
 export interface OperationConfig {
 	name: string;
@@ -12,6 +13,7 @@ export type OperationProperties = Record<string, OperationPropertyConfig>;
 interface OperationExecutionContext<TProps extends OperationProperties = OperationProperties> {
 	properties: OperationExecutionProperties<TProps>;
 	apiClient: ApiClient;
+	node: IAllExecuteFunctions;
 }
 
 export type OperationExecutionFunction<TProps extends OperationProperties = OperationProperties> = (

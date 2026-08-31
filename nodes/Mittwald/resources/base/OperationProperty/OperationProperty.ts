@@ -1,4 +1,4 @@
-import { INodeProperties, type IAllExecuteFunctions } from 'n8n-workflow';
+import { INodeProperties, NodeOperationError, type IAllExecuteFunctions } from 'n8n-workflow';
 import type { Operation } from '../Operation/Operation';
 import type { OperationPropertyConfig } from './types';
 
@@ -132,7 +132,7 @@ export class OperationProperty {
 				return this.config.default;
 			}
 
-			throw parameterError;
+			throw new NodeOperationError(node.getNode(), parameterError);
 		}
 
 		if (this.config.type === 'resourceMapper') {

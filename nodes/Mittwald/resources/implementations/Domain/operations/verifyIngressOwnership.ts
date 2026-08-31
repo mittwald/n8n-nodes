@@ -1,5 +1,6 @@
 import { domainResource } from '../resource';
 import Z from 'zod';
+import { NodeApiError } from 'n8n-workflow';
 
 export default domainResource
 	.addOperation({
@@ -18,7 +19,7 @@ export default domainResource
 		},
 	})
 	.withExecuteFn(async (context) => {
-		const { properties, apiClient } = context;
+		const { properties, apiClient, node } = context;
 		const { ingressId } = properties;
 
 		try {
@@ -34,7 +35,7 @@ export default domainResource
 			// hand back the record the user still has to publish.
 			// n8n reports the status as a string, so compare numerically.
 			if (Number(error.httpCode) !== 412) {
-				throw error;
+				throw new NodeApiError(node.getNode(), error);
 			}
 
 			// A 412 covers two situations: the TXT proof is still missing, or the ingress
