@@ -78,6 +78,7 @@ export class Operation {
 		const result = await this.executionFn({
 			apiClient,
 			properties,
+			node,
 		});
 
 		if (Array.isArray(result)) {

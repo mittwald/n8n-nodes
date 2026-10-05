@@ -1,5 +1,6 @@
 import { domainResource } from '../resource';
 import Z from 'zod';
+import { NodeApiError, NodeOperationError } from 'n8n-workflow';
 import appInstallationProperty from '../../shared/appInstallationProperty';
 import { extractBaseDomain, isSubdomain } from './domainHelper';
 
@@ -19,14 +20,15 @@ domainResource
 		targetInstallation: appInstallationProperty,
 	})
 	.withExecuteFn(async (context) => {
-		const { properties, apiClient } = context;
+		const { properties, apiClient, node } = context;
 		const { fullName, targetInstallation } = properties;
 
 		const baseDomain = extractBaseDomain(fullName);
 
 		//TODO: allow to order domains with handles
 		if (!isSubdomain(fullName)) {
-			throw new Error(
+			throw new NodeOperationError(
+				node.getNode(),
 				'Only subdomains can be created. Please provide a full domain name including at least one subdomain.',
 			);
 		}
@@ -42,11 +44,12 @@ domainResource
 			} catch (e) {
 				// n8n reports the status as a string, so compare numerically.
 				if (Number(e.httpCode) === 403) {
-					throw new Error(
+					throw new NodeOperationError(
+						node.getNode(),
 						'Domain does not exist. Please order the domain first before creating a subdomain. Ordering is not yet supported',
 					);
 				}
-				throw e;
+				throw new NodeApiError(node.getNode(), e);
 			}
 		}
 
