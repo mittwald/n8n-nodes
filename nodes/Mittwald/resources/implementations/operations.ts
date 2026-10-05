@@ -1,4 +1,5 @@
 import './Project/operations';
+import './SshSftpUser/operations';
 import './App/operations';
 import './Backup/operations';
 import './Server/operations';

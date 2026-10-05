@@ -3,7 +3,7 @@ import { expect } from 'vitest';
 import { fromStep, runId } from './helpers';
 import { integrationDescribe, testcase } from './testcase';
 
-integrationDescribe('Project / SSH and SFTP User Get (integration)', () => {
+integrationDescribe('SSH/SFTP User / Get (integration)', () => {
 	testcase('creates and gets an SSH user', async (context) => {
 		const projectDescription = `it-${runId('ssh-get-project')}`;
 		const userDescription = `it-${runId('ssh-get-user')}`;
@@ -42,7 +42,7 @@ integrationDescribe('Project / SSH and SFTP User Get (integration)', () => {
 			})
 			.step({
 				name: 'Create SSH User',
-				resource: 'Project',
+				resource: 'SSH/SFTP User',
 				operation: 'Create SSH User',
 				parameters: {
 					project: fromStep('Create Project'),
@@ -52,7 +52,7 @@ integrationDescribe('Project / SSH and SFTP User Get (integration)', () => {
 			})
 			.step({
 				name: 'Get SSH User',
-				resource: 'Project',
+				resource: 'SSH/SFTP User',
 				operation: 'Get SSH User',
 				parameters: {
 					sshUserId: fromStep('Create SSH User').value,
@@ -102,7 +102,7 @@ integrationDescribe('Project / SSH and SFTP User Get (integration)', () => {
 			})
 			.step({
 				name: 'Create SFTP User',
-				resource: 'Project',
+				resource: 'SSH/SFTP User',
 				operation: 'Create SFTP User',
 				parameters: {
 					project: fromStep('Create Project'),
@@ -114,7 +114,7 @@ integrationDescribe('Project / SSH and SFTP User Get (integration)', () => {
 			})
 			.step({
 				name: 'Get SFTP User',
-				resource: 'Project',
+				resource: 'SSH/SFTP User',
 				operation: 'Get SFTP User',
 				parameters: {
 					sftpUserId: fromStep('Create SFTP User').value,

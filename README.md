@@ -108,21 +108,28 @@ This node provides integration with the [mittwald API v2](https://developer.mitt
 - **List cronjob executions**: Get a list of executions for a cronjob
 - **Get a cronjob execution**: Get details of a specific cronjob execution
 
+### SSH/SFTP User
+
+SSH and SFTP users share one resource, matching how they are grouped in mStudio. These
+operations used to sit under _Project_; workflows built before that move have to pick the
+resource again, the operation and its parameters stay the same.
+
+- **Create an SSH user**: Create an SSH user for a project (parameters: Project, Name, Password, optional Expires At)
+- **Create an SFTP user**: Create an SFTP user for a project (parameters: Project, Name, Password, Access Level, Access to All Directories, Directories, optional Expires At). Turning on _Access to All Directories_ grants the user the whole project, exactly as the equivalent option in mStudio does; leave it off to name directories individually.
+- **Get an SSH user**: Get details of a specific SSH user (parameter: SSH User ID)
+- **Get an SFTP user**: Get details of a specific SFTP user (parameter: SFTP User ID)
+- **List all SSH users**: Get a list of all SSH users in a project (parameter: Project)
+- **List all SFTP users**: Get a list of all SFTP users in a project (parameter: Project)
+- **Delete an SSH user**: Delete an SSH user from a project (parameter: SSH User ID)
+- **Delete an SFTP user**: Delete an SFTP user from a project (parameter: SFTP User ID)
+
 ### Project
 
 - **Create a project on a server**: Create a new project on a server
-- **Create an SSH user**: Create an SSH user for a project (parameters: Project, Name, Password, optional Expires At)
-- **Create an SFTP user**: Create an SFTP user for a project (parameters: Project, Name, Password, Access Level, Directories, optional Expires At)
-- **Delete an SSH user**: Delete an SSH user from a project (parameter: SSH User ID)
-- **Delete an SFTP user**: Delete an SFTP user from a project (parameter: SFTP User ID)
-- **Get an SSH user**: Get details of a specific SSH user (parameter: SSH User ID)
-- **Get an SFTP user**: Get details of a specific SFTP user (parameter: SFTP User ID)
 - **Delete a project**: Delete an existing project
 - **Get a project**: Get details of a specific project
 - **Get project storage statistics**: Get storage usage statistics for a project
 - **Update project storage notification threshold**: Update the storage notification threshold of a project
-- **List all SSH users**: Get a list of all SSH users in a project (parameter: Project)
-- **List all SFTP users**: Get a list of all SFTP users in a project (parameter: Project)
 - **List all invites**: Get a list of all project invitations (parameter: Project)
 - **List all projects**: Get a list of all projects
 - **Accept an invite to a project**: Accept a project invitation using an invitation token

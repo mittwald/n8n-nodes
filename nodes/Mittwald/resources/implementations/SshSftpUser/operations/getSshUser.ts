@@ -1,6 +1,6 @@
-import { projectResource } from '../resource';
+import { sshSftpUserResource } from '../resource';
 
-export default projectResource
+export default sshSftpUserResource
 	.addOperation({
 		name: 'Get SSH User',
 		action: 'Get an SSH user',

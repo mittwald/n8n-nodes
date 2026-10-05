@@ -1,6 +1,6 @@
-import { projectResource } from '../resource';
+import { sshSftpUserResource } from '../resource';
 
-export default projectResource
+export default sshSftpUserResource
 	.addOperation({
 		name: 'Delete SSH User',
 		action: 'Delete an SSH user',
