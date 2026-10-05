@@ -29,7 +29,7 @@ export class Mittwald implements INodeType {
 	description: INodeTypeDescription = {
 		displayName: 'mittwald API',
 		name: 'mittwald',
-		icon: 'file:mittwald.svg',
+		icon: { light: 'file:icon-light.svg', dark: 'file:icon-dark.svg' },
 		group: ['input'],
 		defaultVersion: 1,
 		version: [1],

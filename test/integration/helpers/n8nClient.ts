@@ -445,6 +445,8 @@ export class N8nApiClient {
 				execution = await this.getExecution(executionId);
 			} catch (error) {
 				if (!axios.isAxiosError(error) || error.response?.status !== 404) {
+					// Test harness code, not part of the node: no n8n node context to wrap the error in.
+					// eslint-disable-next-line @n8n/community-nodes/require-node-api-error
 					throw error;
 				}
 			}

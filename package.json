@@ -47,7 +47,7 @@
 	},
 	"devDependencies": {
 		"@mittwald/api-client": "^4.343.0",
-		"@n8n/node-cli": "^0.20.0",
+		"@n8n/node-cli": "^0.50.5",
 		"@types/node": "^25.5.2",
 		"axios": "^1.14.0",
 		"dotenv": "^17.4.1",
@@ -61,11 +61,5 @@
 	},
 	"peerDependencies": {
 		"n8n-workflow": "*"
-	},
-	"resolutions": {},
-	"pnpm": {
-		"overrides": {
-			"change-case": "4.1.2"
-		}
 	}
 }

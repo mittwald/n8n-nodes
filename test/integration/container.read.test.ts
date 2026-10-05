@@ -1,4 +1,3 @@
-/* eslint-disable @n8n/community-nodes/no-restricted-imports */
 import { expect } from 'vitest';
 import { runId } from './helpers';
 import { integrationDescribe, testcase } from './testcase';

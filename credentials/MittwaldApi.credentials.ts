@@ -8,10 +8,12 @@ import {
 import { config } from '../nodes/Mittwald/shared/config';
 
 export class MittwaldApi implements ICredentialType {
-	// eslint-disable-next-line n8n-nodes-base/cred-class-field-display-name-miscased
-	displayName = 'mittwald API';
+	displayName = 'Mittwald API';
 	name = 'mittwaldApi';
-	icon: Icon = 'file:../nodes/Mittwald/mittwald.svg';
+	icon: Icon = {
+		light: 'file:../nodes/Mittwald/icon-light.svg',
+		dark: 'file:../nodes/Mittwald/icon-dark.svg',
+	};
 	documentationUrl = 'https://developer.mittwald.de/';
 
 	properties: INodeProperties[] = [
