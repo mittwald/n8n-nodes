@@ -1,4 +1,3 @@
-/* eslint-disable @n8n/community-nodes/no-restricted-imports */
 import { describe, it } from 'vitest';
 import { MittwaldAPIV2Client } from '@mittwald/api-client';
 

@@ -1,5 +1,5 @@
 {
-	"node": "n8n-nodes-mittwald",
+	"node": "n8n-nodes-mittwald.mittwald",
 	"nodeVersion": "1.0",
 	"codexVersion": "1.0",
 	"categories": ["Development"],

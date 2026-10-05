@@ -1,4 +1,3 @@
-/* eslint-disable @n8n/community-nodes/no-restricted-imports */
 import { config } from 'dotenv';
 import Z from 'zod';
 

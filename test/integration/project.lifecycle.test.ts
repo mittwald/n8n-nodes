@@ -1,8 +1,6 @@
-/* eslint-disable @n8n/community-nodes/no-restricted-imports */
 import { expect } from 'vitest';
 import { fromStep, runId } from './helpers';
 import { integrationDescribe, testcase } from './testcase';
-/* eslint-disable @n8n/community-nodes/no-restricted-imports */
 import { MittwaldAPIV2Client } from '@mittwald/api-client';
 
 integrationDescribe('Project / Lifecycle (integration)', () => {
