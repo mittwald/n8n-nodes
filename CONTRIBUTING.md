@@ -51,6 +51,10 @@ package to npm and creates the GitHub release.
 - **Manually:** run the workflow from the Actions tab and enter a version (e.g. `1.13.0`) to release
   exactly that one, or leave the field empty to derive it as above.
 
+If a run fails after the release tag was pushed, just run the workflow again (without a version, or
+with the same one): it notices the unfinished release and only completes the missing npm package or
+GitHub release.
+
 Never create release tags or GitHub releases by hand: the workflow treats the latest `vX.Y.Z` tag as
 the last release, so a hand-made tag hides the commits before it.
 

@@ -1,7 +1,15 @@
-// Determines the version for the next release and writes it to $GITHUB_OUTPUT as `version`.
+// Determines what the Publish workflow releases and writes it to $GITHUB_OUTPUT:
+//
+// - `version`: the version to release; empty if there is nothing to do.
+// - `sha`:     the commit to release from. The publish job checks out exactly this commit, so the
+//              atomic push to master fails if anything was merged after the version was chosen.
+// - `resume`:  `true` if `version` is an already tagged release whose npm package or GitHub
+//              release is still missing (e.g. after a failed run). The publish job then skips the
+//              version commit and tag and only completes the missing steps.
 //
 // Usage: node .github/scripts/next-version.mjs [version]
 //
+// - An unfinished release is always completed first.
 // - With an explicit version (manual workflow run), it is validated: valid semver, no existing
 //   tag, and greater than the last release.
 // - Without one (nightly run), it is derived from the Conventional Commits since the last release
@@ -9,40 +17,72 @@
 //   them occur, the output is empty and no release happens.
 
 import { execFileSync } from 'node:child_process';
-import { appendFileSync } from 'node:fs';
+import { appendFileSync, readFileSync } from 'node:fs';
 
-const SEMVER = /^(\d+)\.(\d+)\.(\d+)$/;
+// Strict MAJOR.MINOR.PATCH: no prerelease or build suffix, no leading zeroes.
+const SEMVER = /^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)$/;
 
-function git(...args) {
-	return execFileSync('git', args, { encoding: 'utf8' }).trim();
+function run(command, ...args) {
+	return execFileSync(command, args, {
+		encoding: 'utf8',
+		stdio: ['ignore', 'pipe', 'pipe'],
+	}).trim();
+}
+
+function succeeds(command, ...args) {
+	try {
+		run(command, ...args);
+		return true;
+	} catch {
+		return false;
+	}
 }
 
 function parse(version) {
 	const match = SEMVER.exec(version);
-	if (!match) {
+	return match ? match.slice(1).map(Number) : undefined;
+}
+
+function parseOrFail(version) {
+	const parsed = parse(version);
+	if (!parsed) {
 		throw new Error(`"${version}" is not a valid version (expected MAJOR.MINOR.PATCH).`);
 	}
-	return match.slice(1).map(Number);
+	return parsed;
 }
 
-function isGreater(a, b) {
+function compare(a, b) {
 	for (let i = 0; i < 3; i++) {
-		if (a[i] !== b[i]) return a[i] > b[i];
+		if (a[i] !== b[i]) return a[i] - b[i];
 	}
-	return false;
+	return 0;
 }
 
+// The highest strict-semver `vX.Y.Z` tag reachable from HEAD; prerelease tags are ignored.
 function lastReleaseTag() {
-	try {
-		return git('describe', '--tags', '--abbrev=0', '--match', 'v[0-9]*.[0-9]*.[0-9]*');
-	} catch {
-		return undefined;
+	return run('git', 'tag', '--merged', 'HEAD', '--list', 'v*')
+		.split('\n')
+		.map((tag) => ({ tag, version: parse(tag.slice(1)) }))
+		.filter(({ version }) => version)
+		.sort((a, b) => compare(b.version, a.version))[0];
+}
+
+// Only releases made by this workflow carry their version in package.json. Older tags (from
+// semantic-release or created by hand) are treated as finished, whatever is on npm.
+function isUnfinished(tag, packageName) {
+	const version = tag.slice(1);
+	const manifest = JSON.parse(run('git', 'show', `${tag}:package.json`));
+	if (manifest.version !== version) {
+		return false;
 	}
+	const onNpm = succeeds('npm', 'view', `${packageName}@${version}`, 'version');
+	const hasRelease = succeeds('gh', 'release', 'view', tag);
+	return !onNpm || !hasRelease;
 }
 
 function bumpFromCommits(sinceTag) {
 	const range = sinceTag ? `${sinceTag}..HEAD` : 'HEAD';
-	const log = git('log', range, '--format=%s%x1f%b%x1e');
+	const log = run('git', 'log', range, '--format=%s%x1f%b%x1e');
 	const commits = log
 		.split('\x1e')
 		.map((entry) => entry.trim())
@@ -74,37 +114,52 @@ function apply(bump, [major, minor, patch]) {
 	return `${major}.${minor}.${patch + 1}`;
 }
 
-function output(version) {
+function output(values) {
+	console.log(values.version ? `Release: ${JSON.stringify(values)}` : 'Nothing to release.');
 	if (process.env.GITHUB_OUTPUT) {
-		appendFileSync(process.env.GITHUB_OUTPUT, `version=${version}\n`);
+		const lines = Object.entries(values).map(([key, value]) => `${key}=${value}`);
+		appendFileSync(process.env.GITHUB_OUTPUT, `${lines.join('\n')}\n`);
 	}
 }
 
+const packageName = JSON.parse(readFileSync('package.json', 'utf8')).name;
 const requested = (process.argv[2] ?? '').trim().replace(/^v/, '');
-const tag = lastReleaseTag();
-const last = tag ? parse(tag.slice(1)) : [0, 0, 0];
-console.log(`Last release: ${tag ?? '(none)'}`);
+const last = lastReleaseTag();
+console.log(`Last release: ${last?.tag ?? '(none)'}`);
 
+if (last && isUnfinished(last.tag, packageName)) {
+	const version = last.tag.slice(1);
+	if (requested && requested !== version) {
+		throw new Error(
+			`Release ${last.tag} is unfinished (npm package or GitHub release missing). ` +
+				`Run the workflow without a version, or with ${version}, to complete it first.`,
+		);
+	}
+	console.log(`${last.tag} is unfinished; completing it.`);
+	output({ version, sha: run('git', 'rev-list', '-n', '1', last.tag), resume: 'true' });
+	process.exit(0);
+}
+
+const sha = run('git', 'rev-parse', 'HEAD');
 let version;
 if (requested) {
-	const next = parse(requested);
-	if (git('tag', '--list', `v${requested}`)) {
+	const next = parseOrFail(requested);
+	if (run('git', 'tag', '--list', `v${requested}`)) {
 		throw new Error(`Tag v${requested} already exists.`);
 	}
-	if (!isGreater(next, last)) {
-		throw new Error(`Version ${requested} must be greater than the last release ${tag}.`);
+	if (last && compare(next, last.version) <= 0) {
+		throw new Error(`Version ${requested} must be greater than the last release ${last.tag}.`);
 	}
 	version = requested;
 } else {
-	const bump = bumpFromCommits(tag);
+	const bump = bumpFromCommits(last?.tag);
 	if (!bump) {
-		console.log('No feat, fix, perf or breaking commits since the last release; nothing to do.');
-		output('');
+		console.log('No feat, fix, perf or breaking commits since the last release.');
+		output({ version: '', sha, resume: 'false' });
 		process.exit(0);
 	}
-	version = apply(bump, last);
+	version = apply(bump, last?.version ?? [0, 0, 0]);
 	console.log(`Derived a ${bump} bump from the commits.`);
 }
 
-console.log(`Next version: ${version}`);
-output(version);
+output({ version, sha, resume: 'false' });
