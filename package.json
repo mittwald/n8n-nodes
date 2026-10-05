@@ -24,9 +24,7 @@
 		"lint:fix": "n8n-node lint --fix",
 		"test:compile": "tsc --noEmit",
 		"test:integration": "vitest --config vitest.integration.config.ts --run",
-		"test:integration:watch": "vitest --config vitest.integration.config.ts",
-		"n8n:release": "n8n-node release",
-		"n8n:prepublishOnly": "n8n-node prerelease"
+		"test:integration:watch": "vitest --config vitest.integration.config.ts"
 	},
 	"files": [
 		"dist"
