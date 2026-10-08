@@ -21,6 +21,7 @@ concurrency:
 
 jobs:
   version:
+    if: github.ref == 'refs/heads/master'
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -112,8 +113,11 @@ jobs:
           echo "::add-mask::$auth"
           # Atomic, and based on the commit the version was chosen for: if master moved in the
           # meantime, neither the commit nor the tag is pushed.
-          git -c "http.https://github.com/.extraheader=AUTHORIZATION: basic $auth" \
-            push --atomic "https://github.com/${GITHUB_REPOSITORY}.git" HEAD:master "v$VERSION"
+          if ! git -c "http.https://github.com/.extraheader=AUTHORIZATION: basic $auth" \
+            push --atomic "https://github.com/${GITHUB_REPOSITORY}.git" HEAD:master "v$VERSION"; then
+            echo "::error title=Release push rejected::Nothing was released. Either master moved since the version was chosen (just re-run the workflow), or RELEASE_TOKEN is missing, expired or its user lacks the bypass in the master ruleset."
+            exit 1
+          fi
 
       # The two steps below skip what already exists, so a failed run can simply be re-run.
       - name: Publish to npm

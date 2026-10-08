@@ -37,6 +37,7 @@ chore: bump dependencies
 - Keep pull requests focused and small
 - Clearly describe **what** and **why** you changed something
 - Make sure your commits follow the semantic commit convention
+- Give the pull request a semantic title (e.g. `fix(domain): …`): pull requests are squash-merged, so the title becomes the commit subject on `master` and decides whether and how the next release is versioned. A title without a type (`feat`, `fix`, …) releases nothing.
 - Run `pnpm run lint` and `pnpm run build` before opening the pull request
 
 ## Releases
