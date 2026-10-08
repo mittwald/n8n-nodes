@@ -110,7 +110,7 @@ When `Mittwald.node.ts` imports `'./resources/implementations/operations'`, all 
 
 - All available resources and operations should be documented in `README.md`.
 - Each operation should have a brief description of its purpose and parameters.
-- The brand name "mittwald" should ALWAYS be lowercase when referring to the company, even at the start of a sentence.
+- The brand name "mittwald" should ALWAYS be lowercase when referring to the company, even at the start of a sentence. The only exception is the credential `displayName` (`Mittwald API`): the n8n marketplace review requires it in Title Case.
 - The operation `name` should be written in **Title Case** (e.g., `Install`, `List`, `Update Installation Versions`). This is the internal identifier used in n8n.
 - The operation `action` strings should follow the following requirements:
   - Correct english grammar and spelling; start with a capital letter and a verb.
