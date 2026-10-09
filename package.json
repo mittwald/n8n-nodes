@@ -1,6 +1,6 @@
 {
 	"name": "n8n-nodes-mittwald",
-	"version": "0.0.0",
+	"version": "1.12.1",
 	"description": "n8n nodes for interacting with the mittwald API",
 	"license": "MIT",
 	"packageManager": "pnpm@10.28.2",
