@@ -1,22 +1,68 @@
+# Releases the package: bumps the version in package.json, commits and tags it on master,
+# publishes to npm (trusted publishing with provenance) and creates the GitHub release.
+#
+# Keep this file name: npm trusted publishing is bound to `publish.yml`.
+
 name: Publish
 
 on:
   workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version to release, e.g. 1.13.0. Leave empty to derive it from the commits since the last release.'
+        required: false
+        type: string
   schedule:
-    - cron: '0 13,20 * * *'
+    - cron: '0 2 * * *'
+
+concurrency:
+  group: publish
+  cancel-in-progress: false
 
 jobs:
-  publish:
+  version:
+    if: github.ref == 'refs/heads/master'
     runs-on: ubuntu-latest
     permissions:
-      contents: write # to be able to publish a GitHub release
-      issues: write # to be able to comment on released issues
-      pull-requests: write # to be able to comment on released pull requests
-      id-token: write # to enable use of OIDC for trusted publishing and npm provenance
+      contents: read
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+      sha: ${{ steps.version.outputs.sha }}
+      resume: ${{ steps.version.outputs.resume }}
     steps:
       - uses: actions/checkout@v5
         with:
+          ref: master
           fetch-depth: 0
+
+      - name: Determine version
+        id: version
+        env:
+          # Read-only: the script checks whether the last release has its GitHub release.
+          GH_TOKEN: ${{ github.token }}
+          REQUESTED_VERSION: ${{ inputs.version }}
+        run: node .github/scripts/next-version.mjs "$REQUESTED_VERSION"
+
+  publish:
+    needs: version
+    if: needs.version.outputs.version != ''
+    runs-on: ubuntu-latest
+    # Holds RELEASE_TOKEN; restrict the environment to the master branch.
+    environment: release
+    permissions:
+      contents: write # to create the GitHub release
+      id-token: write # to enable use of OIDC for trusted publishing and npm provenance
+    env:
+      VERSION: ${{ needs.version.outputs.version }}
+      RESUME: ${{ needs.version.outputs.resume }}
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          # Exactly the commit the version was chosen for (or the tag of an unfinished release).
+          ref: ${{ needs.version.outputs.sha }}
+          fetch-depth: 0
+          # Keep tokens out of the git config while dependencies are installed and built.
+          persist-credentials: false
 
       - name: Install pnpm
         uses: pnpm/action-setup@v4
@@ -25,6 +71,11 @@ jobs:
         uses: actions/setup-node@v6
         with:
           node-version: 24
+          registry-url: 'https://registry.npmjs.org'
+
+      - name: Update npm
+        # Trusted publishing needs npm >= 11.5.1.
+        run: npm install -g npm@^11.5.1
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
@@ -32,10 +83,57 @@ jobs:
       - name: Verify the integrity for installed dependencies
         run: pnpm audit --prod
 
+      - name: Set version
+        if: env.RESUME != 'true'
+        run: npm version "$VERSION" --no-git-tag-version
+
+      - name: Run lint
+        run: pnpm lint
+
       - name: Run build
         run: pnpm build
 
-      - name: Release
+      - name: Check package
+        if: env.RESUME != 'true'
+        run: npm publish --dry-run
+
+      - name: Commit and tag
+        if: env.RESUME != 'true'
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: npx semantic-release
+          # Its user has to bypass the master ruleset. Only this step gets the token, and only for
+          # the push itself.
+          RELEASE_TOKEN: ${{ secrets.RELEASE_TOKEN }}
+        run: |
+          git config user.name "mittwald-machine"
+          git config user.email "62147274+mittwald-machine@users.noreply.github.com"
+          git add package.json
+          git commit -m "chore(release): v$VERSION"
+          git tag -a "v$VERSION" -m "v$VERSION"
+          auth="$(printf 'x-access-token:%s' "$RELEASE_TOKEN" | base64 -w0)"
+          echo "::add-mask::$auth"
+          # Atomic, and based on the commit the version was chosen for: if master moved in the
+          # meantime, neither the commit nor the tag is pushed.
+          if ! git -c "http.https://github.com/.extraheader=AUTHORIZATION: basic $auth" \
+            push --atomic "https://github.com/${GITHUB_REPOSITORY}.git" HEAD:master "v$VERSION"; then
+            echo "::error title=Release push rejected::Nothing was released. Either master moved since the version was chosen (just re-run the workflow), or RELEASE_TOKEN is missing, expired or its user lacks the bypass in the master ruleset."
+            exit 1
+          fi
+
+      # The two steps below skip what already exists, so a failed run can simply be re-run.
+      - name: Publish to npm
+        run: |
+          if npm view "$(node -p 'require("./package.json").name')@$VERSION" version >/dev/null 2>&1; then
+            echo "$VERSION is already on npm."
+          else
+            npm publish
+          fi
+
+      - name: Create GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if gh release view "v$VERSION" >/dev/null 2>&1; then
+            echo "The GitHub release v$VERSION already exists."
+          else
+            gh release create "v$VERSION" --verify-tag --generate-notes --title "v$VERSION"
+          fi

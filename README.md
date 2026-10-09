@@ -12,7 +12,7 @@ This is an n8n community node. It lets you use the mittwald API in your n8n work
 [Compatibility](#compatibility)
 [Usage](#usage)
 [Resources](#resources)
-[Version history](#version-history)
+[Version history](https://github.com/mittwald/n8n-nodes/releases)
 
 ## Installation
 
