@@ -5,6 +5,7 @@ export default cronjobResource
 		name: 'List Executions',
 		action: 'List cronjob executions',
 		description: 'Get a list of executions for a cronjob',
+		paginated: true,
 	})
 	.withProperties({
 		cronjobId: {
@@ -15,11 +16,11 @@ export default cronjobResource
 			required: true,
 		},
 	})
-	.withExecuteFn(async ({ properties, apiClient }) => {
+	.withExecuteFn(async ({ properties, apiClient, pagination }) => {
 		const { cronjobId } = properties;
 
-		return apiClient.request({
+		return apiClient.requestList({
 			path: `/cronjobs/${cronjobId}/executions`,
-			method: 'GET',
+			pagination,
 		});
 	});

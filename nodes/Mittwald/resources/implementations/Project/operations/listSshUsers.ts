@@ -6,6 +6,7 @@ export default projectResource
 		name: 'List SSH Users',
 		action: 'List all SSH users',
 		description: 'Get a list of all SSH users in a project',
+		paginated: true,
 	})
 	.withProperties({
 		project: {
@@ -13,11 +14,11 @@ export default projectResource
 			required: true,
 		},
 	})
-	.withExecuteFn(async ({ properties, apiClient }) => {
+	.withExecuteFn(async ({ properties, apiClient, pagination }) => {
 		const { project } = properties;
 
-		return apiClient.request({
+		return apiClient.requestList({
 			path: `/projects/${project}/ssh-users`,
-			method: 'GET',
+			pagination,
 		});
 	});

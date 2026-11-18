@@ -6,6 +6,7 @@ export default mailResource
 		name: 'List Mail Addresses By Project',
 		action: 'List mail addresses for a project',
 		description: 'Get a list of mail addresses in a project',
+		paginated: true,
 	})
 	.withProperties({
 		project: {
@@ -13,11 +14,11 @@ export default mailResource
 			required: true,
 		},
 	})
-	.withExecuteFn(async ({ properties, apiClient }) => {
+	.withExecuteFn(async ({ properties, apiClient, pagination }) => {
 		const { project } = properties;
 
-		return apiClient.request({
+		return apiClient.requestList({
 			path: `/projects/${project}/mail-addresses`,
-			method: 'GET',
+			pagination,
 		});
 	});

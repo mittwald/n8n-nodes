@@ -14,6 +14,7 @@ This is **n8n-nodes-mittwald**, an n8n community node package that provides inte
 - `pnpm run lint` — Lint with `n8n-node lint` (uses n8n's ESLint config)
 - `pnpm run lint:fix` — Lint with auto-fix
 - `pnpm run test:compile` — TypeScript compilation check (`tsc --noEmit`)
+- `pnpm run test:unit` — Run the unit tests under `test/unit/` (Vitest, no network or env needed)
 - `pnpm run test:integration` — Run the integration test suite against a real n8n instance and the live mittwald API (auto-skips when env vars are missing; see [Testing](#testing))
 
 ## Code Style
@@ -90,6 +91,29 @@ export default myResource
 
 Then import it from the resource's `operations/index.ts`.
 
+### List Operations (Pagination)
+
+If the list endpoint accepts `limit`/`skip` (check the API spec), register the operation with `paginated: true` and fetch with `apiClient.requestList()`:
+
+```typescript
+export default myResource
+	.addOperation({
+		name: 'List',
+		action: 'List things',
+		description: 'Get a list of all things in a project',
+		paginated: true,
+	})
+	.withProperties({ project: { ...projectProperty, required: true } })
+	.withExecuteFn(async ({ apiClient, properties, pagination }) => {
+		return apiClient.requestList({
+			path: `/projects/${properties.project}/things`,
+			pagination,
+		});
+	});
+```
+
+`paginated: true` adds the **Return All** (default `true`) and **Limit** (default `50`) fields and passes their values as `pagination`; the operation must not define its own `returnAll`/`limit` properties. `requestList()` sends `skip`/`limit`, walks the pages via the `X-Pagination-*` headers and returns the collected items. Return All defaults to `true` on purpose: n8n applies defaults to saved workflows that lack the field, and List operations returned everything before pagination existed. Endpoints without `limit`/`skip` keep using `apiClient.request()` without the flag.
+
 ### Shared Properties
 
 Reusable property configs live in `resources/implementations/shared/`. These export `OperationPropertyConfig` objects (e.g., `projectProperty`, `serverProperty`) that can be spread into any operation's `withProperties()` call. Shared properties typically use the `resourceLocator` type with API-backed search lists.
@@ -100,6 +124,7 @@ Reusable property configs live in `resources/implementations/shared/`. These exp
 
 - Zod schema validation for request/response bodies
 - Polling support for async operations (exponential backoff)
+- Paginated list requests via `requestList()` (see [List Operations](#list-operations-pagination))
 - Full response mode (`returnFullResponse: true`)
 
 ### How Registration Works
@@ -136,7 +161,7 @@ Integration tests live under `test/integration/` and run via:
 pnpm run test:integration
 ```
 
-The suite targets a real n8n instance plus the live mittwald API. Tests auto-skip when the required environment variables are missing — see [`test/integration/README.md`](test/integration/README.md) and `.env.example` for the full list. There is no unit test runner; `pnpm run test:compile` only runs `tsc --noEmit`.
+The suite targets a real n8n instance plus the live mittwald API. Tests auto-skip when the required environment variables are missing — see [`test/integration/README.md`](test/integration/README.md) and `.env.example` for the full list. Logic that can be tested without n8n or the API (for example the list pagination loop in `nodes/Mittwald/api/listPagination.ts`) has unit tests under `test/unit/`, run via `pnpm run test:unit` and in CI. `pnpm run test:compile` only runs `tsc --noEmit` and does not cover `test/`.
 
 ### Conventions
 

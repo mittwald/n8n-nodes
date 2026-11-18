@@ -6,6 +6,7 @@ export default projectResource
 		name: 'List Invites',
 		action: 'List all invites',
 		description: 'Get a list of all project invitations',
+		paginated: true,
 	})
 	.withProperties({
 		project: {
@@ -16,8 +17,8 @@ export default projectResource
 	.withExecuteFn(async (context) => {
 		const { project } = context.properties;
 
-		return context.apiClient.request({
+		return context.apiClient.requestList({
 			path: `/projects/${project}/invites`,
-			method: 'GET',
+			pagination: context.pagination,
 		});
 	});

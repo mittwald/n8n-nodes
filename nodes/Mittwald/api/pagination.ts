@@ -1,6 +1,25 @@
 import { config } from '../shared';
 import type { RequestConfig, RequestConfigWithPagination, Response } from './types';
 
+/**
+ * Reads a numeric `X-Pagination-<subject>` response header. Returns undefined
+ * when the header is missing and throws when it is not a number.
+ */
+export const parsePaginationHeader = (
+	headers: Response['headers'],
+	subject: string,
+): number | undefined => {
+	const headerName = `x-pagination-${subject}`;
+	const headerValue =
+		headerName in headers && typeof headers[headerName] === 'string'
+			? parseInt(headers[headerName], 10)
+			: undefined;
+	if (headerValue !== undefined && isNaN(headerValue)) {
+		throw new Error(`Invalid or missing pagination header: ${headerName}`);
+	}
+	return headerValue;
+};
+
 export const setupPagination = <TRequestBody, TResponseBody>(
 	requestConfig: RequestConfig<TRequestBody, TResponseBody> & Partial<RequestConfigWithPagination>,
 ) => {
@@ -34,21 +53,9 @@ export const setupPagination = <TRequestBody, TResponseBody>(
 		withPaginationToken: (fullResponse: Response<TResponseBody>) => {
 			const { headers } = fullResponse;
 
-			const parsePaginationHeader = (subject: string) => {
-				const headerName = `x-pagination-${subject}`;
-				const headerValue =
-					headerName in headers && typeof headers[headerName] === 'string'
-						? parseInt(headers[headerName], 10)
-						: undefined;
-				if (headerValue !== undefined && isNaN(headerValue)) {
-					throw new Error(`Invalid or missing pagination header: ${headerName}`);
-				}
-				return headerValue;
-			};
-
-			const page = parsePaginationHeader('page');
-			const limit = parsePaginationHeader('limit');
-			const totalcount = parsePaginationHeader('totalcount');
+			const page = parsePaginationHeader(headers, 'page');
+			const limit = parsePaginationHeader(headers, 'limit');
+			const totalcount = parsePaginationHeader(headers, 'totalcount');
 
 			if (page === undefined || limit === undefined || totalcount === undefined) {
 				return fullResponse;

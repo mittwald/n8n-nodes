@@ -5,11 +5,12 @@ export default mailResource
 		name: 'List Mail Addresses',
 		action: 'List all mail addresses',
 		description: 'Get a list of all mail addresses the user has access to',
+		paginated: true,
 	})
 	.withProperties({})
-	.withExecuteFn(async ({ apiClient }) => {
-		return apiClient.request({
+	.withExecuteFn(async ({ apiClient, pagination }) => {
+		return apiClient.requestList({
 			path: '/mail-addresses/',
-			method: 'GET',
+			pagination,
 		});
 	});

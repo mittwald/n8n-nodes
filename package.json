@@ -23,6 +23,7 @@
 		"lint": "n8n-node lint",
 		"lint:fix": "n8n-node lint --fix",
 		"test:compile": "tsc --noEmit",
+		"test:unit": "vitest --config vitest.unit.config.ts --run",
 		"test:integration": "vitest --config vitest.integration.config.ts --run",
 		"test:integration:watch": "vitest --config vitest.integration.config.ts"
 	},

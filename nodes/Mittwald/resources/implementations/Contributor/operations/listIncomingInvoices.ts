@@ -6,6 +6,7 @@ export default contributorResource
 		name: 'List Incoming Invoices',
 		action: 'List incoming invoices',
 		description: 'Get a list of incoming invoices for an organisation',
+		paginated: true,
 	})
 	.withProperties({
 		organisation: {
@@ -17,8 +18,8 @@ export default contributorResource
 		const { properties, apiClient } = context;
 		const { organisation } = properties;
 
-		return apiClient.request({
+		return apiClient.requestList({
 			path: `/contributors/${organisation}/invoices/incoming`,
-			method: 'GET',
+			pagination: context.pagination,
 		});
 	});

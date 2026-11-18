@@ -6,6 +6,7 @@ export default backupResource
 		name: 'List',
 		action: 'List project backups',
 		description: 'Get a list of backups belonging to a project',
+		paginated: true,
 	})
 	.withProperties({
 		project: {
@@ -13,11 +14,11 @@ export default backupResource
 			required: true,
 		},
 	})
-	.withExecuteFn(async ({ properties, apiClient }) => {
+	.withExecuteFn(async ({ properties, apiClient, pagination }) => {
 		const { project } = properties;
 
-		return apiClient.request({
+		return apiClient.requestList({
 			path: `/projects/${project}/backups`,
-			method: 'GET',
+			pagination,
 		});
 	});

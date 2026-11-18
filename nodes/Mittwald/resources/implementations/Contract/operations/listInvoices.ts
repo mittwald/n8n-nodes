@@ -6,6 +6,7 @@ export default contractResource
 		name: 'List Invoices',
 		action: 'List invoices',
 		description: 'Get a list of invoices for an organisation',
+		paginated: true,
 	})
 	.withProperties({
 		organisation: {
@@ -13,11 +14,11 @@ export default contractResource
 			required: true,
 		},
 	})
-	.withExecuteFn(async ({ properties, apiClient }) => {
+	.withExecuteFn(async ({ properties, apiClient, pagination }) => {
 		const { organisation } = properties;
 
-		return apiClient.request({
+		return apiClient.requestList({
 			path: `/customers/${organisation}/invoices`,
-			method: 'GET',
+			pagination,
 		});
 	});

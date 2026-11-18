@@ -6,6 +6,7 @@ export default appResource
 		name: 'List Installations By Project',
 		action: 'List app installations of a project',
 		description: 'Get a list of app installations belonging to a project',
+		paginated: true,
 	})
 	.withProperties({
 		project: {
@@ -17,8 +18,8 @@ export default appResource
 		const { properties, apiClient } = context;
 		const { project } = properties;
 
-		return apiClient.request({
+		return apiClient.requestList({
 			path: `/projects/${project}/app-installations`,
-			method: 'GET',
+			pagination: context.pagination,
 		});
 	});

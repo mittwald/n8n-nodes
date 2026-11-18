@@ -1,11 +1,11 @@
 import type { OperationExecutionFunction } from '../Operation';
 import type { OperationProperties } from '../Operation/types';
 
-export interface OperationBuilder {
+export interface OperationBuilder<TPaginated extends boolean = false> {
 	withProperties<TProps extends OperationProperties>(
 		properties: TProps,
 	): {
-		withExecuteFn(fn: OperationExecutionFunction<TProps>): void;
+		withExecuteFn(fn: OperationExecutionFunction<TProps, TPaginated>): void;
 	};
 }
 

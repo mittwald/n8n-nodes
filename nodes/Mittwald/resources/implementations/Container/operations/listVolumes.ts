@@ -6,6 +6,7 @@ export default containerResource
 		name: 'List Volumes',
 		action: 'List volumes in a project',
 		description: 'Get a list of volumes belonging to a project',
+		paginated: true,
 	})
 	.withProperties({
 		project: {
@@ -13,11 +14,11 @@ export default containerResource
 			required: true,
 		},
 	})
-	.withExecuteFn(async ({ properties, apiClient }) => {
+	.withExecuteFn(async ({ properties, apiClient, pagination }) => {
 		const { project } = properties;
 
-		return apiClient.request({
+		return apiClient.requestList({
 			path: `/projects/${project}/volumes`,
-			method: 'GET',
+			pagination,
 		});
 	});

@@ -6,6 +6,7 @@ export default contributorResource
 		name: 'List Own Extensions',
 		action: 'List own extensions',
 		description: 'Get a list of extensions owned by an organisation',
+		paginated: true,
 	})
 	.withProperties({
 		organisation: {
@@ -17,8 +18,8 @@ export default contributorResource
 		const { properties, apiClient } = context;
 		const { organisation } = properties;
 
-		return apiClient.request({
+		return apiClient.requestList({
 			path: `/contributors/${organisation}/extensions`,
-			method: 'GET',
+			pagination: context.pagination,
 		});
 	});

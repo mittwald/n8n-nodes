@@ -8,12 +8,19 @@ import {
 import { OperationProperty } from '../OperationProperty/OperationProperty';
 import type {
 	OperationConfig,
+	OperationExecutionContext,
 	OperationExecutionFunction,
 	OperationExecutionProperties,
 	OperationProperties,
 } from './types';
-import { ApiClient } from '../../../api';
+import { ApiClient, type ListPaginationOptions } from '../../../api';
 import type { OperationPropertyConfig } from '../OperationProperty';
+import {
+	limitProperty,
+	limitPropertyName,
+	returnAllProperty,
+	returnAllPropertyName,
+} from './paginationProperties';
 
 export class Operation {
 	public readonly resource: Resource;
@@ -33,6 +40,18 @@ export class Operation {
 		this.properties = Object.entries(properties).map(
 			([name, propConfig]) => new OperationProperty(name, this, propConfig),
 		);
+
+		if (config.paginated) {
+			for (const name of [returnAllPropertyName, limitPropertyName]) {
+				if (name in properties) {
+					throw new Error(
+						`Operation "${this.id}" is paginated and must not define its own "${name}" property`,
+					);
+				}
+			}
+			this.addProperty(returnAllPropertyName, returnAllProperty);
+			this.addProperty(limitPropertyName, limitProperty);
+		}
 	}
 
 	public get name() {
@@ -69,17 +88,26 @@ export class Operation {
 		) as OperationExecutionProperties;
 	}
 
+	private getPagination(properties: OperationExecutionProperties): ListPaginationOptions {
+		return {
+			returnAll: properties[returnAllPropertyName] as boolean,
+			limit: properties[limitPropertyName] as number,
+		};
+	}
+
 	public async execute(
 		node: IAllExecuteFunctions,
 		itemIndex: number,
 	): Promise<IDataObject | IDataObject[]> {
 		const apiClient = new ApiClient(node);
 		const properties = this.getExecutionProperties(node, itemIndex);
-		const result = await this.executionFn({
+		const context: OperationExecutionContext = {
 			apiClient,
 			properties,
 			node,
-		});
+			...(this.config.paginated ? { pagination: this.getPagination(properties) } : {}),
+		};
+		const result = await this.executionFn(context);
 
 		if (Array.isArray(result)) {
 			return result as IDataObject[];

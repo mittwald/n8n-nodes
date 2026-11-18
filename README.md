@@ -20,7 +20,16 @@ Follow the [installation guide](https://docs.n8n.io/integrations/community-nodes
 
 ## Operations
 
-This node provides integration with the [mittwald API v2](https://developer.mittwald.de/). The following resources and operations are available:
+This node provides integration with the [mittwald API v2](https://developer.mittwald.de/). The following resources and operations are available.
+
+### Pagination of List operations
+
+The mittwald API returns lists in pages (some endpoints send at most 100 entries per request). List operations walk these pages for you and offer two fields:
+
+- **Return All** (default: on): Fetch every page and return all entries.
+- **Limit** (default: 50, shown when Return All is off): Return at most this many entries.
+
+Every List operation supports pagination, except those whose API endpoint is not paginated: List app versions, List system software versions, List messages, List outgoing invoices, List all MySQL databases, List all Redis databases, List MySQL versions, List Redis versions and List DNS zones.
 
 ### AI Hosting
 

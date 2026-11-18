@@ -5,13 +5,14 @@ export default appResource
 		name: 'List Apps',
 		action: 'List all available apps',
 		description: 'Get a list of all available apps',
+		paginated: true,
 	})
 	.withProperties({})
 	.withExecuteFn(async (context) => {
 		const { apiClient } = context;
 
-		return apiClient.request({
+		return apiClient.requestList({
 			path: `/apps`,
-			method: 'GET',
+			pagination: context.pagination,
 		});
 	});

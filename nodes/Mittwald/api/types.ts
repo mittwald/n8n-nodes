@@ -1,5 +1,6 @@
 import type { JsonObject } from '../shared';
 import type { PollingConfig } from './polling';
+import type { ListPaginationOptions } from './listPagination';
 import Z from 'zod';
 import { IDataObject, type JsonValue } from 'n8n-workflow';
 
@@ -25,6 +26,14 @@ export type RequestConfig<TRequestBody = JsonObject, TResponseBody = JsonValue> 
 	requestSchema?: Z.Schema<TRequestBody>;
 	responseSchema?: Z.Schema<TResponseBody>;
 } & Partial<RequestConfigWithFullResponse & RequestConfigWithPagination>;
+
+/** A GET request against a skip/limit paginated list endpoint. */
+export interface ListRequestConfig<TItem = JsonValue> {
+	path: string;
+	qs?: IDataObject;
+	responseSchema?: Z.Schema<TItem[]>;
+	pagination: ListPaginationOptions;
+}
 
 export interface Response<TBody = JsonValue> {
 	statusCode: number;

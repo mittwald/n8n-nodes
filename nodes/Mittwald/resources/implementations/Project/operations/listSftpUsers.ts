@@ -6,6 +6,7 @@ export default projectResource
 		name: 'List SFTP Users',
 		action: 'List all SFTP users',
 		description: 'Get a list of all SFTP users in a project',
+		paginated: true,
 	})
 	.withProperties({
 		project: {
@@ -13,11 +14,11 @@ export default projectResource
 			required: true,
 		},
 	})
-	.withExecuteFn(async ({ properties, apiClient }) => {
+	.withExecuteFn(async ({ properties, apiClient, pagination }) => {
 		const { project } = properties;
 
-		return apiClient.request({
+		return apiClient.requestList({
 			path: `/projects/${project}/sftp-users`,
-			method: 'GET',
+			pagination,
 		});
 	});

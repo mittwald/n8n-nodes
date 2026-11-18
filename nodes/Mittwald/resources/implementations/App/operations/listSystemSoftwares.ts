@@ -5,13 +5,14 @@ export default appResource
 		name: 'List System Softwares',
 		action: 'List system softwares',
 		description: 'Get a list of available system software packages',
+		paginated: true,
 	})
 	.withProperties({})
 	.withExecuteFn(async (context) => {
 		const { apiClient } = context;
 
-		return apiClient.request({
+		return apiClient.requestList({
 			path: `/system-softwares`,
-			method: 'GET',
+			pagination: context.pagination,
 		});
 	});
