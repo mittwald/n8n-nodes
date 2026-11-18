@@ -5,13 +5,14 @@ export default serverResource
 		name: 'List',
 		action: 'List all servers',
 		description: 'Get a list of all servers',
+		paginated: true,
 	})
 	.withProperties({})
 	.withExecuteFn(async (context) => {
 		const { apiClient } = context;
 
-		return apiClient.request({
+		return apiClient.requestList({
 			path: `/servers`,
-			method: 'GET',
+			pagination: context.pagination,
 		});
 	});

@@ -5,6 +5,7 @@ export default organisationResource
 		name: 'List',
 		action: 'List organisations',
 		description: 'Get all organisations the authenticated user has access to',
+		paginated: true,
 	})
 	.withProperties({
 		role: {
@@ -44,12 +45,12 @@ export default organisationResource
 		const { properties, apiClient } = context;
 		const { role, search } = properties;
 
-		return apiClient.request({
+		return apiClient.requestList({
 			path: '/customers',
-			method: 'GET',
 			qs: {
 				role: role.length > 0 ? role.join(',') : undefined,
 				search: search || undefined,
 			},
+			pagination: context.pagination,
 		});
 	});

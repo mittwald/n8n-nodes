@@ -1,6 +1,10 @@
 export const config = {
 	apiBaseUrl: 'https://api.mittwald.de/v2',
 	apiPaginationPageSize: 25,
+	// Page size and page cap for List operations that walk all pages. 100 is the
+	// default page size the API applies when no limit is sent.
+	apiListPageSize: 100,
+	apiListMaxPages: 1000,
 	// Identifies this node in the mittwald API access logs. Without it, n8n sends
 	// its generic outbound user agent ("n8n"), which is indistinguishable from any
 	// other n8n node. Deliberately carries no version: reading it at runtime would

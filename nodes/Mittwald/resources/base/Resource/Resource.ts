@@ -20,7 +20,9 @@ export class Resource {
 		return this.name;
 	}
 
-	public addOperation(config: OperationConfig): OperationBuilder {
+	public addOperation<TPaginated extends boolean = false>(
+		config: OperationConfig & { paginated?: TPaginated },
+	): OperationBuilder<TPaginated> {
 		return {
 			withProperties: (properties) => {
 				return {

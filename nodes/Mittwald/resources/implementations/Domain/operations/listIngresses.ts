@@ -5,13 +5,14 @@ export default domainResource
 		name: 'List Ingresses',
 		action: 'List ingresses',
 		description: 'Get a list of all ingresses',
+		paginated: true,
 	})
 	.withProperties({})
 	.withExecuteFn(async (context) => {
 		const { apiClient } = context;
 
-		return apiClient.request({
+		return apiClient.requestList({
 			path: `/ingresses`,
-			method: 'GET',
+			pagination: context.pagination,
 		});
 	});

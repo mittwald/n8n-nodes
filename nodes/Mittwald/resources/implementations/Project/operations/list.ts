@@ -5,13 +5,14 @@ export default projectResource
 		name: 'List',
 		action: 'List all projects',
 		description: 'Get a list of all projects',
+		paginated: true,
 	})
 	.withProperties({})
 	.withExecuteFn(async (context) => {
 		const { apiClient } = context;
 
-		return apiClient.request({
+		return apiClient.requestList({
 			path: `/projects`,
-			method: 'GET',
+			pagination: context.pagination,
 		});
 	});

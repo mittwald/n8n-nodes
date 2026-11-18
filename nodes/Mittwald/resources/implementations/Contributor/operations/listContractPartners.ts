@@ -6,6 +6,7 @@ export default contributorResource
 		name: 'List Contract Partners',
 		action: 'List contract partners of a contributor',
 		description: 'Get a list of contract partners associated with a contributor',
+		paginated: true,
 	})
 	.withProperties({
 		organisation: {
@@ -17,8 +18,8 @@ export default contributorResource
 		const { properties, apiClient } = context;
 		const { organisation } = properties;
 
-		return apiClient.request({
+		return apiClient.requestList({
 			path: `/contributors/${organisation}/contract-partners`,
-			method: 'GET',
+			pagination: context.pagination,
 		});
 	});

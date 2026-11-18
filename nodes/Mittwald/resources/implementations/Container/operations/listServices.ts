@@ -6,6 +6,7 @@ export default containerResource
 		name: 'List Services',
 		action: 'List services in a project',
 		description: 'Get a list of services belonging to a project',
+		paginated: true,
 	})
 	.withProperties({
 		project: {
@@ -13,11 +14,11 @@ export default containerResource
 			required: true,
 		},
 	})
-	.withExecuteFn(async ({ properties, apiClient }) => {
+	.withExecuteFn(async ({ properties, apiClient, pagination }) => {
 		const { project } = properties;
 
-		return apiClient.request({
+		return apiClient.requestList({
 			path: `/projects/${project}/services`,
-			method: 'GET',
+			pagination,
 		});
 	});

@@ -1,5 +1,6 @@
 import { type IAllExecuteFunctions, type JsonValue } from 'n8n-workflow';
 import type {
+	ListRequestConfig,
 	RequestConfig,
 	RequestConfigWithFullResponse,
 	RequestConfigWithPagination,
@@ -7,7 +8,8 @@ import type {
 } from './types';
 import { poll } from './polling';
 import { config, type JsonObject } from '../shared';
-import { setupPagination } from './pagination';
+import { parsePaginationHeader, setupPagination } from './pagination';
+import { collectListPages } from './listPagination';
 
 export class ApiClient {
 	private readonly node: IAllExecuteFunctions;
@@ -98,5 +100,43 @@ export class ApiClient {
 		}
 
 		return fullResponse.body;
+	}
+
+	/**
+	 * GETs a skip/limit paginated list endpoint and returns its items, either all
+	 * of them or up to `pagination.limit`, requesting as many pages as needed.
+	 */
+	public async requestList<TItem = JsonValue>(
+		requestConfig: ListRequestConfig<TItem>,
+	): Promise<TItem[]> {
+		const { pagination, qs, ...restRequestConfig } = requestConfig;
+
+		return collectListPages<TItem>(
+			async ({ skip, limit }) => {
+				const response = await this.request<TItem[]>({
+					...restRequestConfig,
+					method: 'GET',
+					qs: { ...qs, skip, limit },
+					returnFullResponse: true,
+				});
+
+				if (!Array.isArray(response.body)) {
+					throw new Error(
+						`GET ${requestConfig.path} - Expected a list in the response body, got: ${typeof response.body}`,
+					);
+				}
+
+				return {
+					items: response.body,
+					totalCount: parsePaginationHeader(response.headers, 'totalcount'),
+					appliedLimit: parsePaginationHeader(response.headers, 'limit'),
+				};
+			},
+			{
+				...pagination,
+				pageSize: config.apiListPageSize,
+				maxPages: config.apiListMaxPages,
+			},
+		);
 	}
 }

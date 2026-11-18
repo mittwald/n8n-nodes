@@ -6,6 +6,7 @@ export default cronjobResource
 		name: 'List',
 		action: 'List all cronjobs',
 		description: 'Get a list of all cronjobs in a project',
+		paginated: true,
 	})
 	.withProperties({
 		project: {
@@ -19,14 +20,14 @@ export default cronjobResource
 			default: false,
 		},
 	})
-	.withExecuteFn(async ({ properties, apiClient }) => {
+	.withExecuteFn(async ({ properties, apiClient, pagination }) => {
 		const { project, includeServiceCronjobs } = properties;
 
-		return apiClient.request({
+		return apiClient.requestList({
 			path: `/projects/${project}/cronjobs`,
-			method: 'GET',
 			qs: {
 				includeServiceCronjobs,
 			},
+			pagination,
 		});
 	});
